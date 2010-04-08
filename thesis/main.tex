@@ -1,0 +1,189 @@
+\documentclass[12pt]{report}
+
+\usepackage{ucs}
+\usepackage[utf8]{inputenc}
+\usepackage[T2A]{fontenc}
+\usepackage{indentfirst} 
+
+%\PrerenderUnicode{}
+
+
+\usepackage[russian]{babel}
+
+\usepackage[
+	colorlinks=true,
+	linkcolor=blue,
+	citecolor=blue,
+	urlcolor=blue
+]{hyperref}
+%\hypersetup{pdftitle={Breslav}} 
+
+\usepackage{listings}
+\usepackage{underscore}
+
+\usepackage{graphicx}
+
+
+\usepackage{amsthm}
+\usepackage{array}
+
+\usepackage{color}
+
+%\usepackage{bold-extra}
+%\renewcommand{\ttdefault}{pcr}
+
+\lstset{
+	inputencoding=utf8x, 
+	extendedchars=\true, 
+	basicstyle=\ttfamily\footnotesize,
+	keywordstyle=\sffamily\bfseries,
+	stringstyle=\sffamily,
+	tabsize=4,
+	captionpos=b,
+	showstringspaces=false,
+}
+
+\sloppy
+
+\newcommand{\figref}[1]{Рис. \ref{#1}}
+\newcommand{\lstref}[1]{Лист. \ref{#1}}
+\newcommand{\tabref}[1]{Таб. \ref{#1}}
+\newcommand{\term}[1]{\emph{#1}}
+\newcommand{\code}[1]{\texttt{#1}}
+\newcommand{\tool}[1]{\textsc{#1}}
+\newcommand{\bad}[1]{{\color{red}\textbf{#1}}}
+
+%\newtheorem{Def}{Определение}[section]
+%\newtheorem{Prop}{Утверждение}[section]
+%\newtheorem{Note}{Замечание}
+
+\DeclareFontFamily{OML}{txmi}{\skewchar\font127 }
+\DeclareFontShape{OML}{txmi}{m}{it}{
+   <-> txmi1%
+}{}
+\DeclareFontShape{OML}{txmi}{bx}{it}{
+   <-> txbmi1%
+}{}
+
+\DeclareFontShape{OML}{txmi}{l}{it}{<->ssub * txmi/m/it}{}
+\DeclareFontShape{OML}{txmi}{b}{it}{<->ssub * txmi/bx/it}{}
+
+\SetSymbolFont{letters}{bold}{OML}{txmi}{bx}{it}
+\SetSymbolFont{letters}{normal}{OML}{txmi}{m}{it}
+
+\DeclareSymbolFont{EulerExtension}{U}{euex}{m}{n}
+\DeclareMathSymbol\intop\mathop{EulerExtension}{"52}
+\DeclareMathSymbol\ointop\mathop{EulerExtension}{"48}
+
+\textwidth=150mm
+\textheight=235mm
+\topmargin=-10mm
+\oddsidemargin=14.6mm
+\renewcommand{\baselinestretch}{1.3}
+\hfuzz=2pt
+\tolerance=1500
+\emergencystretch=3em
+\setlength{\parindent}{12.7mm}
+\raggedbottom
+\mathsurround=2pt
+\righthyphenmin=2
+\sloppy
+\pagestyle{myheadings}
+\makeatletter
+\renewcommand{\@oddhead}{\hfil \thepage}
+\makeatother
+
+\theoremstyle{definition}
+\newtheorem{Def}{Определение~}[part]
+\theoremstyle{plain}
+\newtheorem{Th}{Теорема~}[part]
+\newtheorem{Lemm}[Th]{Лемма~}
+\newtheorem{Prop}[Th]{Предложение~}
+\newtheorem{Cor}{Следствие~}[Th]
+\newtheorem{Note}{Замечание~}[part]
+\newtheorem{Ex}{Пример~}[part]
+\renewcommand{\proofname}{Доказательство}
+
+\renewcommand{\theLemm}{\thepart.\arabic{Lemm}}
+\renewcommand{\theTh}{\thepart.\arabic{Th}}
+\renewcommand{\theProp}{\thepart.\arabic{Prop}}
+\renewcommand{\theCor}{\theTh.\arabic{Cor}}
+\renewcommand{\theNote}{\thepart.\arabic{Note}}
+\renewcommand{\tablename}{Таблица}
+\renewcommand{\figurename}{Рис.}
+\renewcommand{\baselinestretch}{1.23}
+
+\makeatletter
+\@addtoreset{chapter}{part}
+\newcommand{\intro}[1]{%
+\newpage%
+\begin{center}\bf\Large #1\end{center}%
+\addcontentsline{toc}{part}{#1}%
+}
+\renewcommand{\thepart}{\arabic{part}}
+\renewcommand{\part}[1]{%
+\newpage~\\
+%
+\refstepcounter{part}%
+\begin{flushleft}\bf\LARGE Глава~\thepart.\\
+#1\end{flushleft}
+\addcontentsline{toc}{part}{\bf Глава~\thepart. #1}%
+}
+\renewcommand{\chapter}[1]{%
+\refstepcounter{chapter}%
+\begin{flushleft}\bf\Large \S~\thechapter. #1\end{flushleft}
+\nopagebreak[4]%
+\addcontentsline{toc}{section}{\S~\thechapter. #1}%
+}
+\renewcommand{\section}[1]{%
+\nopagebreak[4]
+\refstepcounter{section}%
+\begin{flushleft}\bf \thesection. #1\end{flushleft}%
+\addcontentsline{toc}{section}{\hspace{1em}\thesection. #1}%
+}
+\renewcommand{\subsection}[1]{%
+\nopagebreak[4]
+\refstepcounter{subsection}%
+\begin{flushleft}\bf \thesubsection. #1\end{flushleft}%
+}
+\makeatother
+
+\makeatletter
+\renewcommand*\l@part{\@dottedtocline{1}{0pt}{0em}}
+\renewcommand*\l@section{\@dottedtocline{2}{0pt}{2.8em}}
+\renewcommand{\tableofcontents}
+{\begin{center}\Large\bf Оглавление\end{center}
+\thispagestyle{plain}
+\@starttoc{toc}}
+\makeatother
+
+\makeatletter
+\renewenvironment{thebibliography}[1]
+     {\intro{Список литературы}
+      \list{\@biblabel{\@arabic\c@enumiv}}%
+           {\settowidth\labelwidth{\@biblabel{#1}}%
+            \leftmargin\labelwidth
+            \advance\leftmargin\labelsep
+            \@openbib@code
+            \usecounter{enumiv}%
+            \let\p@enumiv\@empty
+            \renewcommand\theenumiv{\@arabic\c@enumiv}}%
+      \sloppy
+      \clubpenalty4000
+      \@clubpenalty \clubpenalty
+      \widowpenalty4000%
+      \sfcode`\.\@m}
+     {\def\@noitemerr
+       {\@latex@warning{Empty `thebibliography' environment}}%
+      \endlist}
+\makeatother
+
+
+
+\begin{document}\large
+\tableofcontents
+\newpage
+
+\input{chap1.tex}
+\input{chap2.tex}
+\end{document}

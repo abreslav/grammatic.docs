@@ -1,0 +1,143 @@
+http://martinfowler.com/dslwip/Intro.html#TheStateMachineFramework
+
+class StateMachine {
+	ref initialState : State;	
+	val states : State*;
+}
+
+class State {
+	name : String;
+	outgoingTransitions : Transition*;
+	commands : Event*;
+}
+
+class Transition {
+	from : State;
+	to : State;
+	trigger : Event*;
+}
+
+class Event {
+	name : String;
+	code : Integer;
+}
+----------------------------------------------------
+COMMENT : '//' [^'\n']*;
+DIGIT : ['0'-'9'];
+NAME_START : ['a'-'z''A'-'Z'_];
+NAME_PART : NAME_START | DIGIT;
+NAME : NAME_START NAME_PART*;
+INT : DIGIT*;
+
+system : event* stateMachine;
+stateMachine : 'statemachine' NAME '{' state* '}';
+state : 'state' NAME '{' do? (transition ';')* '}';
+do : 'do' block;
+transition : 'on' eventRef 'goto' stateRef;
+stateRef : NAME;
+block : '{' (commandRef ';')* '}';
+eventRef : NAME;
+comandRef : NAME;
+event : 'event' NAME INT;
+
+-------------------------------------------------------
+event lockDoor 0;
+event unlockDoor 1;
+
+event lockPanel 2;
+event unlockPanel 3;
+
+event doorClosed 4;
+event doorOpened 5;
+event lightOn 6;
+event drawOpened 7;
+event panelClosed 8;
+
+statemachine SecretCompartment {
+	state idle {
+		do {
+			unlockDoor;
+			lockPanel;
+		}
+		on doorClosed goto active;
+	}
+	
+	state active {
+		on lightOn goto waitingForDraw;
+		on drawOpened goto waitingForLight;
+		on doorOpened goto idle;
+	}
+	
+	state waitingForDraw {
+		on drawOpened goto unlockedPanel;
+		on doorOpened goto idle;
+	}
+	
+	state waitingForLight {
+		on lightOn goto unlockedPanel;
+		on doorOpened goto idle;
+	}
+	
+	state unlockedPanel {
+		do {
+			unlockPanel;
+			lockDoor;
+		}
+		on panelClosed goto idle;
+	}
+}
+----------------------------------------------------
+
+Templates for lists:
+
+	list<item :: Expression, sep :: Expression> :: Expression {
+		item (sep item)* sep?
+	}
+
+Narrowing
+
+no event declarations (predefined events only):
+
+	system : events=.. stateMachine
+		events.instead = <>
+	
+One command in a block:
+	block : '{' cmds=.. '}'
+		cmds.instead = <commandRef>
+
+Extension
+
+Autoinc for event codes
+	event ?=: 'event' ..
+		after = <: 'autoevent' NAME>
+		
+	or 
+	
+	template SM<eventBody :: Expression> :: Grammar {
+		...
+		event : 'event' NAME <eventBody>;
+	}
+	
+	SM<#empty> or SM<INT?> or SM<block> --- self reference!!!
+	
+Abstracting over events
+	template SM<copy event, eventRef, commandRef : Expression>
+	
+	or
+	
+	template SM<ref events :: Grammar{event, eventRef, commandRef}>
+	
+	
+---------------------------------------------------
+
+MD Aspects:
+
+Name analysis with ATG
+	extensions???
+
+Syntax highlighting and formatting
+
+tree generation ???
+
+docs generation
+
