@@ -529,12 +529,167 @@ STRING : '\'' [^'\'''\n''\r']* '\'';
 // Параметризация грамматики другими грамматиками
 
 \section{Алгоритм развертывания шаблонов}
-Алгоритм развертывания
+В данном разделе мы опишем алгоритм, преобразующий вызов шаблона в обыкновенную грамматику.
 
 импортирование vs встраивание
 
 \section{Статические гарантии корректности}
+
+\begin{lstlisting}[float=htbp,caption=Грамматика упрощенного языка шаблонов]
+templateDef
+	: 'template' NAME '<' 
+			List<NAME type?, ','> 
+	  	'>' type? '{' expression '}'
+	;
+type : ':' ('Expression' | 'Literal' | 'Sequence') ;
+expression
+	: expression expression
+	: STRING
+	: templateParameterRef
+	: templateApplication
+	;
+templateParameterRef : '<' NAME '>'	;
+templateApplication	: '<' NAME List<expression, ','> '>' ;
+\end{lstlisting}
+
 Система типов
+
+\newcommand{\trule}[3]{%
+\dfrac{#1}{#2}(\mbox{\textsc{#3}})
+}
+
+\begin{figure}[htbp]
+$$
+\begin{array}{ccc}
+\trule{}{\mathtt{Literal} \preceq \mathtt{Expression}}{lit-sub}
+&&
+\trule{}{\mathtt{Sequence} \preceq \mathtt{Expression}}{seq-sub}
+\\
+&&\,\\
+\trule{}{STRING : \mathtt{Literal}}{lit-t}
+&\quad&
+\trule{}{\Gamma \cup \{p : \tau\} \vdash <p> : \tau}{par-t}
+\\
+&&\,\\
+%
+\trule{
+	\Gamma \vdash e_1 : \mathtt{Expression} 
+	\quad 
+	\Gamma \vdash e_2 : \mathtt{Expression}
+}{
+	\Gamma \vdash e_1 \, e_2 : \mathtt{Sequence}
+}{seq-t}
+&&
+\trule{
+	\Gamma \vdash e : \tau
+	\quad 
+	\tau \preceq \sigma 
+}{
+	\Gamma \vdash e : \sigma
+}{subtype}
+\\
+&&\,\\
+\multicolumn{3}{c}{
+\trule{
+	\Gamma \cup \bigcup\limits_{i=1}^{n} \{ p_i : \tau_i \} \vdash b : \sigma
+}{
+	\Gamma \vdash \mathbf{template}\left(
+		T <p_1 : \tau_1, \ldots, p_n : \tau_n> \,: \sigma \, \{ b \}
+	\right)
+}{temp-def}
+}
+\\
+&&\,\\
+\multicolumn{3}{c}{
+\trule{
+	\Gamma \vdash \mathbf{template}\left(
+		T <p_1 : \tau_1, \ldots, p_n : \tau_n> \,: \sigma \, \{ b \}
+	\right)
+	\quad
+	\Gamma \vdash a_1 : \tau_1 \, \cdots \, \Gamma \vdash a_n : \tau_n
+}{
+	\Gamma \vdash <T \, a_1, \ldots, a_n> : \sigma
+}{app-t}
+}
+\end{array}
+$$
+	\caption{Система типов упрощенного языка шаблонов}\label{TempTypes}
+\end{figure}
+
+\newcommand{\Inst}[2]{\mathcal{I}_{#1} \left[ #2 \right]}
+\begin{figure}[htbp]
+$$
+\begin{array}{ccc}
+\trule{}{\Inst{\gamma}{STRING} = STRING }{str}
+&\quad&
+\trule{}{
+	\Inst{\gamma}{e_1 \, e_2} = 
+		\Inst{\gamma}{e_1} \, \Inst{\gamma}{e_2} 
+}{seq}
+\\
+&&\,\\
+\trule{
+	\{p = e\} \subseteq \gamma
+}{
+	\Inst{\gamma}{<p>} = \Inst{\gamma}{e}
+}{par}
+&&
+\trule{
+	\mathbf{template}\left(
+		T \, <p_1, \ldots, p_n> \, \{ b \}
+	\right)
+}{
+	\gamma' = \bigcup\limits_{i=1}^{n} \{ p_i = a_i \}
+	\quad	
+	\Inst{\gamma}{<T \, a_1, \ldots, a_n>} = \Inst{\gamma \cup \gamma'}{b}
+}{app}
+\\
+\end{array}
+$$
+	\caption{Семантика упрощенного языка шаблонов}\label{TempSem}
+\end{figure}
+
+\begin{Def}\label{agree}
+Среда $\gamma$ называется \term{согласованной с контекстом} $\Gamma$, если все ее элементы имеют допустимые типы:
+$$
+	\forall p \, : \, 
+		\{p = e\} \subseteq \gamma 
+			\Rightarrow 
+		\left\{\begin{array}{l}		
+		\{p : \tau\} \subseteq \Gamma \\
+		\Gamma \vdash e : \tau
+		\end{array}\right.
+$$
+\end{Def}
+
+\begin{Lemm}
+Если среда $\gamma$ согласована с контекстом $\Gamma$ и $\Gamma \vdash e : \tau$, то $\Gamma \vdash \Inst{\gamma}{e} : \tau$. Другими словами, преобразование $\Inst{}{\bullet}$ сохраняет типы.
+\end{Lemm}
+\begin{proof}
+Будем вести индукцию по структуре выражения $e$, пользуясь правилами на \figref{TempSem}.\\
+\textbf{База}. Правила \textsc{STR} и \textsc{SEQ} сохраняют типы.\\
+\textbf{Предположение}. Пусть для выражений $e, b, a_1, \ldots, a_n$ данная лемма выполняется.\\
+\textbf{Переход}. Рассмотрим правило \textsc{PAR}. Поскольку $\{p = e\} \subseteq \gamma$, по условию леммы выполняется
+$$
+\left\{\begin{array}{l}		
+		\{p : \tau\} \subseteq \Gamma \\
+		\Gamma \vdash e : \tau
+		\end{array}\right.
+$$
+(см. Определение \ref{agree}). Следовательно $\Gamma \vdash (\Inst{\gamma}{<p>} = \Inst{\gamma}{e}) : \tau$.\\
+Теперь рассмотрим правило \textsc{APP}. Пусть $$\Gamma \vdash <T a_1, \ldots, a_n> : \sigma,$$ тогда по условию леммы $\Gamma \vdash b : \sigma$, то есть $$\Gamma \vdash (\Inst{\gamma}{<T a_1, \ldots, a_n>} = \Inst{\gamma}{b}) : \sigma.$$
+\end{proof}
+
+\begin{Lemm}
+Если среда $\gamma$ согласована с контекстом $\Gamma$ и $\Gamma \vdash e : \tau$, то вычисление $\Inst{\gamma}{e}$ по правилам \figref{TempSem} заканчивается за конечное количество шагов, и результат не содержит применений шаблонов и шаблонных параметров.
+\end{Lemm}
+\begin{proof}
+Снова будем вести индукцию по структуре выражения, пользуясь правилами на \figref{TempSem}.\\
+\textbf{База}. Вычисление по правилу \textsc{STR} заканчивается за один шаг и результат не содержит применений шаблонов и шаблонных параметров.\\
+\textbf{Предположение}. Пусть данная лемма выполняется для выражений $e, b, e_1, e_2, a_1, \ldots, a_n$.\\
+\textbf{Переход}. Рассмотрим правило \textsc{PAR}. По предположению вычисление заканчивается за конечное количество шагов (время для $e$ плюс один шаг). Поскольку результат рекурсивного вызова не содержит применений шаблонов и шаблонных параметров, а правило их не добавляет (наоборот, удаляет параметр), то и результат их не содержит.\\
+Для правил \textsc{SEQ} и \textsc{APP} рассуждения аналогичны.
+\end{proof}
 
 Доказательство структурной корректности
 
