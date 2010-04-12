@@ -533,8 +533,63 @@ STRING : '\'' [^'\'''\n''\r']* '\'';
 // импортирование vs встраивание
 
 \subsection{Шаблоны метаданных}
-sd
 
+Поскольку метаданные тоже входят в основную нотацию \tool{Grammatic}, можно создавать и шаблоны аннотаций. В основном, такие шаблоны понадобятся нам для реализации механизма аспектов, а в этом разделе мы приведем простой пример, показывающий, как с их помощью можно регламентировать структуру аннотаций.
+
+Генератор документации для грамматик использует метаданные как источник дополнительной информации: специальные атрибуты хранят текст, описывающий назначение символа, примеры строк, которые он выводит и т.д. Для примера приведем описание оператора \code{if} некоторого гипотетического языка:
+\begin{lstlisting}
+if
+{	doc.title = 'Conditional operator';
+	doc.description = 
+'If expression evaluates to true, <code>then</code> branch is taken,
+otherwise -- <code>else</code> branch is taken';
+	doc.examples = {{
+		'if a > 1 then WriteLn(a)'
+		'if (x < 0) and (x > -5) then x := -x else x := 2 * x'
+	}}
+} : 'if' expression 'then' statement ('else' statement) ;
+\end{lstlisting}
+
+Из такого описания генератор построит следующий текст:
+\begin{center}
+\parbox{0.7\textwidth}{
+{{\bf Conditional operator}\\
+\small
+{\bf Syntax}: \\
+\textit{if} $\rightarrow$ \texttt{if} \textit{expression} \texttt{then} \textit{statement} \texttt{else} \textit{statement}\\
+{\bf Description}: 
+If expression evaluates to true, \texttt{then} branch is taken,
+otherwise -- \texttt{else} branch is taken\\
+{\bf Examples}: 
+\begin{itemize}
+\item \textbf{if} a > 1 \textbf{then} WriteLn(a)
+\item \textbf{if} (x < 0) \textbf{and} (x > -5) \textbf{then} x := -x \textbf{else} x := 2 * x
+\end{itemize}
+}}
+\end{center}
+
+Мы используем шаблон аннотации для того, чтобы гарантировать, что разработчик укажет все атрибуты, необходимые для генерации документации:
+\begin{lstlisting}
+template Doc<title : String, description : String, 
+	examples : String+> : Attribute+ 
+{
+	doc.title = <title>;
+	doc.description = <description>;
+	doc.examples = {{ <examples> }};
+}
+\end{lstlisting}
+С применением этого шаблона метаданные для символа \code{if} будут выглядеть так:
+\begin{lstlisting}
+if
+{Doc<
+'Conditional operator',
+'If expression evaluates to true, <code>then</code> branch is taken,
+otherwise -- <code>else</code> branch is taken',
+'if a > 1 then WriteLn(a)',
+'if (x < 0) and (x > -5) then x := -x else x := 2 * x'
+>} : 'if' expression 'then' statement ('else' statement) ;
+\end{lstlisting}
+В этом случае \tool{Grammatic} выдаст сообщение об ошибке, если один из элементов документации не будет указан.
 
 \section{Формализация языка шаблонов}
 
