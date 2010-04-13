@@ -914,6 +914,116 @@ example : .. ?e=('(' .. ')')?a={*} .. ;
 
 \section{Формализация аспектов}
 
+\begin{Def}
+\term{Аспектным правилом} (или \term{атомарным аспектом}) называется тройка
+$\mathcal{R} = \langle P, T, V \rangle$, где
+\begin{itemize}
+\item $P$ --- образец (срез), связывающий переменные $v_1,\ldots,v_m$;
+\item $T$ --- наиболее конкретный тип элемента, который может быть успешно сопоставлен с $P$;
+\item $V$ --- набор \term{правил замены}, то есть кортежей $\langle v_i, t_i \rangle$, где
+	\begin{itemize}
+		\item $v$ --- переменная;
+		\item $t$ --- шаблонное выражение, содержащее ссылки на переменные $v_1,\ldots,v_m$ как на шаблонные параметры.
+	\end{itemize}
+\end{itemize}
+\end{Def}
+
+\newcommand{\match}[2]{#1 \; \mathbf{match} \; #2}
+\newcommand{\citem}[2]{\left\{ #1 \mapsto #2 \right\}}
+\newcommand{\cempty}{\left\{\right\}}
+\newcommand{\cjoin}{\uplus}
+\newcommand{\wcard}[2]{\mathsf{<} #1 : #2 \mathsf{>} }
+%\newcommand{\wcard}[2]{\wcard*{#1}{\mathtt{2}}}
+
+$\match{e}{P} = \gamma$ или $\bot$
+
+$\gamma_1 \cjoin \gamma_2$
+$\gamma_1 \cjoin \bot = \bot$
+
+$$
+\begin{array}{c}
+\infer[symref]{(\match{S}{S}) = \cempty}{\vdash S : \mathtt{SymbolReference}}
+\qquad
+\infer[str]{(\match{S}{S}) = \cempty}{\vdash S : \mathtt{String}}
+%
+\\
+\,\\
+%
+\infer[wcard]{
+	(\match{x}{\wcard{var}{\tau}}) = \citem{var}{x}
+}{\vdash x : \tau}
+%
+\\
+\,\\
+%
+\infer[var]{
+	(\match{x}{var = P_x}) = \gamma_x \cjoin \citem{var}{x}
+}{
+\match{x}{P_x} = \gamma_x
+}
+%
+\\
+\,\\
+%
+\infer[attr]{
+	(\match{a = v}{P_a = P_v}) = \gamma_a \cjoin \gamma_v
+}{
+\match{a}{P_a} = \gamma_a &
+\match{v}{P_v} = \gamma_v
+}
+%
+\\
+\,\\
+%
+\infer[sym]{
+	(\match{N : e}{P_N : P_e}) = \gamma_N \cjoin \gamma_e
+}{
+\match{N}{P_N} = \gamma_N &
+\match{e}{P_e} = \gamma_e &
+}
+%
+\\
+\,\\
+%
+\infer[seq]{
+	(\match{x \; y}{P_x \; P_y}) = \gamma_x \cjoin \gamma_y
+}{
+	\match{x}{P_x} = \gamma_x &
+	\match{y}{P_y} = \gamma_y &
+}
+%
+\\
+\,\\
+%
+\infer[ann]{
+	(\match{x \{y\}}{P_x \{P_y\}}) = \gamma_x \cjoin \gamma_y
+}{
+	\match{x}{P_x} = \gamma_x &
+	\match{y}{P_y} = \gamma_y &
+}
+\end{array}
+$$
+
+$\Gamma :: Variable -> Expression*$
+
+\newcommand{\subst}[2]{ #1 \mapsto #2 }
+\newcommand{\apply}[2]{\left( #1 \right) \triangleright #2}
+
+$\apply{\subst{x}{y}}{e}$
+
+композиция подстановок: $\sqcup$  $\bigsqcup$
+
+композиция коммутирует
+
+Перебор всех элементов данного типа, для тех, для который сопоставление удачно:
+
+Пусть $\match{P}{e} = \gamma \neq \bot$, $V = \left\{\langle v_i, t_i \rangle | i = 1..m \right\}$,  $\gamma(v_i) = [e^i_1, \ldots, e^i_{n_i}]$, тогда
+	$$\mathcal{R}@e
+		= \apply{\bigsqcup\limits_{i=1}^{m} \bigsqcup\limits_{j=1}^{n_i}
+			\subst{e^i_j}{\Inst{\gamma}{t_i}}}{e}$$
+
+что с порядком применения? Значения переменных копируются или что?
+
 структура совета
 
 семантика встраивания до, вместо, после
@@ -927,75 +1037,3 @@ example : .. ?e=('(' .. ')')?a={*} .. ;
 Возможности Grammatic
 
 Наблюдения относительно автоматизации поддержки шаблонов и пр.
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Неформальное описание
-
-Основными понятиями языка Grammatic являются 
-
-\section{Целевая мета-модель}
-
-Спецификация на языке Grammatic описывает КС-грамматику (и, как мы покажем ниже некоторую дополнительную информацию, связанную с этой грамматикой). Грамматика (мета-класс Grammar) состоит из описаний символов (Symbol). Каждый символ имеет имя и набор продукций (Production), описывающих синтаксическую структуру этого символа. Телом продукции является грамматическое выражение (Expression).
-
-Мета-класс Expression является абстрактным, а его конкретные потомки описывают различные типы выражений:
-\begin{itemize}
-\item Empty --- пустое выражение ($\varepsilon$);
-\item SymbolReference --- ссылка на символ (соответствует вхождению символа в правой части продукции);
-\item Sequence --- последовательность (конкатенация) выражений;
-\item Alternative --- объединение (альтерация) выражений;
-\item Iteration --- повторение (итерация) выражений, имеет атрибуты для верхней и нижней границ количества повторений;
-\item LexicalDefinition --- лексическое определение, конкретные реализации:
-	\begin{itemize}
-		\item CharacterRange --- множество символов, задается как промежуток индексов кодовой таблицы Unicode;
-		\item StringExpression --- строковый литерал, состоящий из символов Unicode;
-		\item LexicalExpression --- ``лексические скобки'', выражение на которое ссылается экземпляр этого мета-класса не должно содержать ссылок на символы, определенные с помощью рекурсивных продукций.
-	\end{itemize}
-\end{itemize}
-
-
-\section{Конкретный синтаксис}
-
-Grammatic использует нотацию для языка EBNF, отличную от описанной в стандарте []. Эта нотация основана на используемой популярным генератором синтаксических анализаторов ANTLR [], которая объединяет средства описания лексических и синтаксических анализаторов, используя для тех и других операторы, применяемые для регулярных выражений.
-
-Продукции, определяющие один и тот же символ группируются в \emph{синтаксические правила} вида:
-
-\begin{lstlisting}
-symbol
-	: expression_1
-	: expression_2
-	...
-	: expression_n
-	;
-\end{lstlisting}
-
-Здесь expression_1, expression_2, \ldots, expression_n обозначают тела продукций, определяющих символ symbol. Нотация для грамматических выражений иллюстрируется следующим примером:
-\begin{lstlisting}
-example
-	: #empty // Пустое выражение
-	: a // Ссылка на символ a
-	: a b // Последовательность 
-	: a | b // Альтерация
-	: a* // Итерация от 0 до бесконечности
-	: a+ // Итерация от 1 до бесконечности
-	: a? // Итерация от 0 до 1
-	: ['a'--'z'] // Множество символов от 'a' до 'z'
-	: 'abc' // Строка символов 'abc'
-	: [[ a ]] // Лексические скобки
-	: (a | b) c // Круглые скобки для группировки выражений
-	;
-\end{lstlisting}
-
-В Листинге \ref{grammatic.grammar} приведена спецификация на языке Grammatic, описывающая нотацию самого языка Grammatic.
-
-\begin{lstlisting}
-
-...........
-
-\end{lstlisting}
-
-// примеры
-
-
