@@ -914,6 +914,120 @@ example : .. ?e=('(' .. ')')?a={*} .. ;
 
 \section{Формализация аспектов}
 
+В данном разделе мы приводим формализованное описание механизма аспектов. Как и в случае шаблонов, чтобы не загромождать текст, мы выносим описание однотипных конструкций в Приложение \bad{???}.
+
+\newcommand{\ME}{\Upsilon}
+\newcommand{\meitem}[2]{\left\{ #1 \mapsto #2 \right\}}
+\newcommand{\meempty}{\left\{\right\}}
+\newcommand{\mejoin}{\uplus}
+
+Понятие среды, введенное при формализации шаблонов, необходимо расширить для случая аспектов, поскольку в этом случае одной переменной может быть сопоставлено несколько значений, которые являются \term{структурно идентичными} (обозначается $\cong$), то есть либо совпадают, либо являются точными копиями друг друга. Такие расширенные среды будем называть \term{мульти-средами} и обозначать буквой $\ME$.
+
+Основная операция на мульти-средах --- извлечение элемента, она возвращает (возможно, пустое) множество элементов, сопоставленных данной переменной: $\ME(var) = \{e_1,\ldots,e_n\}$.
+Для построения мульти-сред будем использовать два конструктора и одну операцию объединения. Простейшая мульти-среда --- пустая --- обозначается конструктором $\meempty$, при этом $$\forall v :\; \meempty(v) = \emptyset.$$ 
+Мульти-среда, сопоставляющая переменной $v$ одно значение $e$ обозначается конструктором $\meitem{v}{e}$, при этом 
+$$
+\left\{\begin{array}{ll}
+\meitem{v}{e}(v) = \{e\}&\\
+\meitem{v}{e}(x) = \emptyset, & \mbox{при } x \neq v
+\end{array}\right..
+$$
+ Более сложные мульти-среды строятся с помощью операции $\mejoin$, описываемой следующим правилом: пусть $\ME = \ME_1 \mejoin \ME_2$, тогда $\ME(v) = \ME_1(v) \cup \ME_2(v)$.
+Специальный элемент $\bot$ не является мульти-средой, но операция объединения доопределяется на нем следующим образом: 
+$\ME_1 \mejoin \bot = \bot$.
+
+\newcommand{\meflatten}[1]{\overline{#1}}
+\term{Уплотнением} мульти-среды $\ME$ называется среда $\meflatten{\ME}$ такая, что $$
+\forall v, \, e \in \ME(v): \; \meflatten{\ME}(v) \cong e.
+$$
+Уплотнение соответствует ``склеиванию'' нескольких значений для каждой переменной в одно, в результате из мульти-среды получается обыкновенная среда.
+
+\newcommand{\match}[2]{#1 \; \mathbf{match} \; #2}
+\newcommand{\wcard}[2]{\mathsf{<} #1 : #2 \mathsf{>} }
+%\newcommand{\wcard}[2]{\wcard*{#1}{\mathtt{2}}}
+
+\term{Операция сопоставления} выражения $e$ с образцом $P$ обозначается
+$\match{e}{P}$ и возвращает мульти-среду $\ME$ в случае успеха и $\bot$ в случае неудачи. Семантика этой операции представлена на \figref{MatchSem}.
+\begin{figure}[htbp]
+$$
+\begin{array}{c}
+\infer[wcard]{
+	(\match{x}{\wcard{?var}{\tau}}) = \meitem{var}{x}
+}{\vdash x : \tau}
+%
+\\
+\,\\
+%
+\infer[var]{
+	(\match{x}{?var = P_x}) = \ME_x \mejoin \meitem{var}{x}
+}{
+\match{x}{P_x} = \ME_x
+}
+%
+\\
+\,\\
+%
+\infer[mvar]{
+	(\match{x}{?var}) = \ME \mejoin \meitem{var}{x}
+}{
+\meflatten{\ME}(?var) \cong x
+}
+%
+\\
+\,\\
+%
+\infer[symref]{(\match{S}{S}) = \meempty}{\vdash S : \mathtt{SymbolReference}}
+\qquad
+\infer[str]{(\match{S}{S}) = \meempty}{\vdash S : \mathtt{String}}
+%
+\\
+\,\\
+%
+\infer[attr]{
+	(\match{a = v}{P_a = P_v}) = \ME_a \mejoin \ME_v
+}{
+\match{a}{P_a} = \ME_a &
+\match{v}{P_v} = \ME_v
+}
+%
+\\
+\,\\
+%
+\infer[sym]{
+	(\match{N : e}{P_N : P_e}) = \ME_N \mejoin \ME_e
+}{
+\match{N}{P_N} = \ME_N &
+\match{e}{P_e} = \ME_e &
+}
+%
+\\
+\,\\
+%
+\infer[seq]{
+	(\match{x \; y}{P_x \; P_y}) = \ME_x \mejoin \ME_y
+}{
+	\match{x}{P_x} = \ME_x &
+	\match{y}{P_y} = \ME_y &
+}
+%
+\\
+\,\\
+%
+\infer[ann]{
+	(\match{x \{y\}}{P_x \{P_y\}}) = \ME_x \mejoin \ME_y
+}{
+	\match{x}{P_x} = \ME_x &
+	\match{y}{P_y} = \ME_y &
+}
+\end{array}
+$$
+	\centering
+	\caption{Семантика операции сопоставления}\label{MatchSem}
+\end{figure}
+\newcommand{\ruleref}[1]{$#1$}
+
+Правила на \figref{MatchSem} можно выделить две группы однотипных правил: правила прямого сопоставления \ruleref{symref} и \ruleref{str} описывают сопоставление константных образцов, правила \ruleref{attr}, \ruleref{sym}, \ruleref{seq} и \ruleref{ann} описывают сопоставление сложных объектов путем сведения к сопоставлению их составных частей. Чтобы не загромождать текст, мы не выписываем такие правила для всех конструкций языка (для полноты изложения они приведены в Приложении \bad{???}). Основной интерес представляют три правила, не входящие в эти две группы: они отвечают за обработку переменных и подстановочных знаков.
+
 \begin{Def}
 \term{Аспектным правилом} (или \term{атомарным аспектом}) называется тройка
 $\mathcal{R} = \langle P, T, V \rangle$, где
@@ -927,102 +1041,26 @@ $\mathcal{R} = \langle P, T, V \rangle$, где
 	\end{itemize}
 \end{itemize}
 \end{Def}
-
-\newcommand{\match}[2]{#1 \; \mathbf{match} \; #2}
-\newcommand{\citem}[2]{\left\{ #1 \mapsto #2 \right\}}
-\newcommand{\cempty}{\left\{\right\}}
-\newcommand{\cjoin}{\uplus}
-\newcommand{\wcard}[2]{\mathsf{<} #1 : #2 \mathsf{>} }
-%\newcommand{\wcard}[2]{\wcard*{#1}{\mathtt{2}}}
-
-$\match{e}{P} = \gamma$ или $\bot$
-
-$\gamma_1 \cjoin \gamma_2$
-$\gamma_1 \cjoin \bot = \bot$
-
-$$
-\begin{array}{c}
-\infer[symref]{(\match{S}{S}) = \cempty}{\vdash S : \mathtt{SymbolReference}}
-\qquad
-\infer[str]{(\match{S}{S}) = \cempty}{\vdash S : \mathtt{String}}
-%
-\\
-\,\\
-%
-\infer[wcard]{
-	(\match{x}{\wcard{var}{\tau}}) = \citem{var}{x}
-}{\vdash x : \tau}
-%
-\\
-\,\\
-%
-\infer[var]{
-	(\match{x}{var = P_x}) = \gamma_x \cjoin \citem{var}{x}
-}{
-\match{x}{P_x} = \gamma_x
-}
-%
-\\
-\,\\
-%
-\infer[attr]{
-	(\match{a = v}{P_a = P_v}) = \gamma_a \cjoin \gamma_v
-}{
-\match{a}{P_a} = \gamma_a &
-\match{v}{P_v} = \gamma_v
-}
-%
-\\
-\,\\
-%
-\infer[sym]{
-	(\match{N : e}{P_N : P_e}) = \gamma_N \cjoin \gamma_e
-}{
-\match{N}{P_N} = \gamma_N &
-\match{e}{P_e} = \gamma_e &
-}
-%
-\\
-\,\\
-%
-\infer[seq]{
-	(\match{x \; y}{P_x \; P_y}) = \gamma_x \cjoin \gamma_y
-}{
-	\match{x}{P_x} = \gamma_x &
-	\match{y}{P_y} = \gamma_y &
-}
-%
-\\
-\,\\
-%
-\infer[ann]{
-	(\match{x \{y\}}{P_x \{P_y\}}) = \gamma_x \cjoin \gamma_y
-}{
-	\match{x}{P_x} = \gamma_x &
-	\match{y}{P_y} = \gamma_y &
-}
-\end{array}
-$$
-
-$\Gamma :: Variable -> Expression*$
+\newcommand{\rapply}[2]{#1@#2}
+\term{Аспект} представляет собой множество аспектных правил. Применение аспекта к грамматике сводится к последовательному применению составляющих его аспектных правил. Каждое правило применяется следующим образом: последовательно перебираются все объекты $e$ типа $T$, представленные в данной грамматике, на каждом из них происходит \term{применение} аспектного правила (обозначается $\rapply{\mathcal{R}}{e}$, определенное ниже.
 
 \newcommand{\subst}[2]{ #1 \mapsto #2 }
 \newcommand{\apply}[2]{\left( #1 \right) \triangleright #2}
-
-$\apply{\subst{x}{y}}{e}$
-
-композиция подстановок: $\sqcup$  $\bigsqcup$
+Для определения применения аспектного правила, нам потребуется операция \term{подстановки}, которая заменяет одни объекты внутри модели другими. Элементарная подстановка заменяет всего один объект и обозначается $\subst{x_1}{x_2}$. Применение подстановки $\sigma$ к модели $m$ обозначается $\apply{\sigma}{m}$ и для элементарного случая $\subst{x_1}{x_2}$ определяется следующим образом: все ссылки на объект $x_1$ заменяются ссылками на $x_2$.
+Неэлементарные подстановки строятся с помощью операции \term{композиции}: $\apply{\sigma_1 \sqcup \sigma_2}{m}$ соответствует последовательному применению двух подстановок $\apply{\sigma_2}{\left( \apply{\sigma_1}{m} \right)}$.
 
 композиция коммутирует
 
 Перебор всех элементов данного типа, для тех, для который сопоставление удачно:
 
-Пусть $\match{P}{e} = \gamma \neq \bot$, $V = \left\{\langle v_i, t_i \rangle | i = 1..m \right\}$,  $\gamma(v_i) = [e^i_1, \ldots, e^i_{n_i}]$, тогда
+Пусть $\match{P}{e} = \ME \neq \bot$, $V = \left\{\langle v_i, t_i \rangle | i = 1..m \right\}$,  $\ME(v_i) = [e^i_1, \ldots, e^i_{n_i}]$, тогда
 	$$\mathcal{R}@e
 		= \apply{\bigsqcup\limits_{i=1}^{m} \bigsqcup\limits_{j=1}^{n_i}
-			\subst{e^i_j}{\Inst{\gamma}{t_i}}}{e}$$
+			\subst{e^i_j}{\Inst{\meflatten{\ME}}{t_i}}}{e}$$
 
 что с порядком применения? Значения переменных копируются или что?
+
+типизация при подстановке
 
 структура совета
 
