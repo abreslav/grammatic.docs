@@ -137,7 +137,7 @@
 \refstepcounter{chapter}%
 \begin{flushleft}\bf\Large \S~\thechapter. #1\end{flushleft}
 \nopagebreak[4]%
-\addcontentsline{toc}{section}{\S~\thechapter. #1}%
+\addcontentsline{toc}{section}{\mbox{\S~\thechapter.} #1}%
 }
 \renewcommand{\section}[1]{%
 \nopagebreak[4]
@@ -190,4 +190,6 @@
 
 \input{chap1.tex}
 \input{chap2.tex}
+\input{chap3.tex}
+\input{chap4.tex}
 \end{document}
