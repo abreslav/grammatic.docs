@@ -89,7 +89,7 @@ $$
 $$
 $$
 \infer[elist]{
-	\fromMM [] : \tau^*
+	\fromMM [\,] : \tau^*
 }{}
 \quad
 \infer[list]{
@@ -163,7 +163,41 @@ $$
 
 структурная эквивалентность объектов
 
-
+$$
+\infer[obj]{
+	\obj{C}{id_1}{f_i = v_i} \cong \obj{C}{id_2}{f_i = u_i}
+}{
+	\forall i. \; v_i \cong u_i
+}
+$$
+$$
+\infer[ref]{
+	\refv{C}{id_1} \cong \refv{C}{id_2}
+}{
+	id_1 = id_2
+}
+\quad
+\infer[refl]{x \cong x}{}
+$$
+$$
+\infer[elist]{[\,] \cong [\,]}{}
+\quad
+\infer[list]{
+	[x_1,\ldots,x_n] \cong [y_1,\ldots,y_n]
+}{
+	\forall i \in [1:n]. \; x_i \cong y_i
+}
+$$
+$$
+\infer[eset]{\{\} \cong \{\}}{}
+\quad
+\infer[set]{
+	\{x_1,\ldots,x_n\} \cong \{y_1,\ldots,y_n\}
+}{
+	\forall i :\; x_i \cong y_{\pi(i)}
+}
+$$
+$\pi$ -- перестановка
 
 размыкание неагрегирующих ссылок
 
