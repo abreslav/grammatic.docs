@@ -153,12 +153,18 @@ $$
 }
 $$
 $$
-\infer[int]{INT : \mathtt{Integer}}{}
+\infer[int]{\fromMM INT : \mathtt{Integer}}{}
 \quad
-\infer[str]{STRING : \mathtt{String}}{}
-\quad
-\infer[char]{CHAR : \mathtt{Char}}{}
+\infer[str]{\fromMM STRING : \mathtt{String}}{}
 $$
+$$
+\infer[char]{\fromMM CHAR : \mathtt{Char}}{}
+$$
+
+структурная эквивалентность объектов
+
+
+
 размыкание неагрегирующих ссылок
 
 преобразование древовидной модели (все классы допускают локальную замену) в грамматику
@@ -389,9 +395,13 @@ $$
 
 $$
 \infer[dstype]{
-	\Gamma \vdash \obj{\TC{C}}{id}{r_i = v_i} : C
+	\Gamma \vdash x : C
 }{
-	\TM \Vdash \obj{\TC{C}}{id}{r_i = v_i} : \TC{C} &
+	\begin{array}{l}
+	x = \obj{\TC{C}}{id}{r_i = v_i; a_j = {v'}_j}\\
+	\TM \Vdash x : \TC{C} 
+	\end{array}	
+	&
 	r_i = \TR{\rho_i : \tau_i} &
 	\Gamma \vdash v_i : \tau_i
 }
@@ -479,6 +489,8 @@ $$
 }
 \end{array}
 $$
+
+типы для аспектов
 	
 
 доказательство структурной корректности
