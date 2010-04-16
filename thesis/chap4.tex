@@ -1,0 +1,452 @@
+\part{Автоматизация разработки средств композиции в предметно-ориентированных языках}\label{part4}
+
+// Обобщаем подход, использованный в Grammatic
+
+\chapter{Описание ядра}
+
+текстовая нотация для моделей
+
+\begin{lstlisting}
+object : NAME '@' INT '{' (NAME '=' value ';')* '}' ;
+value
+	: object
+	: ref
+	: list
+	: set
+	: 'NULL'
+	: INT
+	: STRING
+	: 'true' | 'false'
+	: CHAR
+	: NAME '.' NAME     // Enum.Literal
+	;
+ref	: 'ref' '(' NAME '@' INT ')';
+list : <Collection '[', ']'> ;
+set : <Collection '{', '}'> ;
+template Collection<start, end> : Production+ {
+	: <?start> <?end>
+	: <?start>  <List object, ','> <?end>
+	: <?end> <List ref, ','> <?end>
+}
+\end{lstlisting}
+
+\begin{lstlisting}
+list
+	: '[' ']'
+	: '[' object (',' object)* ']'
+	: '[' ref (',' ref)* ']'
+	;
+set
+	: '{' '}'
+	: '{' object (',' object)* '}'
+	: '{' ref (',' ref)* '}'
+	;
+\end{lstlisting}
+
+система типов, порожденная мета-моделью
+
+Язык типов:
+
+C -- класс => ref(C), val(C)
+T -- простой тип => T
+A -- тип => A?, A*, A+
+
+иногда разделяем атрибуты и ссылки
+
+\newcommand{\class}[4]{\mathbf{class}\; #1 \langle #2, #3, #4\rangle}
+иногда -- нет
+\newcommand{\classf}[3]{\mathbf{class}\; #1 \langle #2, #3\rangle}
+\newcommand{\type}[2]{#1\left(#2\right)}
+\newcommand{\valts}{\mathbf{val}}
+\newcommand{\valt}[1]{\type{\valts}{#1}}
+\newcommand{\refts}{\mathbf{ref}}
+\newcommand{\reft}[1]{\type{\refts}{#1}}
+\newcommand{\refv}[2]{\mathbf{ref}\; #1@#2}
+\newcommand{\reference}[3]{\mathbf{#1}\langle #2 : #3\rangle}
+\newcommand{\attribute}[2]{\mathbf{attr}\langle #1 : #2\rangle}
+\newcommand{\obj}[3]{#1@#2\left\{#3\right\}}
+\newcommand{\fromMM}{\MM{M} \vdash}
+$$
+	\infer[object]{
+		\fromMM \obj{C}{id}{f_i = v_i} : \valt{C}
+	}{
+		\classf{C}{\_}{f_i : \tau_i} \in \MM{M}&
+		\fromMM v_i : \tau_i
+	}
+$$
+$$
+\infer[ref]{
+	\fromMM \refv{C}{id} : C
+}{}
+\quad
+\infer[null]{
+	\fromMM NULL : \tau^?
+}{}
+$$
+$$
+\infer[elist]{
+	\fromMM [] : \tau^*
+}{}
+\quad
+\infer[list]{
+	\fromMM [x_1, \ldots, x_n] : \type{TO}{\tau}^+
+}{
+	\forall i\in[1:n]. \; \fromMM x_i : \type{TO}{\tau} &
+	TO \in \{\valts,\, \refts\}
+}
+$$
+$$
+\infer[eset]{
+	\fromMM \{\} : \tau^*
+}{}
+\quad
+\infer[set]{
+	\fromMM \{x_1, \ldots, x_n\} : \type{TO}{\tau}^+
+}{
+	\forall i\in[1:n]. \; \fromMM x_i : \type{TO}{\tau} &
+	TO \in \{\valts,\, \refts\}
+}
+$$
+$$
+\infer[relax]{
+	\fromMM x : \tau^?
+}{
+	\fromMM x : \tau
+}
+\quad
+\infer[relax+]{
+	\fromMM x : \tau^*
+}{
+	\fromMM x : \tau^+
+}
+\quad
+\infer[subtype]{
+	\fromMM x : \sigma
+}{
+	\fromMM x : \tau &
+	\tau \preceq \sigma
+}
+$$
+$$
+\infer[superclass]{
+	\forall i \in [1:n].\; \type{TO}{C} \preceq \type{TO}{S_i}
+}{
+	\classf{C}{\{S_i, \ldots, S_n\}}{\_} \in \MM{M} &
+	TO \in \{\valts,\, \refts\}
+}
+$$
+$$
+\infer[enum]{
+	\forall i \in [1:n]. \; \fromMM T.L_i : T
+}{
+	\mathbf{enum}\;T\{L_1,\ldots,L_n\} \in \MM{M}
+}
+\quad
+\infer[bool]{
+	\fromMM b : \mathtt{Boolean}
+}{
+	b \in \{\mathbf{true}, \mathbf{false}\}
+}
+$$
+$$
+\infer[int]{INT : \mathtt{Integer}}{}
+\quad
+\infer[str]{STRING : \mathtt{String}}{}
+\quad
+\infer[char]{CHAR : \mathtt{Char}}{}
+$$
+размыкание неагрегирующих ссылок
+
+преобразование древовидной модели (все классы допускают локальную замену) в грамматику
+
+семантические акции для разбора + анализ имен
+
+мета-модель
+
+грамматика
+
+преобразование
+
+\chapter{Автоматическое построение языков, поддерживающих шаблоны}
+
+общая мета-модель шаблонов
+
+\begin{lstlisting}
+class Abstraction {
+	name : String
+	parameters : Variable*
+	body : Term
+}
+
+class Variable {
+	name : String
+	mode : {Copy, Ref, OneRef}
+}
+
+abstract class Term
+
+class VariableRef extends Term {
+	variable : Variable
+}
+
+class Application extends Term {
+	abstraction : Abstraction
+	arguments : Term*
+}
+\end{lstlisting}
+
+стандартный синтаксис
+\begin{lstlisting}
+template Temapltes<domainSpecificTypes : Expression*, 
+		domainSpecificTerms : Expression*> : Grammar {
+abstraction 
+	: 'template' NAME 
+		'<' variable (',' variable)*'>' 
+		type? 
+		'{' term '}';
+variable : mode? NAME type?;
+mode : 'copy' | 'ref' | 'oneref';
+type : ':' typeName;
+typeName
+	: basicType
+	: <?domainSpecificTypes>
+	;
+basicType
+	: 'Integer'
+	: 'String'
+	: 'Boolean'
+	: 'Character'
+	;
+term
+	: genericTerm
+	: <?domainSpecificTerms>
+	;
+genericTerm
+	: '<' '?' NAME type? '>'
+	: '<' NAME term* '>'
+	;
+}
+\end{lstlisting}
+
+\newcommand{\ang}[1]{\mathsf{<}#1\mathsf{>}}
+общий алгоритм инстанциации
+$$
+\trule{
+	\{p = e\} \subseteq \gamma
+}{
+	\Inst{\gamma}{\ang{?p}} = \Inst{\gamma}{e}
+}{var-inst}
+$$ 
+
+$$
+\trule{
+	\mathbf{template}\left(
+		T \, \ang{p_1, \ldots, p_n} \, \{ b \}
+	\right)
+}{
+	\gamma' = \bigcup\limits_{i=1}^{n} \{ p_i = a_i \}
+	\qquad
+	\Inst{\gamma}{\ang{T \, a_1, \ldots, a_n}} = \Inst{\gamma \cup \gamma'}{b}
+}{app-inst}
+$$
+встраивание/ссылки
+???
+общая система типов
+$$
+\trule{}{\tau \preceq \mathtt{EObject}}{top}
+\quad
+\trule{
+	\Gamma \vdash e : \tau
+	&
+	\tau \preceq \sigma 
+}{
+	\Gamma \vdash e : \sigma
+}{subtype}
+$$ 
+
+$$
+\trule{}{\Gamma \cup \{p : \tau\} \vdash \ang{?p} : \tau}{var}
+$$ 
+
+$$
+\trule{
+	\Gamma \cup \bigcup\limits_{i=1}^{n} \{ p_i : \tau_i \} \vdash b : \sigma
+}{
+	\Gamma \vdash \mathbf{template}\left(
+		T \ang{p_1 : \tau_1, \ldots, p_n : \tau_n} \,: \sigma \, \{ b \}
+	\right)
+}{abstr}
+$$ 
+
+$$
+\trule{
+	\Gamma \vdash \mathbf{template}\left(
+		T \ang{p_1 : \tau_1, \ldots, p_n : \tau_n} \,: \sigma \, \{ b \}
+	\right)
+	&
+	\Gamma \vdash a_1 : \tau_1 \, \cdots \, \Gamma \vdash a_n : \tau_n
+}{
+	\Gamma \vdash \ang{T \, a_1, \ldots, a_n} : \sigma
+}{appl}
+$$
+
+генерация специализированной мета-модели шаблонов
+
+\newcommand{\TC}[1]{\mathcal{TC}\left(#1\right)}
+\newcommand{\TR}[1]{\mathcal{TR}\left(#1\right)}
+\newcommand{\TA}[1]{\mathcal{TA}\left(#1\right)}
+%\renewcommand{\vec}[1]{\overrightarrow{\mbox{#1}}}
+
+$\TC{\class{}{S}{R}{A}} = \class{}
+			{\mathtt{Term}}{\TR{R}}{\TA{A}}$
+			
+$\TC{C^*} = \TC{C}^*$
+
+$\TC{C^+} = \TC{C}^+$
+
+$\TC{C^?} = \TC{C}^?$
+
+$\TR{\reference{ref}{r}{T}} = \reference{ref}{r}{\TC{T}}$
+
+$\TR{\reference{var}{r}{T}} = \reference{val}{r}{\TC{T}}$
+
+$\TA{\attribute{a}{T}} = \attribute{a}{T}$
+
+интеграция синтаксиса
+
+\begin{lstlisting}
+# : <p : Production+>;
+	instead p : p : term;
+\end{lstlisting}
+
+domainSpecificTypes = все имена классов мета-модели
+
+domainSpecificTerms = все нетерминалы измененной грамматики
+
+спец. алгоритм инстанциации
+
+$$
+\trule{
+	RTT(t) = \TC{C} & C = \class{}{\_}{R=\{r_i\}}{A=\{a_i\}}
+}{
+	\Inst{\gamma}{t} = \mathbf{new}\, C \{ \forall i.\,r_i = \Inst{\gamma}{t.r_i}, \forall i.\,a_i = t.a_i \}
+}{ds-inst}
+$$ 
+
+генерации спец. системы типов
+
+$$
+\trule{
+	C = \class{}{S=\{S_i\}}{\_}{\_}
+}{
+	\forall i.\, C \preceq S_i
+}{ds-subtype}
+$$ 
+
+$$
+\trule{
+	RTT(e) = \TC{C}
+}{
+	\vdash e : C
+}{ds-type}
+$$ 
+
+доказательство сохранения типов
+
+\begin{Th}
+Если среда $\gamma$ согласована с контекстом $\Gamma$ и $\Gamma \vdash e : \tau$, то $\Gamma \vdash \Inst{\gamma}{e} : \tau$. Другими словами, преобразование $\Inst{}{\bullet}$ сохраняет типы.
+\end{Th}
+\begin{proof}
+проблема: не в той мета-модели сидим
+\end{proof}
+
+доказательство нормализации
+
+\begin{Th}
+Если среда $\gamma$ согласована с контекстом $\Gamma$ и $\Gamma \vdash e : \tau$, то вычисление $\Inst{\gamma}{e}$ заканчивается за конечное количество шагов, и результат не содержит применений шаблонов и шаблонных параметров.
+\end{Th}
+
+вывод типов
+
+???
+
+\chapter{Автоматическое построение языков, поддерживающих аспекты}
+
+
+
+общая мета-модель аспектов
+
+\begin{lstlisting}
+class Aspect {
+	rules : AspectRule*;
+}
+class AspectRule {
+	pattern : Abstraction;
+	variablePatterns : Term*;
+	substitutions : SubstitutionRule*;
+}
+class SubstitutionRule {
+	variable : Variable;
+	putInstead : Term;
+}
+\end{lstlisting}
+
+общий синтаксис
+ -- добавить wildcards:
+\begin{lstlisting}
+term : '<' '?' n=NAME type? '>'
+	instead n : n?;
+\end{lstlisting}
+
+ -- добавить bindings !!! 
+\begin{lstlisting}
+aspect : aspectRule*;
+aspectRule : 'on' aspectTerm 'perform' substRule* ;
+aspectTerm : 
+substRule : 'instead' NAME ':' term ;
+\end{lstlisting}
+
+специализированная мета-модель образцов (получение из шаблонов)
+
+   Ничего не надо
+
+алгоритм сопоставления с образцом
+
+%\newcommand{\P}[1]{\mathcal{P}\left(#1\right)}
+-- функция возвращает ассоциированный с переменной терм
+$$
+\begin{array}{c}
+\infer[wcard]{
+	(\match{x}{\wcard{?var}{\tau}}) = \meitem{var}{x}
+}{RTT(x) = \tau}
+\\
+\infer[var]{
+	(\match{x}{?var = P_x}) = \ME_x \mejoin \meitem{var}{x}
+}{
+\match{x}{P_x} = \ME_x
+}
+\\
+\infer[mvar]{
+	(\match{x}{?var}) = \ME \mejoin \meitem{var}{x}
+}{
+\meflatten{\ME}(?var) \cong x
+}
+\end{array}
+$$
+	
+
+доказательство структурной корректности
+
+\chapter{Пример: Автоматическое расширение языка Emfatic}
+
+шаблоны
+
+аспекты
+
+\chapter{Сравнение предложенного подхода с существующими}
+
+незнание в аспектах
+
+локальность в шаблонах
+
+\chapter{Выводы}
