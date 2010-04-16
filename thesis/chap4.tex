@@ -51,10 +51,14 @@ C -- класс => ref(C), val(C)
 T -- простой тип => T
 A -- тип => A?, A*, A+
 
+разные типы для множеств и списков?
+
 иногда разделяем атрибуты и ссылки
 
 \newcommand{\class}[4]{\mathbf{class}\; #1 \langle #2, #3, #4\rangle}
 иногда -- нет
+
+top type?
 \newcommand{\classf}[3]{\mathbf{class}\; #1 \langle #2, #3\rangle}
 \newcommand{\type}[2]{#1\left(#2\right)}
 \newcommand{\valts}{\mathbf{val}}
@@ -65,7 +69,7 @@ A -- тип => A?, A*, A+
 \newcommand{\reference}[3]{\mathbf{#1}\langle #2 : #3\rangle}
 \newcommand{\attribute}[2]{\mathbf{attr}\langle #1 : #2\rangle}
 \newcommand{\obj}[3]{#1@#2\left\{#3\right\}}
-\newcommand{\fromMM}{\MM{M} \vdash}
+\newcommand{\fromMM}{\MM{M} \Vdash}
 $$
 	\infer[object]{
 		\fromMM \obj{C}{id}{f_i = v_i} : \valt{C}
@@ -249,25 +253,13 @@ $$
 	\Inst{\gamma}{\ang{T \, a_1, \ldots, a_n}} = \Inst{\gamma \cup \gamma'}{b}
 }{app-inst}
 $$
-встраивание/ссылки
-???
+
+встраивание/ссылки???, от этого зависит наличие val/ref в типах ниже
+
 общая система типов
 $$
-\trule{}{\tau \preceq \mathtt{EObject}}{top}
-\quad
-\trule{
-	\Gamma \vdash e : \tau
-	&
-	\tau \preceq \sigma 
-}{
-	\Gamma \vdash e : \sigma
-}{subtype}
+\trule{}{\Gamma \cup \{v : \tau\} \vdash \ang{?v} : \tau}{var}
 $$ 
-
-$$
-\trule{}{\Gamma \cup \{p : \tau\} \vdash \ang{?p} : \tau}{var}
-$$ 
-
 $$
 \trule{
 	\Gamma \cup \bigcup\limits_{i=1}^{n} \{ p_i : \tau_i \} \vdash b : \sigma
@@ -277,7 +269,6 @@ $$
 	\right)
 }{abstr}
 $$ 
-
 $$
 \trule{
 	\Gamma \vdash \mathbf{template}\left(
@@ -289,13 +280,74 @@ $$
 	\Gamma \vdash \ang{T \, a_1, \ldots, a_n} : \sigma
 }{appl}
 $$
+$$
+\infer[elist]{\Gamma \vdash [] : \tau*}{}
+\quad
+\infer[list]{
+	\Gamma \vdash [t_1,\ldots,t_n] : \tau^+
+}{
+	\forall i \in [1:n].\; \Gamma \vdash Item(t_i, \tau)
+}
+$$
+$$
+\infer[eset]{\Gamma \vdash \{\} : \tau*}{}
+\quad
+\infer[set]{
+	\Gamma \vdash \{t_1,\ldots,t_n\} : \tau^+
+}{
+	\forall i \in [1:n].\; \Gamma \vdash Item(t_i, \tau)
+}
+$$
+$$
+\infer[item]{
+	\Gamma \vdash Item(t, \tau)
+}{
+	\Gamma \vdash t : \tau
+}
+\quad
+\infer[itemv]{
+	\Gamma \vdash Item(\ang{?v}, \tau)
+}{
+	\Gamma \vdash v : \tau^*
+}
+\quad
+$$
+$$
+\infer[null]{
+	\Gamma \vdash NULL : \tau^?
+}{}
+\quad
+\infer[relax]{
+	\Gamma \vdash x : \tau^?
+}{
+	\Gamma \vdash x : \tau
+}
+\quad
+\infer[relax+]{
+	\Gamma \vdash x : \tau^*
+}{
+	\Gamma \vdash x : \tau^+
+}
+$$
+$$
+\infer[subtype]{
+	\Gamma \vdash x : \sigma
+}{
+	\Gamma \vdash x : \tau &
+	\tau \preceq \sigma
+}
+$$
+* Отношение $\preceq$ задается мета-моделью $\MM{M}$
 
 генерация специализированной мета-модели шаблонов
 
+\newcommand{\TM}{\mathcal{TM}}
 \newcommand{\TC}[1]{\mathcal{TC}\left(#1\right)}
 \newcommand{\TR}[1]{\mathcal{TR}\left(#1\right)}
 \newcommand{\TA}[1]{\mathcal{TA}\left(#1\right)}
 %\renewcommand{\vec}[1]{\overrightarrow{\mbox{#1}}}
+
+$\TM$ -- новая мета-модель
 
 $\TC{\class{}{S}{R}{A}} = \class{}
 			{\mathtt{Term}}{\TR{R}}{\TA{A}}$
@@ -336,19 +388,13 @@ $$
 генерации спец. системы типов
 
 $$
-\trule{
-	C = \class{}{S=\{S_i\}}{\_}{\_}
+\infer[dstype]{
+	\Gamma \vdash \obj{\TC{C}}{id}{r_i = v_i} : C
 }{
-	\forall i.\, C \preceq S_i
-}{ds-subtype}
-$$ 
-
-$$
-\trule{
-	RTT(e) = \TC{C}
-}{
-	\vdash e : C
-}{ds-type}
+	\TM \Vdash \obj{\TC{C}}{id}{r_i = v_i} : \TC{C} &
+	r_i = \TR{\rho_i : \tau_i} &
+	\Gamma \vdash v_i : \tau_i
+}
 $$ 
 
 доказательство сохранения типов
