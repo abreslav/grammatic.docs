@@ -1,0 +1,104 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage{afterpage,fullpage,amsfonts,amsthm,amssymb,amsmath,indentfirst}
+
+\usepackage{ucs}
+\usepackage[utf8]{inputenc}
+\usepackage[T2A]{fontenc}
+
+\usepackage[english,russian]{babel}
+
+\voffset=-5mm
+\rightmargin=0pt
+
+%\input ../sty/aut14.cli
+\input{aut14.cli}
+\makeatletter
+\def\paragraph{\@startsection{paragraph}{4}{\z@}%
+{2ex plus 0.2ex minus.1ex}{-1em}{\reset@font\bf}}
+ \makeatother
+\date{}
+\catcode`@ = 11 \catcode`@ = 12
+\def\hiphantom#1{\underline{\phantom{#1}}}
+
+\sloppy
+
+\selectlanguage{russian} \makeatletter
+\renewcommand{\@oddhead}{\hfill{\large -\thepage-}\hfill}
+\renewcommand{\@oddfoot}{}
+\renewcommand{\@evenhead}{\hfill{\large -\thepage-}\hfill}
+\renewcommand{\@evenfoot}{}
+%\renewcommand{\@makefntext}[1]{\parindent=1em\noindent
+% \hbox to 1.8 em {\hss\Large$^{\@thefnmark}$}#1}
+\makeatother \large
+%title
+
+\newcommand{\afsection}[1]{\par \begin{center}\textbf{\MakeUppercase{#1}}\end{center}}
+\newcommand{\afsubsection}[1]{\par \textbf{\underline{#1}}}
+
+\begin{document}
+
+Титул
+
+и т.д.
+
+\thispagestyle{empty}
+\newpage
+
+
+\setlength{\topmargin}{-5mm} \makeatletter
+\renewcommand{\@oddhead}{\hfill{\large -\thepage-}\hfill}
+\renewcommand{\@oddfoot}{}
+\renewcommand{\@evenhead}{\hfill{\large -\thepage-}\hfill}
+\renewcommand{\@evenfoot}{}
+\makeatother
+
+\afsection{Общая характеристика работы}
+
+\afsubsection{Актуальность темы.}
+
+\afsubsection{Предметом исследования} являются
+
+\afsubsection{Целью работы} является
+
+\afsubsection{Задачи исследования.} 
+
+\afsubsection{Методы исследования} включают
+
+\afsubsection{Научная новизна} результатов работы состоит в том, что:
+
+\afsubsection{Практическую ценность} работы составляют:
+
+\afsubsection{На защиту выносятся следующие положения:} 
+
+\afsubsection{Достоверность научных результатов и выводов}
+
+\afsubsection{Внедрение результатов работы.} 
+
+\afsubsection{Апробация работы.}
+
+\afsubsection{Публикации.}
+
+\afsubsection{Личный вклад автора.}
+
+\afsection{Содержание работы}
+
+\afsubsection{Во введении}
+
+\afsubsection{Первая глава}
+
+\afsubsection{Вторя глава}
+
+\afsubsection{Третья глава}
+
+\afsubsection{Четвертая глава}
+
+\afsubsection{Основные результаты диссертационной работы}
+
+\par
+\begin{center}
+\afsubsection{Публикации по теме диссертационной работы}
+\end{center}
+
+
+\end{document}
