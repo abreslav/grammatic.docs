@@ -39,6 +39,32 @@
 \newcommand{\code}[1]{\mbox{\texttt{#1}}}
 \newcommand{\tool}[1]{\textsc{#1}}
 
+\theoremstyle{definition}
+\newtheorem{Def}{Определение~}[part]
+\theoremstyle{plain}
+\newtheorem{Th}{Теорема~}[part]
+\newtheorem{Lemm}[Th]{Лемма~}
+\newtheorem{Prop}[Th]{Предложение~}
+\newtheorem{Cor}{Следствие~}[Th]
+\newtheorem{Note}{Замечание~}[part]
+\newtheorem{Ex}{Пример~}[part]
+\renewcommand{\proofname}{Доказательство}
+
+\renewcommand{\theLemm}{\thepart.\arabic{Lemm}}
+\renewcommand{\theTh}{\thepart.\arabic{Th}}
+\renewcommand{\theProp}{\thepart.\arabic{Prop}}
+\renewcommand{\theCor}{\theTh.\arabic{Cor}}
+\renewcommand{\theNote}{\thepart.\arabic{Note}}
+\renewcommand{\tablename}{Таблица}
+\renewcommand{\lstlistingname}{Листинг}
+\renewcommand{\figurename}{Рис.}
+\renewcommand{\baselinestretch}{1.23}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\Inst}[2]{\mathcal{I}_{#1} \left[ #2 \right]}%
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \voffset=-5mm
