@@ -35,17 +35,47 @@
 %\usepackage{bold-extra}
 %\renewcommand{\ttdefault}{pcr}
 
+\newcommand{\GRM}{\tool{Grammatic}}
+\newcommand{\ATF}{\tool{Grammatic$^{SDT}$}}
+
+\definecolor{Brown}{cmyk}{0,0.81,1,0.60}
+\definecolor{OliveGreen}{cmyk}{0.64,0,0.95,0.40}
+\definecolor{CadetBlue}{cmyk}{0.62,0.57,0.23,0}
+\definecolor{MyDarkBlue}{rgb}{0,0.08,0.45} 
+
 \lstset{
 	inputencoding=utf8x, 
 	extendedchars=\true, 
 	basicstyle=\ttfamily\footnotesize,
 	keywordstyle=\sffamily\bfseries,
 	stringstyle=\sffamily,
+	commentstyle=\color{OliveGreen}\ttfamily,
 	tabsize=4,
 	captionpos=b,
 	showstringspaces=false,
 	xleftmargin=1cm,
+	texcl,
 }
+\lstdefinelanguage{Grammatic}
+	{
+		morestring=[b]',
+		morekeywords={lex,empty,*,?,+,before,after,at},
+		morecomment=[l]{//},
+	}
+\lstdefinelanguage{Typesystem}
+	{
+		morestring=[b]',
+		morekeywords={typesystem,language,for,backend,type},
+		morecomment=[l]{//},
+	}
+\lstdefinelanguage{ANTLR}{
+	morecomment=[s][\itshape\color{MyDarkBlue}]{\{}{\}},
+	morekeywords={returns,int},
+	morestring=[b]',
+	morecomment=[l][\color{red}]{//!},
+	morecomment=[l]{//},
+}
+
 
 \sloppy
 
@@ -189,8 +219,8 @@
 \tableofcontents
 \newpage
 
-\input{chap1.tex}
-\input{chap2.tex}
+%\input{chap1.tex}
+%\input{chap2.tex}
 \input{chap3.tex}
-\input{chap4.tex}
+%\input{chap4.tex}
 \end{document}
