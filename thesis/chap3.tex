@@ -209,7 +209,40 @@ factor : VAR | INT | '(' expr ')' ;
 \end{itemize}
 В некоторых случаях вызовы функций разбора могут быть опущены, но в данном примере это невозможно, поскольку необходимо указать значение аргумента.
 
-Правило для символа \code{term} отличается тем, что имеет два вхождения одного
+Правило для символа \code{term} отличается тем, что имеет два вхождения одного и того же символа \code{factor}, семантические действия для которых различны (действия по ключевому слову \code{at} совпадают):
+\begin{lstlisting}[
+	language=Grammatic,	
+	label=termTF,
+%	caption=Translation function for \texttt{term},float=htbp
+]
+term : $f1=factor ('*' $f2=factor)* ;         
+	term(Environment env) --> (Int result) {  
+		Int f; // Объявление локального атрибута
+		at factor : f = factor(env);      // Для обоих вхождений
+		after $f1 : result = f;              // Только для \$f1
+		after $f2 : result = mul(result, f); // Только для \$f2
+	}
+\end{lstlisting}
+Для того, чтобы различать вхождения, в данном примере используются переменные \footnote{Синтаксис аналогичен использованному в \GRM{}, поскольку для реализации \ATF{} используется механизм аспектов, реализованный в \GRM{}}. Это позволяет сопоставить первому вхождению (переменная \code{\$f1}) присваивание, а второму (переменная \code{\$f2}) --- умножение и присваивание. Отметим, что вызов функции \code{factor} общий для обоих вхождений.
+
+
+\begin{lstlisting}[
+	language=Grammatic,	
+	label=exprTF,
+%	caption=Translation function for \texttt{expr},float=htbp
+	]
+expr : $t1=term ( $sgn=('+' | '-') term)* ;         
+	expr(Environment env) --> (Int result) {  
+  		at     term : t = term(env);
+		before $t1  : {
+			result = zero();
+			sign = one();
+		}
+		after  term : result = add(result, mul(sign, t));
+		before $sgn : sign = one();
+		after  '-'  : sign = neg(sign);
+  }
+\end{lstlisting}
 
 \chapter{Контроль типов в семантических действиях}
 
