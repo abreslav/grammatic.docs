@@ -225,13 +225,13 @@ term : $f1=factor ('*' $f2=factor)* ;
 \end{lstlisting}
 Для того, чтобы различать вхождения, в данном примере используются переменные \footnote{Синтаксис аналогичен использованному в \GRM{}, поскольку для реализации \ATF{} используется механизм аспектов, реализованный в \GRM{}}. Это позволяет сопоставить первому вхождению (переменная \code{\$f1}) присваивание, а второму (переменная \code{\$f2}) --- умножение и присваивание. Отметим, что вызов функции \code{factor} общий для обоих вхождений.
 
-
+Использование ключевого слова \code{before} иллюстрирует правило для символа \code{expr}:
 \begin{lstlisting}[
 	language=Grammatic,	
 	label=exprTF,
 %	caption=Translation function for \texttt{expr},float=htbp
 	]
-expr : $t1=term ( $sgn=('+' | '-') term)* ;         
+expr : $t1=term ( ('+' | '-') term)* ;         
 	expr(Environment env) --> (Int result) {  
   		at     term : t = term(env);
 		before $t1  : {
@@ -239,10 +239,27 @@ expr : $t1=term ( $sgn=('+' | '-') term)* ;
 			sign = one();
 		}
 		after  term : result = add(result, mul(sign, t));
-		before $sgn : sign = one();
+		before ('+' | '-') : sign = one();
 		after  '-'  : sign = neg(sign);
   }
 \end{lstlisting}
+Следует обратить внимание на использование сложного образца \code{('+' | '-')}. Кроме того, заметим, что ни в одном из случаев использования \code{before} в данном примере его нельзя заменить эквивалентным использованием \code{after}.
+
+Чтобы дополнительно мотивировать сделанный нами выбор нотации, приведем аналогичное правило для \code{expr} в нотации \tool{ANTLR}, использующей внедренные семантические действия.
+\begin{lstlisting}[
+	label=exprANTLR,language=ANTLR,
+%	caption=\tool{ANTLR} rule for \texttt{expr},float=hb
+]
+expr[Environment env] returns [int result] 
+	: {result = 0; sign = 1;} 
+	  t=term[env] {result = t;}
+	  (
+ 	    {sign = 1;} ('+' | '-' {sign = -1;}) 
+	    t=term[env] {result += t * sign;}
+	  )* 
+	;         
+\end{lstlisting}
+Легко видеть, что грамматическая структура правила читается гораздо хуже из-за смешивания с семантическим кодом.
 
 \chapter{Контроль типов в семантических действиях}
 
