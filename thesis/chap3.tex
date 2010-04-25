@@ -293,6 +293,122 @@ rem : Int;
 
 \section{Базовые правила системы типов}
 
+\renewcommand{\L}{{}}
+\newcommand{\G}{ {\mathcal{G}_\L} }
+\newcommand{\eql}{\cong_\L}
+\newcommand{\lel}{\preceq_\L}
+\newcommand{\gel}{\succeq_\L}
+\newcommand{\TUP}{TupleType}
+\newcommand{\Str}{String_\L}
+
+Базовые правила системы типов \ATF{} содержат следующие параметры, уточняющиеся для каждой спецификации:
+\begin{itemize}
+\item множество \term{базовых типов} $\G$ (от \emph{ground});
+\item выделенный \term{строковый тип} $\Str \in \G$;
+\item отношение $\lel \;\subseteq \G \times \G$ (и $\gel \;:=\; \lel^{\top}$), где 
+	\begin{itemize}
+	\item ``$\tau \lel \sigma$''
+читается как ``$\tau$ является \term{подтипом} $\sigma$'', а
+	\item ``$\tau \gel \sigma$''
+читается как ``$\tau$ является \term{супертипом} $\sigma$''.
+	\end{itemize}
+\end{itemize}
+
+Язык типов \ATF{} описывается следующими продукциями:
+$$
+\begin{array}{rcll}
+	AttributeType &::=& \G              &\mbox{--- тип атрибута}\\
+	TupleType &::=& (AttributeType^*)   &\mbox{--- тип кортежа}\\
+	FunctionType &::=& 
+	   TupleType \rightarrow TupleType  &\mbox{--- тип функции}\\
+\end{array}
+$$
+Таким образом, атрибуты могут иметь только базовые типы, а функции принимают на вход и возвращают кортежи. Заметим, что кортеж может иметь ноль или более компонент.
+
+Корректность типов проверяется отдельно в каждой функции трансляции. \term{Контекст} $\Gamma$ является множеством деклараций всех функций, объявленных в спецификации, а также всех входных и выходных атрибутов этих функций и локальных атрибутов той функции, которая проверяется в данный момент. Поскольку атрибуты в разных функциях могут иметь одинаковые имена, мы выносим имя функции в верхний индекс имени атрибута. Например, контекст может содержать следующий набор деклараций:
+$$\begin{array}{rcl}
+factor&:& (Environment) \rightarrow (Int)\\
+env^{factor} &:& Environment\\
+result^{factor} &:& Int\\
+term &:& (Environment) \rightarrow (Int)\\
+env^{term} &:& Environment\\
+result^{term} &:& Int\\
+\end{array}$$
+
+
+\begin{figure}[htbp]
+$$\begin{array}{lll}
+
+	\begin{array}{l}
+		\trule{}{\Gamma \vdash \mathtt{NAME\#} : \Str}{token}\\
+		\\
+		\trule{}{\Gamma, \alpha : \tau \vdash \alpha : \tau }{attribute}\\
+	\end{array}
+&&
+\trule{
+\begin{array}{l}
+	\tau_1 \ldots\tau_n \in \G\\
+	\Gamma \vdash x_1 : \tau_1 \, \ldots \, \Gamma \vdash x_n : \tau_n
+\end{array}
+}{
+	\Gamma \vdash (x_1, \ldots, x_n) : (\tau_1, \ldots, \tau_n)
+}{tuple}
+
+\\
+&&\hspace{10pt}\\
+\multicolumn{3}{c}{
+\trule{	
+\begin{array}{lll}
+		\tau_1 \ldots\tau_n,\, \sigma_1 \ldots \sigma_n,\, \rho_1 \ldots \rho_m \in \G
+		&\quad&
+		\sigma_1 \gel \rho_1\,\ldots\, \sigma_m \gel \rho_m\\
+		\Gamma \vdash f : (\sigma_1,\,\ldots,\,\sigma_m) \rightarrow (\tau_1,\,\ldots,\,\tau_n)
+		&\quad&
+		\Gamma \vdash x_1 : \rho_1 \, \ldots \, \Gamma \vdash x_n : \rho_n\\
+\end{array}
+}{\Gamma \vdash f(x_1,\,\ldots,\,x_m) : (\tau_1,\,\ldots,\,\tau_n)}{app}
+}
+\end{array}$$
+\caption{Typing rules for \ATF{} expressions}\label{exptypes}
+\end{figure}
+
+
+
+\begin{figure}[htbp]
+$$
+\begin{array}{l}
+\trule{
+\begin{array}{l}
+\sigma,\,\tau \in \G \cup \TUP
+\\
+\Gamma \vdash \alpha : \sigma 
+\quad 
+\Gamma \vdash \beta : \tau 
+\quad 
+\sigma \gel^* \tau
+\end{array}
+}{\Gamma \vdash \alpha = \beta \in CorrectStatement}{assignment}
+\vspace{10pt}
+\\
+\trule{
+\Gamma \vdash f(x_1,\,\ldots,\,x_m) : \rho
+}{
+\Gamma \vdash f(x_1,\,\ldots,\,x_m) \in CorrectStatement
+}{app-statement}
+\vspace{10pt}
+\\
+\trule{
+\Gamma \vdash \alpha_1,\,\ldots,\,\alpha_n \in CorrectStatement
+}{\Gamma \vdash \left\{ \alpha_1,\,\ldots,\,\alpha_n \right\} \in CorrectStatement}{block}
+\end{array}
+$$
+\caption{Type checking rules for \ATF{} statements}\label{statypes}
+\end{figure}
+
+
+$$(a_1,\cdots,a_n)\gel^*(b_1,\cdots,b_n)\mbox{ iff } (a_1 \gel b_1) \wedge \cdots \wedge (a_n \gel b_n)$$
+
+
 Общие правила системы типов
 
 Алгоритм реконструкции типов
