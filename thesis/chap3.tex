@@ -335,7 +335,7 @@ env^{term} &:& Environment\\
 result^{term} &:& Int\\
 \end{array}$$
 
-
+На \figref{exptypes} приведены очевидные правила типизации для атрибутов, токенов и кортежей, а также правило для функций, говорящее, что тип фактического аргумента должен являться подтипом типа формального параметра.
 \begin{figure}[htbp]
 $$\begin{array}{lll}
 
@@ -369,11 +369,9 @@ $$\begin{array}{lll}
 }{\Gamma \vdash f(x_1,\,\ldots,\,x_m) : (\tau_1,\,\ldots,\,\tau_n)}{app}
 }
 \end{array}$$
-\caption{Typing rules for \ATF{} expressions}\label{exptypes}
+\caption{Базовые правила для выражений \ATF{}}\label{exptypes}
 \end{figure}
-
-
-
+На \figref{statypes} приведены правила типизации, контролирующие структуру правильных предложений \ATF{}, контролирующие типизацию в присваиваниях и вызовах функций, результат которых не используется. 
 \begin{figure}[htbp]
 $$
 \begin{array}{l}
@@ -402,15 +400,14 @@ $$
 }{\Gamma \vdash \left\{ \alpha_1,\,\ldots,\,\alpha_n \right\} \in CorrectStatement}{block}
 \end{array}
 $$
-\caption{Type checking rules for \ATF{} statements}\label{statypes}
+\caption{Базовые правила для предложений \ATF{}}\label{statypes}
 \end{figure}
+Поскольку результатом функции, а также значением слева от знака равенства может быть кортеж, правило для присваивания (assignment) использует отношение $\gel^*$, являющееся покомпонентным расширением $\gel$ на кортежи:
+$$(a_1,\cdots,a_n)\gel^*(b_1,\cdots,b_n)
+	\;\Leftrightarrow\; 
+(a_1 \gel b_1) \wedge \cdots \wedge (a_n \gel b_n)$$
 
-
-$$(a_1,\cdots,a_n)\gel^*(b_1,\cdots,b_n)\mbox{ iff } (a_1 \gel b_1) \wedge \cdots \wedge (a_n \gel b_n)$$
-
-
-Общие правила системы типов
-
+\section{Локальный вывод типов}
 Алгоритм реконструкции типов
 
 декларативное описание абстрактной системы типов
