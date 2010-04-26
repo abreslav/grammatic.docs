@@ -51,6 +51,14 @@ A -- тип => A?, A*, A+
 
 иногда разделяем атрибуты и ссылки
 
+Требования целевой мета-модели моделируются с помощью отношения ``подтип'', обозначаемого следующим образом:
+$$
+	\mbox{подтип} \subtype \mbox{супертип}.
+$$
+В остальном система типов выражена традиционным способом (см. \cite{???}). \term{Контекст} $\Gamma$ представляет собой множество утверждений вида $e : \tau$, где $e$ --- шаблонное выражение, а $\tau$ --- тип; такие утверждения читаются как ``\term{$e$ имеет тип $\tau$}''. 
+
+определить подтипы
+
 \newcommand{\class}[4]{\mathbf{class}\; #1 \langle #2, #3, #4\rangle}
 иногда -- нет
 
@@ -124,12 +132,12 @@ $$
 	\fromMM x : \sigma
 }{
 	\fromMM x : \tau &
-	\tau \preceq \sigma
+	\tau \subtype \sigma
 }
 $$
 $$
 \infer[superclass]{
-	\forall i \in [1:n].\; \type{TO}{C} \preceq \type{TO}{S_i}
+	\forall i \in [1:n].\; \type{TO}{C} \subtype \type{TO}{S_i}
 }{
 	\classf{C}{\{S_i, \ldots, S_n\}}{\_} \in \MM{M} &
 	TO \in \{\valts,\, \refts\}
