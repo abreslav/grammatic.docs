@@ -169,7 +169,7 @@
 \newcommand{\intro}[1]{%
 \newpage%
 \begin{center}\bf\Large #1\end{center}%
-\addcontentsline{toc}{part}{#1}%
+\addcontentsline{toc}{part}{\bf #1}%
 }
 \renewcommand{\thepart}{\arabic{part}}
 \renewcommand{\part}[1]{%
@@ -235,8 +235,14 @@
 \tableofcontents
 \newpage
 
-%\input{chap1.tex}
-%\input{chap2.tex}
-%\input{chap3.tex}
+\newcommand{\afsubsection}[1]{\paragraph*{#1}}
+
+\intro{Введение}
+\input{intro.tex}
+\input{chap1.tex}
+\input{chap2.tex}
+\input{chap3.tex}
 \input{chap4.tex}
+\intro{Заключение}
+\input{conclusion.tex}
 \end{document}
