@@ -1,0 +1,37 @@
+\begin{thebibliography}{1}
+\def\selectlanguageifdefined#1{
+\expandafter\ifx\csname date#1\endcsname\relax
+\else\language\csname l@#1\endcsname\fi}
+\ifx\undefined\url\def\url#1{{\small #1}}\else\fi
+\ifx\undefined\BibUrl\def\BibUrl#1{\url{#1}}\else\fi
+\ifx\undefined\BibAnnote\long\def\BibAnnote#1{}\else\fi
+\ifx\undefined\BibEmph\def\BibEmph#1{\emph{#1}}\else\fi
+
+\bibitem{gttse}
+\selectlanguageifdefined{english}
+\BibEmph{Breslav,~A.} Creating textual language dialects using aspect-like
+  techniques~/ A.~Breslav~// Pre-proceedings of 3rd Summer School on Generative
+  and Transformational Techniques in Software Engineering (Braga, Portugal).
+  "---
+\newblock 2009. "---
+\newblock Pp.~63--64.
+
+\bibitem{ewscs2010}
+\selectlanguageifdefined{english}
+\BibEmph{Breslav,~A.} A type checker for multi-targeted parser specifications~/
+  A.~Breslav~// Proceedings of 15th Estonian Winter School in Computer Science
+  (Palmse, Estonia). "---
+\newblock 2010. "---
+\newblock Pp.~12--13.
+
+\bibitem{knit}
+\selectlanguageifdefined{russian}
+\BibEmph{Бреслав,~А.~А.} Создание диалектов языков программирования с
+  использованием грамматических аспектов~/ А.~А.~Бреслав~// Компьютерные науки
+  и информационные технологии: Материалы Междунар. науч. конф.~/
+  {\cyr\CYRP\cyro\cyrd\ \cyrr\cyre\cyrd.\ }В.~А.~Твердохлебов,
+  Ю.~И.~Митрованов, А.~Г.~Федорова {\cyr\cyri~\cyrd\cyrr.} "---
+\newblock Саратов: Издательство Саратовского университета, 2009. "---
+\newblock {\cyr\CYRS.}~231--232.
+
+\end{thebibliography}
