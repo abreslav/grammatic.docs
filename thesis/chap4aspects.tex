@@ -1,0 +1,78 @@
+\chapter{Автоматическое построение языков, поддерживающих аспекты}
+
+общая мета-модель аспектов
+
+\begin{lstlisting}
+class Aspect {
+	rules : AspectRule*;
+}
+class AspectRule {
+	pattern : Abstraction;
+	variablePatterns : Term*;
+	substitutions : SubstitutionRule*;
+}
+class SubstitutionRule {
+	variable : Variable;
+	putInstead : Term;
+}
+\end{lstlisting}
+
+общий синтаксис
+ -- добавить wildcards:
+\begin{lstlisting}
+term : '<' '?' n=NAME type? '>'
+	instead n : n?;
+\end{lstlisting}
+
+ -- добавить bindings !!! 
+\begin{lstlisting}
+aspect : aspectRule*;
+aspectRule : 'on' aspectTerm 'perform' substRule* ;
+aspectTerm : 
+substRule : 'instead' NAME ':' term ;
+\end{lstlisting}
+
+специализированная мета-модель образцов (получение из шаблонов)
+
+   Ничего не надо
+
+алгоритм сопоставления с образцом
+
+%\newcommand{\P}[1]{\mathcal{P}\left(#1\right)}
+-- функция возвращает ассоциированный с переменной терм
+$$
+\begin{array}{c}
+\infer[wcard]{
+	(\match{x}{\wcard{?var}{\tau}}) = \meitem{var}{x}
+}{RTT(x) = \tau}
+\\
+\infer[var]{
+	(\match{x}{?var = P_x}) = \ME_x \mejoin \meitem{var}{x}
+}{
+\match{x}{P_x} = \ME_x
+}
+\\
+\infer[mvar]{
+	(\match{x}{?var}) = \ME \mejoin \meitem{var}{x}
+}{
+\meflatten{\ME}(?var) \cong x
+}
+\end{array}
+$$
+
+типы для аспектов
+	
+
+доказательство структурной корректности
+
+\chapter{Пример: Автоматическое расширение языка Emfatic}
+
+шаблоны
+
+аспекты
+
+\chapter{Сравнение предложенного подхода с существующими}
+
+незнание в аспектах
+
+локальность в шаблонах

@@ -1,0 +1,208 @@
+\chapter{Описание ядра}
+
+текстовая нотация для моделей
+
+\begin{lstlisting}
+object : NAME '@' INT '{' (NAME '=' value ';')* '}' ;
+value
+	: object
+	: ref
+	: list
+	: set
+	: 'NULL'
+	: INT
+	: STRING
+	: 'true' | 'false'
+	: CHAR
+	: NAME '.' NAME     // Enum.Literal
+	;
+ref	: 'ref' '(' NAME '@' INT ')';
+list : <Collection '[', ']'> ;
+set : <Collection '{', '}'> ;
+template Collection<start, end> : Production+ {
+	: <?start> <?end>
+	: <?start>  <List object, ','> <?end>
+	: <?end> <List ref, ','> <?end>
+}
+\end{lstlisting}
+
+\begin{lstlisting}
+list
+	: '[' ']'
+	: '[' object (',' object)* ']'
+	: '[' ref (',' ref)* ']'
+	;
+set
+	: '{' '}'
+	: '{' object (',' object)* '}'
+	: '{' ref (',' ref)* '}'
+	;
+\end{lstlisting}
+
+система типов, порожденная мета-моделью
+
+Язык типов:
+
+C -- класс => ref(C), val(C)
+T -- простой тип => T
+A -- тип => A?, A*, A+
+
+разные типы для множеств и списков?
+
+иногда разделяем атрибуты и ссылки
+
+\newcommand{\class}[4]{\mathbf{class}\; #1 \langle #2, #3, #4\rangle}
+иногда -- нет
+
+top type?
+\newcommand{\classf}[3]{\mathbf{class}\; #1 \langle #2, #3\rangle}
+\newcommand{\type}[2]{#1\left(#2\right)}
+\newcommand{\valts}{\mathbf{val}}
+\newcommand{\valt}[1]{\type{\valts}{#1}}
+\newcommand{\refts}{\mathbf{ref}}
+\newcommand{\reft}[1]{\type{\refts}{#1}}
+\newcommand{\refv}[2]{\mathbf{ref}\; #1@#2}
+\newcommand{\reference}[3]{\mathbf{#1}\langle #2 : #3\rangle}
+\newcommand{\attribute}[2]{\mathbf{attr}\langle #1 : #2\rangle}
+\newcommand{\obj}[3]{#1@#2\left\{#3\right\}}
+\newcommand{\fromMM}{\MM{M} \Vdash}
+$$
+	\infer[object]{
+		\fromMM \obj{C}{id}{f_i = v_i} : \valt{C}
+	}{
+		\classf{C}{\_}{f_i : \tau_i} \in \MM{M}&
+		\fromMM v_i : \tau_i
+	}
+$$
+$$
+\infer[ref]{
+	\fromMM \refv{C}{id} : C
+}{}
+\quad
+\infer[null]{
+	\fromMM NULL : \tau^?
+}{}
+$$
+$$
+\infer[elist]{
+	\fromMM [\,] : \tau^*
+}{}
+\quad
+\infer[list]{
+	\fromMM [x_1, \ldots, x_n] : \type{TO}{\tau}^+
+}{
+	\forall i\in[1:n]. \; \fromMM x_i : \type{TO}{\tau} &
+	TO \in \{\valts,\, \refts\}
+}
+$$
+$$
+\infer[eset]{
+	\fromMM \{\} : \tau^*
+}{}
+\quad
+\infer[set]{
+	\fromMM \{x_1, \ldots, x_n\} : \type{TO}{\tau}^+
+}{
+	\forall i\in[1:n]. \; \fromMM x_i : \type{TO}{\tau} &
+	TO \in \{\valts,\, \refts\}
+}
+$$
+$$
+\infer[relax]{
+	\fromMM x : \tau^?
+}{
+	\fromMM x : \tau
+}
+\quad
+\infer[relax+]{
+	\fromMM x : \tau^*
+}{
+	\fromMM x : \tau^+
+}
+\quad
+\infer[subtype]{
+	\fromMM x : \sigma
+}{
+	\fromMM x : \tau &
+	\tau \preceq \sigma
+}
+$$
+$$
+\infer[superclass]{
+	\forall i \in [1:n].\; \type{TO}{C} \preceq \type{TO}{S_i}
+}{
+	\classf{C}{\{S_i, \ldots, S_n\}}{\_} \in \MM{M} &
+	TO \in \{\valts,\, \refts\}
+}
+$$
+$$
+\infer[enum]{
+	\forall i \in [1:n]. \; \fromMM T.L_i : T
+}{
+	\mathbf{enum}\;T\{L_1,\ldots,L_n\} \in \MM{M}
+}
+\quad
+\infer[bool]{
+	\fromMM b : \mathtt{Boolean}
+}{
+	b \in \{\mathbf{true}, \mathbf{false}\}
+}
+$$
+$$
+\infer[int]{\fromMM INT : \mathtt{Integer}}{}
+\quad
+\infer[str]{\fromMM STRING : \mathtt{String}}{}
+$$
+$$
+\infer[char]{\fromMM CHAR : \mathtt{Char}}{}
+$$
+
+структурная эквивалентность объектов
+
+$$
+\infer[obj]{
+	\obj{C}{id_1}{f_i = v_i} \cong \obj{C}{id_2}{f_i = u_i}
+}{
+	\forall i. \; v_i \cong u_i
+}
+$$
+$$
+\infer[ref]{
+	\refv{C}{id_1} \cong \refv{C}{id_2}
+}{
+	id_1 = id_2
+}
+\quad
+\infer[refl]{x \cong x}{}
+$$
+$$
+\infer[elist]{[\,] \cong [\,]}{}
+\quad
+\infer[list]{
+	[x_1,\ldots,x_n] \cong [y_1,\ldots,y_n]
+}{
+	\forall i \in [1:n]. \; x_i \cong y_i
+}
+$$
+$$
+\infer[eset]{\{\} \cong \{\}}{}
+\quad
+\infer[set]{
+	\{x_1,\ldots,x_n\} \cong \{y_1,\ldots,y_n\}
+}{
+	\forall i :\; x_i \cong y_{\pi(i)}
+}
+$$
+$\pi$ -- перестановка
+
+размыкание неагрегирующих ссылок
+
+преобразование древовидной модели (все классы допускают локальную замену) в грамматику
+
+семантические акции для разбора + анализ имен
+
+мета-модель
+
+грамматика
+
+преобразование

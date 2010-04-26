@@ -1,0 +1,290 @@
+\chapter{Автоматическое построение языков, поддерживающих шаблоны}
+
+общая мета-модель шаблонов
+
+\begin{lstlisting}
+class Abstraction {
+	attr name : String;
+	val parameters : Variable*;
+	val body : Term;
+}
+
+class Variable {
+	attr name : String;
+	attr mode : {Copy, Ref, OneRef};
+}
+
+abstract class Term {}
+
+class VariableRef extends Term {
+	ref variable : Variable;
+}
+
+class Application extends Term {
+	ref abstraction : Abstraction;
+	val arguments : Term*;
+}
+\end{lstlisting}
+
+стандартный синтаксис
+\begin{lstlisting}
+template Temapltes<domainSpecificTypes : Expression*, 
+		domainSpecificTerms : Expression*> : Grammar {
+abstraction 
+	: 'template' NAME 
+		'<' variable (',' variable)*'>' 
+		type? 
+		'{' term '}';
+variable : mode? NAME type?;
+mode : 'copy' | 'ref' | 'oneref';
+type : ':' typeName;
+typeName
+	: basicType
+	: <?domainSpecificTypes>
+	;
+basicType
+	: 'Integer'
+	: 'String'
+	: 'Boolean'
+	: 'Character'
+	;
+term
+	: genericTerm
+	: <?domainSpecificTerms>
+	;
+genericTerm
+	: '<' '?' NAME type? '>'
+	: '<' NAME term* '>'
+	;
+}
+\end{lstlisting}
+
+Семантика языка шаблонов задается операцией \term{разворачивания}, описанной в композиционном стиле правилами на \figref{TempSem}. Мы обозначаем результат разворачивания шаблонов в выражении $e$ как $\Inst{\gamma}{e}$, где $\gamma$ (``\term{среда}'') является множеством значений параметров шаблонов вида $p = e$, где $p$ --- параметр, а $e$ --- шаблонное выражение. Как видно из правила \textsc{APP}, когда разворачивается применение шаблона, среда пополняется информацией о текущих значениях параметров, при этом само значение не разворачивается до тех пор, пока оно не будет использовано. Разворачивание значений использованных параметров выполняется в правиле \textsc{PAR}.
+
+общий алгоритм инстанциации
+\begin{figure}[htbp]
+	\centering
+$$
+\trule{
+	\{p = e\} \subseteq \gamma
+}{
+	\Inst{\gamma}{\ang{?p}} = \Inst{\gamma}{e}
+}{var-inst}
+$$ 
+$$
+\trule{
+	\mathbf{template}\left(
+		T \, \ang{p_1, \ldots, p_n} \, \{ b \}
+	\right)
+}{
+	\gamma' = \bigcup\limits_{i=1}^{n} \{ p_i = a_i \}
+	\qquad
+	\Inst{\gamma}{\ang{T \, a_1, \ldots, a_n}} = \Inst{\gamma \cup \gamma'}{b}
+}{app-inst}
+$$
+	\caption{Базовая семантика языка шаблонов}\label{TempSem}
+\end{figure}
+
+
+встраивание/ссылки???, от этого зависит наличие val/ref в типах ниже
+
+общая система типов
+$$
+\trule{}{\Gamma \cup \{v : \tau\} \vdash \ang{?v} : \tau}{var}
+$$ 
+$$
+\trule{
+	\Gamma \cup \bigcup\limits_{i=1}^{n} \{ p_i : \tau_i \} \vdash b : \sigma
+}{
+	\Gamma \vdash \mathbf{template}\left(
+		T \ang{p_1 : \tau_1, \ldots, p_n : \tau_n} \,: \sigma \, \{ b \}
+	\right)
+}{abstr}
+$$ 
+$$
+\trule{
+	\Gamma \vdash \mathbf{template}\left(
+		T \ang{p_1 : \tau_1, \ldots, p_n : \tau_n} \,: \sigma \, \{ b \}
+	\right)
+	&
+	\forall i : [1:n].\; \Gamma \vdash a_i : \tau_i \
+}{
+	\Gamma \vdash \ang{T \, a_1, \ldots, a_n} : \sigma
+}{appl}
+$$
+$$
+\infer[elist]{\Gamma \vdash [] : \tau*}{}
+\quad
+\infer[list]{
+	\Gamma \vdash [t_1,\ldots,t_n] : \tau^+
+}{
+	\forall i \in [1:n].\; \Gamma \vdash Item(t_i, \tau)
+}
+$$
+$$
+\infer[eset]{\Gamma \vdash \{\} : \tau*}{}
+\quad
+\infer[set]{
+	\Gamma \vdash \{t_1,\ldots,t_n\} : \tau^+
+}{
+	\forall i \in [1:n].\; \Gamma \vdash Item(t_i, \tau)
+}
+$$
+$$
+\infer[item]{
+	\Gamma \vdash Item(t, \tau)
+}{
+	\Gamma \vdash t : \tau
+}
+\quad
+\infer[itemv]{
+	\Gamma \vdash Item(\ang{?v}, \tau)
+}{
+	\Gamma \vdash v : \tau^*
+}
+\quad
+$$
+$$
+\infer[null]{
+	\Gamma \vdash NULL : \tau^?
+}{}
+\quad
+\infer[relax]{
+	\Gamma \vdash x : \tau^?
+}{
+	\Gamma \vdash x : \tau
+}
+\quad
+\infer[relax+]{
+	\Gamma \vdash x : \tau^*
+}{
+	\Gamma \vdash x : \tau^+
+}
+$$
+$$
+\infer[subtype]{
+	\Gamma \vdash x : \sigma
+}{
+	\Gamma \vdash x : \tau &
+	\tau \preceq \sigma
+}
+$$
+* Отношение $\preceq$ задается мета-моделью $\MM{M}$
+
+генерация специализированной мета-модели шаблонов
+
+\newcommand{\TM}{\mathcal{TM}}
+\newcommand{\TC}[1]{\mathcal{TC}\left(#1\right)}
+\newcommand{\TR}[1]{\mathcal{TR}\left(#1\right)}
+\newcommand{\TA}[1]{\mathcal{TA}\left(#1\right)}
+%\renewcommand{\vec}[1]{\overrightarrow{\mbox{#1}}}
+
+$\TM$ -- новая мета-модель
+
+$\TC{\class{}{S}{R}{A}} = \class{}
+			{\mathtt{Term}}{\TR{R}}{\TA{A}}$
+			
+$\TC{C^*} = \TC{C}^*$
+
+$\TC{C^+} = \TC{C}^+$
+
+$\TC{C^?} = \TC{C}^?$
+
+$\TR{\reference{ref}{r}{T}} = \reference{ref}{r}{\TC{T}}$
+
+$\TR{\reference{var}{r}{T}} = \reference{val}{r}{\TC{T}}$
+
+$\TA{\attribute{a}{T}} = \attribute{a}{T}$
+
+интеграция синтаксиса
+
+\begin{lstlisting}
+# : <p : Production+>;
+	instead p : p : term;
+\end{lstlisting}
+
+domainSpecificTypes = все имена классов мета-модели
+
+domainSpecificTerms = все нетерминалы измененной грамматики
+
+спец. алгоритм инстанциации
+
+$$
+\trule{
+%	C = \class{}{\_}{R=\{r_i\}}{A=\{a_i\}} &
+	t = \obj{\TC{C}}{id}{r_i = rv_i,\, a_j = av_j}
+}{
+	\Inst{\gamma}{t} = \obj{\TC{C}}{id^{new}}{r_i = \Inst{\gamma}{rv_i}, \,a_j = av_j }
+}{ds-inst}
+$$ 
+
+генерации спец. системы типов
+
+$$
+\infer[dstype]{
+	\Gamma \vdash x : C
+}{
+	\begin{array}{l}
+	x = \obj{\TC{C}}{id}{r_i = v_i; a_j = {v'}_j}\\
+	\TM \Vdash x : \TC{C} 
+	\end{array}	
+	&
+	r_i = \TR{\rho_i : \tau_i} &
+	\Gamma \vdash v_i : \tau_i
+}
+$$ 
+
+Для того, чтобы убедиться, что данная система типов согласуется с приведенной семантикой, нужно показать, что выполняются свойства \term{сохранения типов} и \term{нормализации} \cite{???}. Оба эти свойства выполняются, если функция разворачивания получает на вход выражение, в котором соблюдаются правила системы типов. Это условие формализовано в следующем определении.
+
+\begin{Def}\label{agree}
+Среда $\gamma$ называется \term{согласованной с контекстом} $\Gamma$, если все ее элементы имеют допустимые типы:
+$$
+	\forall p \, : \, 
+		\{p = e\} \subseteq \gamma 
+			\Rightarrow 
+		\left\{\begin{array}{l}		
+		\{p : \tau\} \subseteq \Gamma \\
+		\Gamma \vdash e : \tau
+		\end{array}\right.
+$$
+\end{Def}
+
+Теперь докажем первое из упомянутых выше свойств.
+
+\begin{Th}
+Если среда $\gamma$ согласована с контекстом $\Gamma$ и $\Gamma \vdash e : \tau$, то $\Gamma \vdash \Inst{\gamma}{e} : \tau$. Другими словами, преобразование $\Inst{}{\bullet}$ сохраняет типы.
+\end{Th}
+\begin{proof}
+Будем вести индукцию по структуре выражения $e$, пользуясь правилами на \figref{TempSem}.\\
+\textbf{База}. Правила \textsc{STR} и \textsc{SEQ} сохраняют типы.\\
+\textbf{Предположение}. Пусть для выражений $e, b, a_1, \ldots, a_n$ данная лемма выполняется.\\
+\textbf{Переход}. Рассмотрим правило \textsc{PAR}. Поскольку $\{p = e\} \subseteq \gamma$, по условию леммы выполняется
+$$
+\left\{\begin{array}{l}		
+		\{p : \tau\} \subseteq \Gamma \\
+		\Gamma \vdash e : \tau
+		\end{array}\right.
+$$
+(см. Определение \ref{agree}). Следовательно $\Gamma \vdash (\Inst{\gamma}{<p>} = \Inst{\gamma}{e}) : \tau$.\\
+Теперь рассмотрим правило \textsc{APP}. Пусть $$\Gamma \vdash <T a_1, \ldots, a_n> : \sigma,$$ тогда по условию леммы $\Gamma \vdash b : \sigma$, то есть $$\Gamma \vdash (\Inst{\gamma}{<T a_1, \ldots, a_n>} = \Inst{\gamma}{b}) : \sigma.$$
+\end{proof}
+
+Второе свойство --- нормализация --- формулируется следующим образом.
+
+\begin{Th}
+Если среда $\gamma$ согласована с контекстом $\Gamma$ и $\Gamma \vdash e : \tau$, то вычисление $\Inst{\gamma}{e}$ заканчивается за конечное количество шагов, и результат не содержит применений шаблонов и шаблонных параметров.
+\end{Th}
+\begin{proof}
+Снова будем вести индукцию по структуре выражения, пользуясь правилами на \figref{TempSem}.\\
+\textbf{База}. Вычисление по правилу \textsc{STR} заканчивается за один шаг и результат не содержит применений шаблонов и шаблонных параметров.\\
+\textbf{Предположение}. Пусть данная лемма выполняется для выражений $e, b, e_1, e_2, a_1, \ldots, a_n$.\\
+\textbf{Переход}. Рассмотрим правило \textsc{PAR}. По предположению вычисление заканчивается за конечное количество шагов (время для $e$ плюс один шаг). Поскольку результат рекурсивного вызова не содержит применений шаблонов и шаблонных параметров, а правило их не добавляет (наоборот, удаляет параметр), то и результат их не содержит.\\
+Для правил \textsc{SEQ} и \textsc{APP} рассуждения аналогичны с той лишь разницей, что в случае \textsc{APP} нужно учитывать, что рекурсия в шаблонах не допускается.
+\end{proof}
+
+Мы показали, что функция $\Inst{}{\bullet}$ корректно разворачивает все шаблонные параметры и применения шаблонов, а также что она не нарушает структурной корректности с точки зрения мета-модели. Результатом применения этой функции (в пустой среде) всегда является константное шаблонное выражение, которое, фактически, является предложением в нотации, не имеющей шаблонов. Таким образом, описанный здесь язык шаблонов работает корректно.
+
+вывод типов
+
+???
+
