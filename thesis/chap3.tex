@@ -467,7 +467,7 @@ Integer \lel \tau\\
 Вернемся к примеру, приведенному в разделе \ref{antlr_example} и покажем, как система типов \ATF{} облегчает работу программиста в этой ситуации. Мы рассматривали правило для символа \code{factor}, в котором была допущена ошибка: вместо текстового значения токена \code{INT} был использован сам объект токена. В следующей функции трансляции допущена такая же ошибка:
 \begin{lstlisting}
 factor : VAR | INT | '(' expr ')' ;          
-	factor(Environment env) --> (Int result) { 
+	factor(env : Environment) -> (result : Int) { 
 		after VAR : result = evaluate(env, VAR#);  
 		after INT : result = INT;
 		at expr   : result = expr(env);           
@@ -539,8 +539,8 @@ language Java for Simple {
 Архитектура \ATF{} позволяет подключать различные расширения, вводящие другие способы описания базовых типов. В качестве примера рассмотрим расширение, позволяющее использовать типы языка \tool{Java} в спецификациях \ATF{} непосредственно, без описания абстрактного уровня.
 
 Данное расширение задает синтаксическую форму языка типов в соответствии с правилами языка \tool{Java}, вводит инструкцию \code{javaimport} для импортирования классов и осуществляет поиск типов аналогично тому как это делает компилятор \tool{Java}. В результате, например, описание внешней функции может выглядеть так:
-\begin{lstlisting}[language=Java]
-import java.util.Map;
+\begin{lstlisting}[language=Grammatic,emph={javaimport},emphstyle={\bf}]
+javaimport java.util.Map;
 
 evaluate(environment : Map<String, Integer>) -> (result : Integer);
 \end{lstlisting}
