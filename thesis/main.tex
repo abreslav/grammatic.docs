@@ -12,6 +12,8 @@
 \binoppenalty=10000
 \relpenalty=10000
 
+\newcommand{\ignore}[1]{}
+
 \usepackage[
 	colorlinks=true,
 	linkcolor=blue,
@@ -240,7 +242,7 @@
 \tableofcontents
 \newpage
 
-\newcommand{\afsubsection}[1]{\paragraph*{#1}}
+\newcommand{\afsubsection}[1]{\par \textbf{#1}}
 
 \intro{Введение}
 \input{intro.tex}
