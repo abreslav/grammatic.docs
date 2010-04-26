@@ -217,25 +217,25 @@ $\pi$ -- перестановка
 
 \begin{lstlisting}
 class Abstraction {
-	name : String
-	parameters : Variable*
-	body : Term
+	attr name : String;
+	val parameters : Variable*;
+	val body : Term;
 }
 
 class Variable {
-	name : String
-	mode : {Copy, Ref, OneRef}
+	attr name : String;
+	attr mode : {Copy, Ref, OneRef};
 }
 
-abstract class Term
+abstract class Term {}
 
 class VariableRef extends Term {
-	variable : Variable
+	ref variable : Variable;
 }
 
 class Application extends Term {
-	abstraction : Abstraction
-	arguments : Term*
+	ref abstraction : Abstraction;
+	val arguments : Term*;
 }
 \end{lstlisting}
 
@@ -281,7 +281,6 @@ $$
 	\Inst{\gamma}{\ang{?p}} = \Inst{\gamma}{e}
 }{var-inst}
 $$ 
-
 $$
 \trule{
 	\mathbf{template}\left(
@@ -461,8 +460,6 @@ $$
 ???
 
 \chapter{Автоматическое построение языков, поддерживающих аспекты}
-
-
 
 общая мета-модель аспектов
 
