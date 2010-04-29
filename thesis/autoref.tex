@@ -371,19 +371,12 @@ example : .. e=example  .. ;
 
 Транслятор языка \GRM{} был реализован с помощью \ATF{} (основным языком реализации является \tool{Java}, а для генерации синтаксического анализатора используется \tool{ANTLR}).
 
-\newcommand{\hd}[1]{{\begin{sideways}{\tool{#1}}\end{sideways}}}
-\begin{tabular}{|ll|c|c|c|c|c|c|c|}
-\hline
-&&\hd{Coco/R}&\hd{Yacc/Bison}&\hd{Eli}&\hd{ANTLR}&\hd{GOLD}&\hd{SableCC}&\hd{\ATF{}}\\
-\hline
-\multicolumn{2}{|l|}{Генерация кода на разных языках}&+&+&-&+&+&+&+\\
-&По одной спецификации&-&-&-&-&+&+&+\\
-\multicolumn{2}{|l|}{Поддержка семантических действий}&+&+&+&+&-&-&+\\
-\multicolumn{2}{|l|}{Проверка типов в спецификациях}&-&-&-&-&n/a&n/a&+\\
-\multicolumn{2}{|l|}{Ошибки в терминах спецификации}&-&-&+&-&n/a&n/a&+\\
-&Сумма&2&2&2&2&2&2&5\\
-\hline
-\end{tabular}
+\begin{table}[htbp]
+	\centering
+\newcommand{\dissonly}[1]{}
+	\input{atf.table.tex}
+	\caption{Сравнение \ATF{} с существующими инструментами}\label{AtfTable}
+\end{table}
 
 \renewcommand{\thepart}{4}
 \afsubsection{В четвертой главе} описан метод, позволяющий автоматически расширять предметно-ориентированные языки механизмами композиции, основанными на шаблонах и аспектах аналогичных использованным в языке \GRM{}. 
