@@ -1,21 +1,21 @@
 {
 \small
 \newcommand{\hd}[1]{{\begin{sideways}{\tool{#1}}\end{sideways}}}
-\begin{tabular}{|ll|c|c|c|c|c|c|c|}
+\begin{tabular}{|l|c|c|c|c|c|c|c|}
 \hline
-&&\hd{Coco/R}&\hd{Yacc/Bison}&\hd{Eli}&\hd{ANTLR}&\hd{GOLD}&\hd{SableCC}&\hd{\ATF{}}\\
+&\hd{Coco/R}&\hd{Yacc/Bison}&\hd{Eli}&\hd{ANTLR}&\hd{GOLD}&\hd{SableCC}&\hd{\ATF{}}\\
 \hline
-\multicolumn{2}{|l|}{Генерация кода на разных языках}&+&+&-&+&+&+&+\\
+Генерация кода на разных языках&+&+&-&+&+&+&+\\
 \hline
-\qquad\quad&по одной спецификации&-&-&-&-&+&+&+\\
+\qquad по одной спецификации&-&-&-&-&+&+&+\\
 \hline
-\multicolumn{2}{|l|}{Поддержка семантических действий}&+&+&+&+&-&-&+\\
+{Семантические действия в спецификациях}&+&+&+&+&-&-&+\\
 \hline
-\multicolumn{2}{|l|}{Проверка типов в спецификациях}&-&-&-&-&n/a&n/a&+\\
+{Ошибки в терминах спецификации}&-&-&+&-&n/a&n/a&+\\
 \hline
-\multicolumn{2}{|l|}{Ошибки в терминах спецификации}&-&-&+&-&n/a&n/a&+\\
+{\qquad Проверка типов в спецификациях}&-&-&-&-&n/a&n/a&+\\
 \hline
-\dissonly{\multicolumn{2}{|r|}{Сумма}&2&2&2&2&2&2&5\\
+\dissonly{\multicolumn{1}{|r|}{Сумма}&2&2&2&2&2*&2*&5\\
 \hline}
 \end{tabular}
 }
