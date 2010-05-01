@@ -1,0 +1,25 @@
+\newcommand{\hd}[1]{{\begin{sideways}\parbox{30mm}{\tool{#1}}\end{sideways}}}
+%{\begin{sideways}\parbox{15mm}{\bf text}\end{sideways}}
+{\small\noindent
+\begin{tabular}{|l|c|c|c|c|c|c|c|c|}
+\hline 
+	&\hd{Lisp}
+	&\hd{MacroML}
+	&\hd{Haskel TMP}
+	&\hd{cpp}
+	&\hd{Velocity и др.}
+	&\hd{MPS}
+	&\hd{Reuseware}
+	&\hd{Наш подход}\\
+\hline 
+Поддержка многих языков&-&-&-&+&+&+&+&+\\
+Применимо для текстовых языков&n/a&n/a&n/a&+&+&-&+&+\\
+Замкнутость&+&+&+&+&+&n/a&-&+\\
+Контроль корректности&n/a&+&+&-&-&+&+&+\\
+Логика в теле шаблона&+&+&+&+/-&+&+&-&-\\
+Используемый термин&M&M&T&M&T&T&CF&T\\
+\dissonly{\hline
+\multicolumn{1}{|r|}{Сумма}&3&3.5&3.5&3.5&4&3.5&3&4\\}
+\hline
+\end{tabular}
+}

@@ -10,42 +10,34 @@
 
 \begin{lstlisting}
 specification : classifier*;
-
 classifier
 	: class
 	: enum
 	: data
 	;
-	
 class
 	: 'abstract'? 'class' NAME ('extends' <List NAME, ','>)? '{'
 		feature*
 	  '}'
 	;
-	
 feature
-	: attr
-	: ref
-	: val
+	: 'attr' sign
+	: 'ref' sign
+	: 'val' sign
 	;
-	
-attr
-	: 'attr' sign;
-ref
-	: 'ref' sign;
-val
-	: 'val' sign;
-	
-sign
-	: NAME ':' type;
-type
-	: NAME ('*' | '+' | '?')?;
+sign : NAME ':' type;
+type : NAME ('*' | '+' | '?')?;
+enum : 'enum' NAME '{' <List NAME, ','> '}' ;
+data : 'data' NAME '=' STRING ;
+\end{lstlisting}
 
-enum
-	: 'enum' NAME '{' <List NAME, ','> '}' ;
-	
-data
-	: 'data' NAME '=' STRING ;
+\begin{lstlisting}
+template List<N, T> {
+	class N {
+		
+	}
+}
+
 \end{lstlisting}
 
 шаблоны
@@ -55,6 +47,13 @@ data
 \chapter{Сравнение с существующими подходами}
 
 Шаблоны (или типизированные макроопределения) реализованы во многих языках программирования \cite{???}, однако эти разработки представляют собой частные решения проблемы и не переносятся на произвольные предметно-ориентированные языки.
+
+\begin{table}[htb]
+	\centering
+\newcommand{\dissonly}[1]{#1}
+\input{templates.table.tex}
+	\caption{Сравнение \GRM{} с существующими инструментами}\label{TmpTable}
+\end{table}
 
 Наиболее важным свойством предложенного подхода является его универсальность --- шаблоны и аспекты могут быть автоматически добавлены в произвольный язык. Наиболее распространенные подходы, обладающие таким свойством, основаны на порождении текста \cite{???}: они не проверяют типы и не гарантируют структурной корректности результатов. Основным недостатком этих подходов является возможность порождения спецификаций с ошибками, причины которых трудно отследить (как при использовании препроцессора \tool{C} и шаблонов \tool{C++}).
 
