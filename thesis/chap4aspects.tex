@@ -119,6 +119,18 @@ $$
 }{
 	x = \obj{C}{id}{f_i = v_i}
 }
+\quad
+\myinfer[match-wc-?]{
+	\match[\ME]{x}{\ang{? : C^?}} = \ME
+}{
+	\match[\ME]{x}{\ang{? : C}} = \ME
+}
+$$
+$$
+\myinfer[match-null]{
+	\match[\ME]{NULL}{\ang{? : C^?}} = \ME
+}{
+}
 $$		
 $$
 \myinfer[match-ds]{
@@ -128,14 +140,6 @@ $$
 	x = \obj{C}{id}{f_i = v_i}
 	&
 	\match[\ME]{v_i}{P_i} = \ME_i
-}
-$$		
-$$
-\myinfer[match-prim]{
-	\match[\ME]{x}{x} 
-		= \ME
-}{
-	x \mbox{ --- значение примитивного типа}
 }
 $$
 $$
@@ -154,6 +158,14 @@ $$
 	x = \{x_1, \ldots, x_n\}
 	&
 	P = \{P_1, \ldots, P_m\}
+}
+$$
+$$
+\myinfer[match-prim]{
+	\match[\ME]{x}{x} 
+		= \ME
+}{
+	x \mbox{ --- значение примитивного типа}
 }
 $$
 	\caption{Семантика операции сопоставления с образцом}\label{MatchSem}
