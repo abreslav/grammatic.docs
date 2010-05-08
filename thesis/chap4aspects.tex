@@ -8,24 +8,21 @@ class Aspect {
 	rules : AspectRule*;
 }
 class AspectRule {
-	pattern : Abstraction;
-	variablePatterns : Term*;
-	substitutions : SubstitutionRule*;
-}
-class SubstitutionRule {
-	variable : Variable;
-	putInstead : Term;
+	pointcut : Application;
+	advice : Application;
 }
 \end{lstlisting}
 
 общий синтаксис
- -- добавить wildcards:
+ -- добавить wildcards (во что?):
 \begin{lstlisting}
 term : '<' '?' n=NAME type? '>'
 	instead n : n?;
+	after type? : ('=' term)?;
 \end{lstlisting}
 
  -- добавить bindings !!! 
+ -- чем отличается variable reference от wildcard
 \begin{lstlisting}
 aspect : aspectRule*;
 aspectRule : 'on' aspectTerm 'perform' substRule* ;

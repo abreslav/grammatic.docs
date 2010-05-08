@@ -8,6 +8,7 @@
 \usepackage{bold-extra}
 \usepackage{url}
 \newcommand{\linkcolor}{blue}
+%\newcommand{\linkcolor}{black}
 \usepackage[
 	colorlinks=true,
 	linkcolor=\linkcolor,
@@ -18,6 +19,11 @@
 \definecolor{Brown}{cmyk}{0,0.81,1,0.60}
 \definecolor{OliveGreen}{cmyk}{0.64,0,0.95,0.40}
 \definecolor{CadetBlue}{cmyk}{0.62,0.57,0.23,0}
+\definecolor{StringBlue}{rgb}{0,0,1}
+%\definecolor{Brown}{rgb}{0,0,0}
+%\definecolor{OliveGreen}{rgb}{0,0,0}
+%\definecolor{CadetBlue}{rgb}{0,0,0}
+%\definecolor{StringBlue}{rgb}{0,0,0}
 \renewcommand{\ttdefault}{pcr}
 
 \newcommand{\bad}[1]{\textcolor{red}{#1}}
@@ -87,7 +93,7 @@
   basicstyle=\ttfamily\footnotesize,
   keywordstyle=\bfseries\color{Brown},
   commentstyle=\color{OliveGreen},
-  stringstyle=\color[rgb]{0,0,1},
+  stringstyle=\color{StringBlue},
   tabsize=4,
   captionpos=b,
   showstringspaces=false
@@ -102,7 +108,7 @@
 \title{Grammatical Aspects for Language Descriptions}
 \author{Andrey Breslav\thanks{This work was partly done while the author was a visiting PhD student at University of Tartu, under a scholarship from European Regional Development Funds through Archimedes Foundation.}}
 %\affil{ITMO University$_1$\\ St. Petersburg$_1$, Russia$_1$}
-\institute{ITMO University\\ St. Petersburg, Russia}
+\institute{\email{abreslav@gmail.com}\\ITMO University\\ St. Petersburg, Russia}
 \date{}
 
 \maketitle
