@@ -45,6 +45,7 @@
 }%
 \newcommand{\Inst}[2]{\mathcal{I}_{#1} \left[ #2 \right]}%
 \newcommand{\match}[3][]{#2 \; \mathbf{match}_{#1} \; #3}
+\newcommand{\matchNV}[3][]{#2 \; \overline{\mathbf{match}}_{#1} \; #3}
 \newcommand{\ang}[1]{\mathsf{<}#1\mathsf{>}}
 \newcommand{\wcard}[2]{\mathsf{<} #1 : #2 \mathsf{>} }
 \newcommand{\ME}{\Upsilon}
@@ -58,6 +59,8 @@
 \newcommand{\subtype}{\preceq}
 \newcommand{\suptype}{\succeq}
 \newcommand{\myinfer}[3][]{\infer[\mbox{#1}]{#2}{#3}}
+\newcommand{\matchList}[3]{\mathit{matchList}_{#1}(#2,\, #3)}
+\newcommand{\matchSet}[3]{\mathit{matchSet}_{#1}(#2,\, #3)}
 
 %\usepackage{bold-extra}
 %\renewcommand{\ttdefault}{pcr}
