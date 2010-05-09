@@ -1,0 +1,229 @@
+\chapter{Текстовая нотация для моделей}
+Ниже нам понадобится записывать формализованные утверждения, вовлекающие мета-модели и их экземпляры. Для этого в данном разделе мы опишем нотацию, позволяющую описывать соответствующие понятия в виде текста, что удобно при записи правил вывода, например, при формализации систем типов.
+
+\section{Элементы мета-моделей}
+
+Для описания элементов мета-моделей в формулах мы будем использовать следующие обозначения:
+%
+\newcommand{\class}[4]{\mathbf{class}\; #1 \langle #2, #3, #4\rangle}%
+\newcommand{\classf}[3]{\mathbf{class}\; #1 \langle #2, #3\rangle}%
+\newcommand{\reference}[3]{\mathbf{#1}\langle #2 : #3\rangle}%
+\newcommand{\attribute}[2]{\mathbf{attr}\langle #1 : #2\rangle}%
+%
+\begin{itemize}
+\item Класс описывается именем $C$ и списками суперклассов $S$, ссылок $R$ и атрибутов $A$: $\class{C}{S}{R}{A}$. Иногда удобно объединять атрибуты и ссылки в единый список структурных элементов $F$: $\classf{C}{S}{F}$.
+\item Атрибут или ссылка описываются именем и типом: $\attribute{x}{\tau}$.
+\end{itemize}
+%
+\newcommand{\type}[2]{#1\left(#2\right)}%
+\newcommand{\valts}{\mathbf{val}}%
+\newcommand{\valt}[1]{\type{\valts}{#1}}%
+\newcommand{\refts}{\mathbf{ref}}%
+\newcommand{\reft}[1]{\type{\refts}{#1}}%
+%
+Типы структурных элементов имеют следующий вид:
+\begin{itemize}
+\item \code{String}, \code{Integer}, \code{Boolean} или \code{Character} --- имя примитивного типа, используется только для атрибутов;
+\item $\reft{C}$ --- неагрегирующая ссылка на класс $C$;
+\item $\valt{C}$ --- агрегирующая ссылка на класс $C$;
+\item $\tau^?$ --- ссылка может иметь значение $NULL$, атрибут может быть не указан;
+\item $\tau^*$ --- коллекция может содержать ноль или более элементов;
+\item $\tau^+$ --- коллекция может содержать один или более элементов.
+\end{itemize}
+%
+\section{Элементы моделей}
+
+\newcommand{\obj}[3]{#1@#2\left\{#3\right\}}%
+\newcommand{\refv}[2]{\mathbf{ref}\; #1@#2}%
+%
+Нотация для элементов моделей несколько более сложна, поэтому мы сначала приводим ее компактное описание в виде контекстно-свободной грамматики в \lstref{modelGrammar}, а затем поясняем.
+
+Общий вид обозначения для объекта таков: 
+\[\obj{C}{id}{r_i = u_i, a_i = v_i},\]
+ где $C$ --- класс данного объекта, $id$ --- его уникальный идентификатор\footnote{Согласно основополагающим принципам ООП, каждый объект обладает \term{идентичностью} (identity, см. \cite{Booch}).}, $r_i = u_i$ --- ссылки и их значения, а $a_i = v_i$ --- атрибуты и их значения. Как и в случае классов, часто бывает удобно объединять атрибуты и ссылки и писать $\obj{C}{id}{f_i = v_i}$.
+
+\begin{lstlisting}[label=modelGrammar,float=htbp,caption={Грамматика, описывающая запись моделей в виде текста}]
+object : NAME '@' INT '{' (NAME '=' value ';')* '}' ;
+value : attrValue | refValue;
+attrValue : INT | STRING | CHAR | 'true' | 'false' 
+          | 'NULL' | enumValue;
+enumValue : NAME '.' NAME;
+refValue : object | ref | list | set | 'NULL';
+ref	: 'ref' '(' NAME '@' INT ')';
+list : <Collection '[', ']'> ;
+set : <Collection '{', '}'> ;
+
+template Collection<start, end> : Production+ {
+	: <?start> <?end>
+	: <?start>  <List object, ','> <?end>
+	: <?end> <List ref, ','> <?end>
+}
+\end{lstlisting}
+
+Значениями атрибутов могут быть литералы примитивных типов (числа, строки, символы, булевские значения) или перечислений.
+
+Значениями ссылок могут быть либо объекты (в случае агрегирующих ссылок), либо ссылочные выражения вида $\refv{C}{id}$, указывающие класс и идентификатор объекта, на который делается ссылка. Также ссылки могут иметь множественные значения --- коллекции\footnote{В принципе, множественные значения могут иметь и атрибуты, но для дальнейшего обсуждения это не важно, и мы не будем это учитывать.}, которые могут быть упорядоченными (списки) и неупорядоченными (множества).
+
+Шаблонные выражения в правой части правил для списков (\code{list}) и множеств (\code{set}) разворачиваются следующим образом:
+\begin{lstlisting}
+list
+	: '[' ']'
+	: '[' object (',' object)* ']'
+	: '[' ref (',' ref)* ']'
+	;
+set
+	: '{' '}'
+	: '{' object (',' object)* '}'
+	: '{' ref (',' ref)* '}'
+	;
+\end{lstlisting}
+Важно отметить, что коллекция может одновременно хранить либо объекты, либо ссылочные выражения, но не те и другие сразу.
+
+На объектах определено отношение структурной эквивалентности, обозначаемое $\cong$ и заданное правилами, приведенными на \figref{cong}.
+%
+\begin{figure}[htbp]
+	\centering
+$$
+\infer[obj]{
+	\obj{C}{id_1}{f_i = v_i} \cong \obj{C}{id_2}{f_i = u_i}
+}{
+	\forall i. \; v_i \cong u_i
+}
+$$
+$$
+\infer[ref]{
+	\refv{C}{id_1} \cong \refv{C}{id_2}
+}{
+	id_1 = id_2
+}
+\quad
+\infer[refl]{x \cong x}{}
+$$
+$$
+\infer[elist]{[\,] \cong [\,]}{}
+\quad
+\infer[list]{
+	[x_1,\ldots,x_n] \cong [y_1,\ldots,y_n]
+}{
+	\forall i \in [1:n]. \; x_i \cong y_i
+}
+$$
+$$
+\infer[eset]{\{\} \cong \{\}}{}
+\quad
+\infer[set]{
+	\{x_1,\ldots,x_n\} \cong \{y_1,\ldots,y_n\}
+}{
+	\forall i :\; x_i \cong y_{\pi(i)}
+}
+$$
+	\caption{Отношение структурной эквивалентности объектов}\label{cong}
+\end{figure}
+Два объекта связаны отношением $\cong$, если они являются точными копиями друг друга, то есть отличаются только идентификаторами. В правиле \rref{set} $\pi$ обозначает некоторую перестановку из $n$ элементов, которая необходима для того, чтобы выразить неупорядоченность коллекции.
+
+\section{Структурные ограничения в виде системы типов}
+
+Требования целевой мета-модели моделируются с помощью отношения ``подтип'', обозначаемого следующим образом:
+$$
+	\mbox{подтип} \subtype \mbox{супертип}.
+$$
+В остальном система типов выражена традиционным способом (см. \cite{Pierce}). \term{Контекст} $\Gamma$ представляет собой множество утверждений вида $e : \tau$, где $e$ --- шаблонное выражение, а $\tau$ --- тип; такие утверждения читаются как ``\term{$e$ имеет тип $\tau$}''. 
+
+определить подтипы
+
+\newcommand{\fromMM}{\MM{M} \Vdash}
+\begin{figure}[htbp]
+	\centering
+$$
+	\infer[object]{
+		\fromMM \obj{C}{id}{f_i = v_i} : \valt{C}
+	}{
+		\classf{C}{\_}{f_i : \tau_i} \in \MM{M}&
+		\fromMM v_i : \tau_i
+	}
+$$
+$$
+\infer[ref]{
+	\fromMM \refv{C}{id} : C
+}{}
+\quad
+\infer[null]{
+	\fromMM NULL : \tau^?
+}{}
+$$
+$$
+\infer[elist]{
+	\fromMM [\,] : \tau^*
+}{}
+\quad
+\infer[list]{
+	\fromMM [x_1, \ldots, x_n] : \type{TO}{\tau}^+
+}{
+	\forall i\in[1:n]. \; \fromMM x_i : \type{TO}{\tau} &
+	TO \in \{\valts,\, \refts\}
+}
+$$
+$$
+\infer[eset]{
+	\fromMM \{\} : \tau^*
+}{}
+\quad
+\infer[set]{
+	\fromMM \{x_1, \ldots, x_n\} : \type{TO}{\tau}^+
+}{
+	\forall i\in[1:n]. \; \fromMM x_i : \type{TO}{\tau} &
+	TO \in \{\valts,\, \refts\}
+}
+$$
+$$
+\infer[relax]{
+	\fromMM x : \tau^?
+}{
+	\fromMM x : \tau
+}
+\quad
+\infer[relax^+]{
+	\fromMM x : \tau^*
+}{
+	\fromMM x : \tau^+
+}
+\quad
+\infer[subtype]{
+	\fromMM x : \sigma
+}{
+	\fromMM x : \tau &
+	\tau \subtype \sigma
+}
+$$
+$$
+\infer[superclass]{
+	\forall i \in [1:n].\; \type{TO}{C} \subtype \type{TO}{S_i}
+}{
+	\classf{C}{\{S_i, \ldots, S_n\}}{\_} \in \MM{M} &
+	TO \in \{\valts,\, \refts\}
+}
+$$
+$$
+\infer[enum]{
+	\forall i \in [1:n]. \; \fromMM T.L_i : T
+}{
+	\mathbf{enum}\;T\{L_1,\ldots,L_n\} \in \MM{M}
+}
+\quad
+\infer[bool]{
+	\fromMM b : \mathtt{Boolean}
+}{
+	b \in \{\mathbf{true}, \mathbf{false}\}
+}
+$$
+$$
+\infer[int]{\fromMM INT : \mathtt{Integer}}{}
+\quad
+\infer[str]{\fromMM STRING : \mathtt{String}}{}
+$$
+$$
+\infer[char]{\fromMM CHAR : \mathtt{Char}}{}
+$$
+	\caption{Структурная корректность объектов}\label{TypesMM}
+\end{figure}
+
