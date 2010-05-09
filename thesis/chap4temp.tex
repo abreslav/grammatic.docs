@@ -67,25 +67,20 @@ class Variable {
 template Templates<domainSpecificTypes : Expression*, 
 		domainSpecificTerms : Expression*> : Grammar {
 	abstraction 
-		: 'template' NAME 
-			'<' variable (',' variable)*'>' 
-			type? 
+		: 'template' NAME <List variable, ','> type? 
 			'{' term '}';
 	variable : NAME type?;
 	type : ':' typeName ('?' | '*' | '+')?;
 	typeName
 		: basicType
-		: <?domainSpecificTypes>
-		;
+		: <?domainSpecificTypes> ;
 	basicType : 'Integer' | 'String' | 'Boolean' | 'Character' ;
 	term
 		: genericTerm
-		: <?domainSpecificTerms>
-		;
+		: <?domainSpecificTerms> ;
 	genericTerm
 		: '<' '?' NAME type? '>'
-		: '<' NAME term* '>'
-		;
+		: '<' NAME term* '>' ;
 }
 \end{lstlisting}
 
@@ -132,7 +127,7 @@ $$
 		T \ang{p_1 : \tau_1, \ldots, p_n : \tau_n} \,: \sigma \, \{ b \}
 	\right)
 }{abstr}
-$$ 
+$$
 $$
 \trule{
 	\Gamma \vdash \mathbf{template}\left(
@@ -143,6 +138,31 @@ $$
 }{
 	\Gamma \vdash \ang{T \, a_1, \ldots, a_n} : \sigma
 }{appl}
+$$
+$$
+\myinfer[null]{
+	\Gamma \vdash NULL : \tau^?
+}{}
+\quad
+\myinfer[relax]{
+	\Gamma \vdash x : \tau^?
+}{
+	\Gamma \vdash x : \tau
+}
+\quad
+\myinfer[relax$^+$]{
+	\Gamma \vdash x : \tau^*
+}{
+	\Gamma \vdash x : \tau^+
+}
+$$
+$$
+\myinfer[subtype]{
+	\Gamma \vdash x : \sigma
+}{
+	\Gamma \vdash x : \tau &
+	\tau \subtype \sigma
+}
 $$
 $$
 \myinfer[elist]{\Gamma \vdash [] : \tau*}{}
@@ -181,41 +201,19 @@ $$
 	\Gamma \vdash v : \tau^+
 }
 $$
-$$
-\myinfer[null]{
-	\Gamma \vdash NULL : \tau^?
-}{}
-\quad
-\myinfer[relax]{
-	\Gamma \vdash x : \tau^?
-}{
-	\Gamma \vdash x : \tau
-}
-\quad
-\myinfer[relax$^+$]{
-	\Gamma \vdash x : \tau^*
-}{
-	\Gamma \vdash x : \tau^+
-}
-$$
-$$
-\myinfer[subtype]{
-	\Gamma \vdash x : \sigma
-}{
-	\Gamma \vdash x : \tau &
-	\tau \subtype \sigma
-}
-$$
 	\caption{Базовая система типов языка шаблонов}\label{TempTypes}
 \end{figure}
+
+В правилах \rref{list} и \rref{set} использовано отношение $Item(x,\tau)$, означающее, что $x$ может быть элементом коллекции $\tau$. Определение этого отношения дано на том же рисунке и сводится к тому, что внутри коллекции типа $\tau$ можно использовать не только одиночные значения этого типа, но и переменные, сами являющиеся коллекциями, что соответствует возможности вставки сразу нескольких элементов.
+
+% mistake: we can add all <?v:\tau*> and get a collection of type \tau+
+
 Дополнительно к правилам типизации, на язык шаблонов накладывается следующее требование: 
 %\begin{enumerate}[(a)]
 %\item 
 \emph{Никакой шаблон не должен быть достижим из своего тела по ссылкам}. Это требование гарантирует отсутствие рекурсии в определениях шаблонов.
 %\item \emph{Если множество использований некоторого параметра непусто, в нем должно содержаться хотя бы одно использование, на которое указывает агрегирующая ссылка.} Это требование гарантирует, что в результате разворачивания не возникнет объектов, не агрегируемых результирующей моделью.
 %\end{enumerate}
-
-// Пояснения про систему типов
 
 \section{Генерация языка шаблонов}
 
@@ -308,7 +306,7 @@ $$
 \section{Структурная корректность}
 
 Система типов накладывает ограничения на шаблоны. Шаблоны и шаблонные выражения, удовлетворяющие правилам типизации, при разворачивании порождают конечные объекты, удовлетворяющие требованиям целевой мета-модели.
-Для того, чтобы убедиться в этом, покажем, что для системы типов и семанитки языка шаблонов выполняются свойства \term{сохранения типов} и \term{нормализации} \cite{Pierce}. 
+Для того, чтобы убедиться в этом, покажем, что для системы типов и семанитки языка шаблонов выполняются свойства \term{сохранения типов} и \term{нормализации}~\cite{Pierce}. 
 
 Как отмечалось выше, необходимым условием корректного поведения является тот факт, что функция разворачивания получает на вход выражение, в котором соблюдаются правила системы типов. Это условие формализовано в следующем определении.
 
