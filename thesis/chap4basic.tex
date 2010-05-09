@@ -74,6 +74,8 @@ top type?
 \newcommand{\attribute}[2]{\mathbf{attr}\langle #1 : #2\rangle}
 \newcommand{\obj}[3]{#1@#2\left\{#3\right\}}
 \newcommand{\fromMM}{\MM{M} \Vdash}
+\begin{figure}[htbp]
+	\centering
 $$
 	\infer[object]{
 		\fromMM \obj{C}{id}{f_i = v_i} : \valt{C}
@@ -164,6 +166,8 @@ $$
 $$
 \infer[char]{\fromMM CHAR : \mathtt{Char}}{}
 $$
+	\caption{Структурная корректность объектов}\label{TypesMM}
+\end{figure}
 
 структурная эквивалентность объектов
 
