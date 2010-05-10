@@ -717,6 +717,7 @@ example : .. ?e=('(' .. ')')?a={*} .. ;
 \end{lstlisting}
 
 // Примеры про before и after
+// Remove
 
 \section{Поддержка метаданных}
 
@@ -780,8 +781,52 @@ a : b c d ;
 \item список с разделителем (шаблон приводился выше).
 \end{itemize}
 
-СУБД \tool{Derby} \cite{Derby} и \tool{PostgreSQL} \cite{PostgreSQL} не поддерживают некоторые конструкции, описанные в стандарте.
+Для описания диалектов применяются аспекты. Так документация по СУБД \tool{PostgreSQL} \cite{PostgreSQL} отмечает некоторые отличия в синтаксисе запроса \code{SELECT} по сравнению со стандартом. Опишем эти отличия в виде аспектных правил, применяемых к грамматике \tool{SQL92}: образцы соответствуют стандартному синтаксису, а советы отражают изменения, имеющиеся в диалекте.
+\begin{itemize}
+\item В \tool{PostgreSQL} предложение \code{FROM} является необязательным:
+\begin{lstlisting}
+tableExpression : ?f=fromClause ..;
+	instead f : fromClause?;
+\end{lstlisting}
+%
+\item Использование ключевого слова \code{AS} при указании псевдонима обязательно:
+\begin{lstlisting}
+asClause : ?a=(AS?) ..;
+	instead a : AS;
+\end{lstlisting}
+%
+\item Квантор \code{DISTINCT} может быть снабжен предложением \code{ON}, которое позволяет указать, на каких выражениях необходимо сравнивать результаты запроса, чтобы исключить повторения:
+\begin{lstlisting}
+setQuantifier : ?d=DISTINCT | ...;
+	after d : (ON '(' <List expression ','> ')')?;
+\end{lstlisting}
+%
+\item В предложении \code{GROUP BY} разрешается указывать произвольные выражения:
+\begin{lstlisting}
+groupingColumnReference : ?p=:.:;
+	after p : : valueExpression;
+\end{lstlisting}
+%
+\item Спецификации \code{CORRESPONDING BY} не поддерживаются:
+\begin{lstlisting}
+nonjoinQueryTerm : ... | (.. ?c=(correspondingSpec?) ..);
+	remove P;
+\end{lstlisting}
+%
+\end{itemize}
 
+PostgreSQL SELECT:
+\url{http://www.postgresql.org/files/documentation/books/aw_pgsql/node278.html#SECTION0032784100000000000000}
+
+
+optional FROM
+mandatory AS
+The DISTINCT ON phrase is not part of SQL92. Nor are LIMIT and OFFSET. 
+Postgres also allows both clauses (ORDER BY GROUP BY) to specify arbitrary expressions
+The CORRESPONDING BY clause is not supported by Postgres. 
+
+
+СУБД \tool{Derby} \cite{Derby} и 
 Derby:
 \url{http://db.apache.org/derby/docs/10.0/manuals/reference/sqlj151.html}
 natural join
@@ -789,13 +834,6 @@ INTERSECT
 Full outer join
 Union join
 
-PostgreSQL SELECT:
-\url{http://www.postgresql.org/files/documentation/books/aw_pgsql/node278.html#SECTION0032784100000000000000}
-optional FROM
-mandatory AS
-The DISTINCT ON phrase is not part of SQL92. Nor are LIMIT and OFFSET. 
-Postgres also allows both clauses (ORDER BY GROUP BY) to specify arbitrary expressions
-The CORRESPONDING BY clause is not supported by Postgres. 
 \chapter{Сравнение с существующими инструментами}
 
 Результаты сравнения \GRM{} с другими инструментами представлены в \tabref{GrmTable}. Строки таблицы соответствуют тем или иным возможностям, связанным с механизмами композиции. Для сравнения были выбраны девять инструментов, поддерживающих различные механизмы композиции, а также \tool{Yacc/Bison}, очень широко используемое представляющие семейство инструментов.
