@@ -782,6 +782,12 @@ a : b c d ;
 \end{itemize}
 
 Для описания диалектов применяются аспекты. Так документация по СУБД \tool{PostgreSQL} \cite{PostgreSQL} отмечает некоторые отличия в синтаксисе запроса \code{SELECT} по сравнению со стандартом. Опишем эти отличия в виде аспектных правил, применяемых к грамматике \tool{SQL92}: образцы соответствуют стандартному синтаксису, а советы отражают изменения, имеющиеся в диалекте.
+%\url{http://www.postgresql.org/files/documentation/books/aw_pgsql/node278.html#SECTION0032784100000000000000}
+%optional FROM
+%mandatory AS
+%The DISTINCT ON phrase is not part of SQL92. Nor are LIMIT and OFFSET. 
+%Postgres also allows both clauses (ORDER BY GROUP BY) to specify arbitrary %expressions
+%The CORRESPONDING BY clause is not supported by Postgres. 
 \begin{itemize}
 \item В \tool{PostgreSQL} предложение \code{FROM} является необязательным:
 \begin{lstlisting}
@@ -814,25 +820,15 @@ nonjoinQueryTerm : ... | (.. ?c=(correspondingSpec?) ..);
 \end{lstlisting}
 %
 \end{itemize}
+Как видно из примеров, каждое отличие реализуется весьма кратко, что делает всю спецификацию диалекта компактной. Такая спецификация может быть разделена на аспект, вносящий дополнения в стандартную грамматику, и аспект, удаляющий неподдерживаемые конструкции. Наиболее вероятно, что из второго аспекта правила будут удаляться по мере того, как соответствующие конструкции будут поддерживаться в новых версиях СУБД.
 
-PostgreSQL SELECT:
-\url{http://www.postgresql.org/files/documentation/books/aw_pgsql/node278.html#SECTION0032784100000000000000}
-
-
-optional FROM
-mandatory AS
-The DISTINCT ON phrase is not part of SQL92. Nor are LIMIT and OFFSET. 
-Postgres also allows both clauses (ORDER BY GROUP BY) to specify arbitrary expressions
-The CORRESPONDING BY clause is not supported by Postgres. 
-
-
-СУБД \tool{Derby} \cite{Derby} и 
-Derby:
-\url{http://db.apache.org/derby/docs/10.0/manuals/reference/sqlj151.html}
-natural join
-INTERSECT
-Full outer join
-Union join
+Аналогичные аспектные описания можно сделать и для других диалектов, например, \tool{Derby} \cite{Derby}.
+%\url{http://db.apache.org/derby/docs/10.0/manuals/reference/sqlj151.html}
+%natural join
+%INTERSECT
+%Full outer join
+%Union join
+В целом, механизм аспектов показал себя очень эффективным инструментом для описания семейств родственных языков.
 
 \chapter{Сравнение с существующими инструментами}
 
