@@ -29,16 +29,15 @@ class Wildcard extends Term {
 \end{lstlisting}
 //	subrules : AspectRule*; // scoped by variables?
 
-
 Конкретный синтаксис строится следующим образом: к синтаксису шаблонов добавляются конструкции для описания срезов (нетерминальный символ \code{aspectTerm}):
-\begin{lstlisting}
+\begin{lstlisting}[language=Grammatic]
 aspectTerm 
 	: genericAspectTerm
 	: <?domainSpecificTerm> ;
 genericAspectTerm
 	: aspectVariable type? '=' aspectTerm // Определение переменной
-	: aspectVariable                // Ссылка на переменную
-	: '<' '?' type '>'              // Подстановочный знак
+	: aspectVariable                      // Ссылка на переменную
+	: '<' '?' type '>' ;                  // Подстановочный знак
 aspectVariable : '?' NAME;
 \end{lstlisting}
 \begin{itemize}
@@ -256,10 +255,8 @@ $$
 \term{Аспектным правилом} (или \term{атомарным аспектом}) называется тройка
 $\mathcal{R} = \langle P, T, V \rangle$, где
 \begin{itemize}
-\item $P$ --- образец (срез), связывающий переменные $v_1,\ldots,v_m$;
-// шаблонное выражение без свободных переменных
-\item $T$ --- наиболее конкретный тип элемента, который может быть успешно сопоставлен с $P$;
-// тип этого выражения
+\item $P$ --- образец (срез), связывающий переменные $v_1,\ldots,v_m$ и не имеющий свободных переменных;
+\item $T$ --- наиболее конкретный тип элемента, который может быть успешно сопоставлен с $P$, то есть тип $P$ (см. \figref{TempTypes});
 \item $V$ --- набор \term{правил замены}, то есть кортежей $\langle v_i, t_i \rangle$, где
 	\begin{itemize}
 		\item $v_i$ --- переменная;
