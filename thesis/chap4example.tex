@@ -1,11 +1,22 @@
 \chapter{Пример: расширение простого языка}
 
-
-
+В качестве примера применения описанного выше метода в данном разделе описано расширение простого предметно-ориентированного языка \tool{Toy}. Данный язык позволяет описывать интерфейсы классов, например:
 \begin{lstlisting}
+class Iterator {
+	fun hasNext() : Boolean;
+	fun next() : Object;
+}
+class Collection {
+	fun add(obj : Object) : Boolean;
+	fun iterator() : Iterator;
+}
+\end{lstlisting}
+Как видно из примера, классы имеют имена, а в теле содержат объявления функций. Грамматика данного языка, приведенная в \lstref{ToyGrammar} позволяет также указывать суперкласс после ключевого слова \code{extends}.
+
+\begin{lstlisting}[float=htbp,label=ToyGrammar,caption=Грамматика языка \tool{Toy}]
 specification : class*;
 class
-	: 'class' name ('extends' <List name, ','>)? '{'
+	: 'class' name ('extends' name)? '{'
 		function*
 	  '}'
 	;
@@ -18,46 +29,70 @@ type
 name : NAME;
 \end{lstlisting}
 
-\begin{lstlisting}
-class Specification { val classes : Class*; }
+Целевая мета-модель данного языка приведена в \figref{ToyMM} (слева) в текстовой нотации. 
+\begin{figure}[htbp]
+	\centering
+\begin{tabular}{b{.45\textwidth}b{.45\textwidth}}
+%[float=htbp,label=ToyMM,caption=Целевая мета-модель языка \tool{Toy}]
+\begin{lstlisting}[xleftmargin=0cm,framesep=0pt]
+class Specification { 
+	val classes : Class*; 
+}
 class Class {
 	val name : Name;
-	ref superclasses : Class*;
+	ref superclass : Class?;
 	val functions : Function*;
 }
 class Function {
 	val name : Name;
-	val parameters : Parameter*;
+	val params : Parameter*;
 	ref returnType : Class;
 }
 class Parameter {
 	val name : Name;
 	ref type : Class;
 }
-class Name { attr name : String; }
-\end{lstlisting}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+class Name { 
+	attr name : String; 
+}\end{lstlisting}%
+&
+\begin{lstlisting}[xleftmargin=0cm,framesep=0pt]
+class SpecificationT extends Term { 
+	val classes : Term*; 
+}
+class ClassT extends Term {
+	val name : Term;
+	ref superclass : Term?;
+	val functions : Term*;
+}
+class FunctionT extends Term {
+	val name : Term;
+	val params : Term*;
+	ref returnType : Term;
+}
+class ParameterT extends Term {
+	val name : Term;
+	ref type : Term;
+}
+class NameT extends Term { 
+	attr name : Term; 
+}\end{lstlisting}%
+%\\
+%\hline
+%\begin{center}(а)\end{center}&
+%\begin{center}(б)\end{center}\\
+\end{tabular}
+	\caption{Классы целевой мета-модели исходного языка и языка шаблонов }\label{ToyMM}
+\end{figure}
+Из названий классов видно, как они сопоставлены символам грамматики. На том же рисунке справа показан результат применения преобразования $\TC{\bullet}$ к классам целевой мета-модели. Согласно описанной выше процедуре, грамматика расширена, и к каждому правилу добавлена продукция ``\code{: term}''.
+Соответствующее применение шаблона \code{Templates} (\lstref{TempG}) выглядит следующим образом:
 \begin{lstlisting}
-specification 
-	: class*
-	: term ;
-class
-	: 'class' name ('extends' <List name, ','>)? '{'
-		function*
-	  '}'
-	: term
-	;
-function
-	: 'fun' name '(' <List parameter ','> ')' ':' name
-	: term;
-parameter 
-	: name ':' name
-	: term;
-name 
-	: NAME
-	: term;
+<Templates 
+	('Specification' | 'Class' | 'Function' | 'Parameter' | 'Name'),
+	(specification, class, function, parameter, name)>
 \end{lstlisting}
 
+Полученный язык позволяет записывать следующие шаблонные выражения, достаточно близкие к шаблонным классам \tool{C++}:
 \begin{lstlisting}
 template Iterator<N : String, T : Class> : Class {
 	class <?N> {
@@ -72,39 +107,12 @@ template Collection<N : String, IN : String, T : Class> : Class {
 		fun iterator() : <Iterator <?IN> <?T>>
 	}
 }
+\end{lstlisting}
+Важным отличием от шаблонов \tool{C++} является необходимость указывать имена как параметры шаблонов. Эту проблему можно устранить, если добавить к процедуре разворачивания шаблонов стадию переименования, запрограммированную вручную. Добавление подобных функций до и после семантических операций, описанных выше, не представляет затруднений и гораздо проще, чем реализация всего механизма шаблонов полностью вручную.
 
+Полученный при расширении языка \tool{Toy} механизм аспектов позволяет реализовать внешние декларации функций (аналогично Inter-Type Declarations в \tool{AspectJ}) следующим образом:
+\begin{lstlisting}
 on class <? : String> { ?funs=<? : Function*> } perform
-	append funs : fun toString() : String;
+	instead funs : <?funs>; fun toString() : String;
 \end{lstlisting}
-
-\begin{lstlisting}
-class SpecificationT extends Term { val classes : Term*; }
-class ClassT extends Term {
-	val name : Term;
-	ref superclasses : Term*;
-	val functions : Term*;
-}
-class FunctionT extends Term {
-	val name : Term;
-	val parameters : Term*;
-	ref returnType : Term;
-}
-class ParameterT extends Term {
-	val name : Term;
-	ref type : Term;
-}
-class NameT extends Term { attr name : Term; }
-\end{lstlisting}
-
-\begin{lstlisting}
-template List<N, T> {
-	class N {
-		
-	}
-}
-
-\end{lstlisting}
-
-шаблоны
-
-аспекты
+Данное аспектное правило добавляет в тело каждого класса функцию \code{toString()}, что демонстрирует возможности квантификации (все классы обрабатываются одним правилом) и незнания (классы не готовятся для расширения специальным образом и имеют смысле даже если аспект не применялся).
