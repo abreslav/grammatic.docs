@@ -7,44 +7,7 @@
 \input{chap4basic.tex}
 \input{chap4temp.tex}
 \input{chap4aspects.tex}
-
-\chapter{Пример: расширение языка \tool{Emfatic}}
-//
-\begin{lstlisting}
-specification : classifier*;
-classifier
-	: class
-	: enum
-	: data
-	;
-class
-	: 'abstract'? 'class' NAME ('extends' <List NAME, ','>)? '{'
-		feature*
-	  '}'
-	;
-feature
-	: 'attr' sign
-	: 'ref' sign
-	: 'val' sign
-	;
-sign : NAME ':' type;
-type : NAME ('*' | '+' | '?')?;
-enum : 'enum' NAME '{' <List NAME, ','> '}' ;
-data : 'data' NAME '=' STRING ;
-\end{lstlisting}
-
-\begin{lstlisting}
-template List<N, T> {
-	class N {
-		
-	}
-}
-
-\end{lstlisting}
-
-шаблоны
-
-аспекты
+\input{chap4example.tex}
 
 \chapter{Сравнение с существующими подходами}
 

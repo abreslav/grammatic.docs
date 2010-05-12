@@ -1,0 +1,110 @@
+\chapter{Пример: расширение простого языка}
+
+
+
+\begin{lstlisting}
+specification : class*;
+class
+	: 'class' name ('extends' <List name, ','>)? '{'
+		function*
+	  '}'
+	;
+function
+	: 'fun' name '(' <List parameter ','> ')' ':' type;
+parameter 
+	: name ':' type;
+type 
+	: name ('*' | '+' | '?')?;
+name : NAME;
+\end{lstlisting}
+
+\begin{lstlisting}
+class Specification { val classes : Class*; }
+class Class {
+	val name : Name;
+	ref superclasses : Class*;
+	val functions : Function*;
+}
+class Function {
+	val name : Name;
+	val parameters : Parameter*;
+	ref returnType : Class;
+}
+class Parameter {
+	val name : Name;
+	ref type : Class;
+}
+class Name { attr name : String; }
+\end{lstlisting}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{lstlisting}
+specification 
+	: class*
+	: term ;
+class
+	: 'class' name ('extends' <List name, ','>)? '{'
+		function*
+	  '}'
+	: term
+	;
+function
+	: 'fun' name '(' <List parameter ','> ')' ':' name
+	: term;
+parameter 
+	: name ':' name
+	: term;
+name 
+	: NAME
+	: term;
+\end{lstlisting}
+
+\begin{lstlisting}
+template Iterator<N : String, T : Class> : Class {
+	class <?N> {
+		fun hasNext() : Boolean
+		fun next() : <?T>
+	}
+}
+template Collection<N : String, IN : String, T : Class> : Class {
+	class <?N> {
+		fun contains(object : <?T>) : Boolean
+		fun add(object : <?T>) : Boolean
+		fun iterator() : <Iterator <?IN> <?T>>
+	}
+}
+
+on class <? : String> { ?funs=<? : Function*> } perform
+	append funs : fun toString() : String;
+\end{lstlisting}
+
+\begin{lstlisting}
+class SpecificationT extends Term { val classes : Term*; }
+class ClassT extends Term {
+	val name : Term;
+	ref superclasses : Term*;
+	val functions : Term*;
+}
+class FunctionT extends Term {
+	val name : Term;
+	val parameters : Term*;
+	ref returnType : Term;
+}
+class ParameterT extends Term {
+	val name : Term;
+	ref type : Term;
+}
+class NameT extends Term { attr name : Term; }
+\end{lstlisting}
+
+\begin{lstlisting}
+template List<N, T> {
+	class N {
+		
+	}
+}
+
+\end{lstlisting}
+
+шаблоны
+
+аспекты

@@ -203,7 +203,7 @@ An \emph{aspect} is basically a unit comprising of a number of such pointcut-adv
 \Grammatic{} employs the principles of AOP in order to tackle the problems of tangling and duplication in annotated grammars. We will use the grammar from \lstref{arithexpr} and the annotated rule from \lstref{annotated_rule} to illustrate how the terms such as ``pointcut'' and ``advice'' are embodied for annotated grammars. 
 
 % Join points
-\subsection*{Grammatical join points}
+\subsection{Grammatical join points}
 \figref{structured} shows a structured representation (a syntax diagram) of the annotated rule from \lstref{annotated_rule}. 
 \fig{structured}{Annotations attached to a grammar rule}
 It shows the annotations attached to a symbol definition \texttt{expr}, three symbol references: \texttt{term} (two times) and \texttt{MINUS}, and an alternative~\texttt{(PLUS | MINUS)} (marked ``\emph{alt}'' in the figure). All these are examples of \emph{grammatical join points} (in \figref{structured} they are marked with black circles). The full list of join point types comprises all the types of nodes of the abstract syntax trees (ASTs) of the \emph{language of grammars}. To avoid confusion with ASTs of languages defined by the grammar, we will refer to the AST of the grammar itself as \emph{grammar tree} (GT).
@@ -220,7 +220,7 @@ It shows the annotations attached to a symbol definition \texttt{expr}, three sy
 The grammars given in this paper (e.g., \lstref{patterns}) may serve as example usages of this notation.
 
 % Pointcuts
-\subsection*{Grammatical pointcuts}
+\subsection{Grammatical pointcuts}
 
 \Grammatic{} implements pointcuts using \emph{patterns} over the grammar language. A pattern is an expression that matches a set of nodes in a GT. The syntax of the pattern language is given in \lstref{patterns}. 
 \begin{lstlisting}[language=Grammatic,label=patterns,float,caption=Grammar of the pattern language]
@@ -287,7 +287,7 @@ Here the variable \texttt{\$tr} is defined with the pattern \texttt{\#} (any sym
 Note that in general a variable is bound to a \emph{set} of GT nodes: if we match the rule for \texttt{expr} against the pattern in the example above, the variable \texttt{\$tr} will be bound to a set comprised by two distinct references to the symbol \texttt{term}.
 
 % Advice
-\subsection*{Grammatical advice}
+\subsection{Grammatical advice}
 Annotations attached to grammars (they are analogous to AspectJ's \emph{advice}) may have an arbitrarily complicated structure: in general, a generator may need a very rich annotation system. \Grammatic{} provides a \emph{generic annotation language}, which represents the annotations as sets of name-value pairs (see \lstref{advice}) which we call \emph{attributes}. Examples of such pairs are given in \tabref{value_types} which shows all the predefined value types. Values may also have user-defined types which can be plugged into the position marked by \texttt{<additionalValueTypes>} in the grammar.
 
 \begin{table}[h!]
@@ -333,7 +333,7 @@ For example, the annotations in \figref{structured} may be represented as values
 As the usage of the term ``attribute'' may be misleading in this context, we would like to note that the approach presented here does not directly correspond to attribute grammars \cite{ATG}. In fact, grammars with annotations do not have any particular execution semantics (each generator interprets the annotations in its own way), as opposed to attributed grammars which have a fixed execution semantics. One can describe attribute grammars using \Grammatic{} and define corresponding semantics in a generator, but this is just an example application.
 
 % Aspects
-\subsection*{Grammatical aspects}
+\subsection{Grammatical aspects}
 Now, having described all the components, we can assemble a \emph{grammatical aspect} as a set of pointcuts-advice pairs.
 Usage of grammatical aspects is illustrated by \figref{problems_and_solution}~(right side).
 
@@ -383,7 +383,7 @@ Patterns and subpatterns may be preceded by a \emph{multiplicity directive}, for
 \end{lstlisting}
 Multiplicity determines a number of times the pattern is allowed to match. The default multiplicity is \texttt{[1..*]} which means that each pattern with no explicit multiplicity is allowed to match one or more times. When an aspect is applied to a grammar, if the actual number of matches goes beyond the range allowed by a multiplicity directive, \Grammatic{} generates an error message. In the example above, such a message will be generated for the grammar from \lstref{arithexpr} because the pattern matches two rules: \texttt{expr} and \texttt{term}, which violates the specified multiplicity \texttt{[0..1]}.
 
-\subsection*{Generation-time behaviour}
+\subsection{Generation-time behaviour}
 
 Grammatical aspects are applied at generation time. Before a generator starts working, in order to prepare the data for it, \Grammatic{} performs the following steps:
 \begin{itemize}
@@ -427,7 +427,7 @@ Thus, \Grammatic{} works as a front-end for generators that use its API. To use 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Applications}\label{Example}
 In this section we show how one can make use of grammatical aspects when generating syntax highlighters and pretty-printers on the basis of the same grammar.
-\subsection*{Specifying syntax highlighters}
+\subsection{Specifying syntax highlighters}
 
 A syntax highlighter generator creates a highlighting add-on for an IDE, such as a script for \texttt{vim} editor or a plug-in for Eclipse. For all targets the same specification language is used: we annotate a grammar with \emph{highlighting groups} which are assigned to occurrences of terminals. Each group may have its own color attributes when displayed. Common examples of highlighting groups are \emph{keyword}, \emph{number}, \emph{punctuation}. 
 
@@ -482,7 +482,7 @@ typeArgument : {...}
 \end{lstlisting}
 
 % Pretty-printers
-\subsection*{Specifying pretty-printers}
+\subsection{Specifying pretty-printers}
 
 By applying a different aspect to the same grammar (\lstref{java}), one can specify a pretty-printer for Java. A pretty-printer generator relies on annotations describing how tokens should be aligned by inserting whitespace between them. 
 
