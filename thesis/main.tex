@@ -4,7 +4,9 @@
 \usepackage{ucs}
 \usepackage[T2A]{fontenc}
 \usepackage{cmap} 
+\usepackage{cyrtimes} 
 \usepackage{indentfirst} 
+
 
 %\PrerenderUnicode{}
 
@@ -81,7 +83,7 @@
 \lstset{
 	inputencoding=utf8x, 
 	extendedchars=\true, 
-	basicstyle=\ttfamily\footnotesize,
+	basicstyle=\ttfamily\scriptsize,
 	keywordstyle=\sffamily\bfseries,
 	stringstyle=\sffamily,
 	commentstyle=\color{OliveGreen}\ttfamily,
@@ -90,6 +92,7 @@
 	showstringspaces=false,
 	xleftmargin=1cm,
 	texcl,
+	basewidth=.7em
 }
 \lstdefinelanguage{Grammatic}
 	{
@@ -112,11 +115,20 @@
 }
 
 
+%% Define a new style for the package that will use a smaller font.
+\makeatletter
+\def\url@mystyle{%
+  \@ifundefined{selectfont}{\def\UrlFont{\sf}}{\def\UrlFont{\footnotesize\ttfamily}}}
+\makeatother
+%% Now actually use the newly defined style.
+\urlstyle{my}
+
+
 \newcommand{\figref}[1]{Рис.~\ref{#1}}
 \newcommand{\lstref}[1]{Лист.~\ref{#1}}
 \newcommand{\tabref}[1]{Таб.~\ref{#1}}
 \newcommand{\term}[1]{\emph{#1}}
-\newcommand{\code}[1]{\mbox{\small\texttt{#1}}}
+\newcommand{\code}[1]{\mbox{\footnotesize\texttt{#1}}}
 \newcommand{\tool}[1]{\textsc{#1}}
 \newcommand{\bad}[1]{{\color{red}\textbf{#1}}}
 

@@ -1,0 +1,665 @@
+\documentclass{beamer}
+\usepackage[utf8x]{inputenc}
+\usepackage{ucs}
+\usepackage[T2A]{fontenc}
+\usepackage{cmap} 
+\usepackage{cyrtimes} 
+\usepackage{multirow}
+\usepackage{rotating}
+\usepackage{cmap}
+\usepackage{url}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{proof}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{array}
+\usepackage{underscore}
+
+\newtheorem{Th}{Теорема~}
+
+
+\definecolor{Brown}{cmyk}{0,0.81,1,0.60}
+\definecolor{OliveGreen}{cmyk}{0.64,0,0.95,0.40}
+\definecolor{CadetBlue}{cmyk}{0.62,0.57,0.23,0}
+\definecolor{MyDarkBlue}{rgb}{0,0.08,0.45} 
+
+
+\newcommand{\tool}[1]{\textsc{#1}}
+\newcommand{\GRM}{\textsc{Grammatic}}
+\newcommand{\ATF}{\tool{Grammatic$^{SDT}$}}
+\newcommand{\term}[1]{\emph{#1}}
+\newcommand{\dissonly}[1]{}
+\newcommand{\size}{\scriptsize}
+
+\newcommand{\MM}[1]{\mathcal{#1}}%
+\newcommand{\Inst}[2]{\mathcal{I}_{#1} \left[ #2 \right]}%
+\newcommand{\match}[3][]{#2 \; \mathbf{match}_{#1} \; #3}
+\newcommand{\matchNV}[3][]{#2 \; \overline{\mathbf{match}}_{#1} \; #3}
+\newcommand{\ang}[1]{\mathsf{<}#1\mathsf{>}}
+\newcommand{\wcard}[2]{\mathsf{<} #1 : #2 \mathsf{>} }
+\newcommand{\ME}{\Upsilon}
+\newcommand{\meitem}[2]{\left\{ #1 \mapsto #2 \right\}}
+\newcommand{\meempty}{\left\{\right\}}
+\DeclareMathOperator{\MEjoin}{\mbox{\Large$\uplus$\hspace{-2pt}}}
+\DeclareMathOperator{\mejoin}{\uplus}
+%\newcommand{\mejoin}{\uplus}
+\newcommand{\mereplace}{\pitchfork}
+\newcommand{\meflatten}[1]{\overline{#1}}
+\newcommand{\subtype}{\preceq}
+\newcommand{\suptype}{\succeq}
+\newcommand{\myinfer}[3][]{\infer[\mbox{#1}]{#2}{#3}}
+\newcommand{\matchList}[3]{\mathit{matchList}_{#1}(#2,\, #3)}
+\newcommand{\matchSet}[3]{\mathit{matchSet}_{#1}(#2,\, #3)}
+\newcommand{\trule}[3]{%
+\myinfer[#3]{#2}{#1}%(\mbox{\textsc{#3}})%
+}%
+\newcommand{\rref}[1]{\mbox{\textit{#1}}}
+\newcommand{\class}[4]{\mathbf{class}\; #1 \langle #2, #3, #4\rangle}%
+\newcommand{\classf}[3]{\mathbf{class}\; #1 \langle #2, #3\rangle}%
+\newcommand{\reference}[3]{\mathbf{#1}\langle #2 : #3\rangle}%
+\newcommand{\attribute}[2]{\mathbf{attr}\langle #1 : #2\rangle}%
+\newcommand{\type}[2]{#1\left(#2\right)}%
+\newcommand{\valts}{\mathbf{val}}%
+\newcommand{\valt}[1]{\type{\valts}{#1}}%
+\newcommand{\refts}{\mathbf{ref}}%
+\newcommand{\reft}[1]{\type{\refts}{#1}}%
+\newcommand{\obj}[3]{#1@#2\left\{#3\right\}}%
+\newcommand{\refv}[2]{\mathbf{ref}\; #1@#2}%
+\newcommand{\subst}[2]{ #1 \mapsto #2 }
+\newcommand{\apply}[2]{\left( #1 \right) \triangleright #2}
+
+
+\lstdefinelanguage{Grammatic}
+	{
+		morestring=[b]',
+		morekeywords={lex,empty,before,after,at,template},
+		morecomment=[l]{//},
+	}
+\lstset{
+	inputencoding=utf8x, 
+	extendedchars=\true, 
+	basicstyle=\ttfamily\scriptsize,
+	keywordstyle=\sffamily\bfseries,
+	stringstyle=\sffamily,
+	commentstyle=\color{OliveGreen}\ttfamily,
+	tabsize=4,
+	captionpos=b,
+	showstringspaces=false,
+	xleftmargin=1cm,
+	texcl,
+	basewidth=.7em,
+	language=Grammatic
+}
+
+
+\title{Механизмы композиции в предметно-ориентированных языках}
+\author{Андрей Бреслав}
+\date{\today}
+
+\begin{document}
+\newcommand{\ignore}[1]{}
+\frame {\titlepage}
+
+
+\frame{
+\frametitle{Содержание работы}
+\small
+\textbf{Цель работы:} расширение предметно-ориентированных языков механизмами композиции, поддерживающими повторное использование.
+\begin{itemize}
+\item Язык \GRM{} 
+	\begin{itemize}
+		\item описание текстового синтаксиса;
+		\item поддержка шаблонов и аспектов.
+	\end{itemize}
+\item Генератор трансляторов \ATF{}
+	\begin{itemize}
+		\item проверка типов в семантических действиях;
+		\item генерация кода на многих языках реализации.
+	\end{itemize}
+\item Метод расширения языков механизмами композиции
+	\begin{itemize}
+		\item добавление шаблонов и аспектов;
+		\item формальное описание семантики механизмов композиции;
+		\item гарантии корректности с помощью системы типов.
+	\end{itemize}
+\end{itemize}
+}
+
+\frame{
+	\frametitle{Язык \GRM{}}
+	
+\begin{itemize}
+\item Операции EBNF
+	\begin{itemize}
+		\item описание лексической и синтаксической структуры
+		\item строковые литералы в качестве нетерминалов
+	\end{itemize}
+\item Метаданные --- обобщенный механизм для представления аннотаций
+	\begin{itemize}
+		\item семантические действия
+		\item автоматическое форматирование
+		\item ...
+	\end{itemize}
+\item Конвертеры для интеграции с существующими инструментами
+	\begin{itemize}
+		\item пример: преобразование \GRM{} $\rightarrow$ ANTLR
+		\item добавление к инструментам механизмов композиции
+		\item метаданные описывают специфичную информацию
+	\end{itemize}
+\end{itemize}	
+}
+
+\begin{frame}[fragile]
+	\frametitle{Шаблоны грамматических выражений}
+Объявление шаблона:
+\begin{lstlisting}
+template List<
+    item : Expression, 
+    sep : Expression
+  > : Expression {
+  
+    <?item> (<?sep> <?item>)* <?sep>?
+    
+}
+\end{lstlisting}
+Применение шаблона:
+\begin{lstlisting}
+<List INT, ','>
+\end{lstlisting}
+Результат применения:
+\begin{lstlisting}
+INT (',' INT)* ','?
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Параметризованные модули}
+Шаблон грамматики:
+\begin{lstlisting}[xleftmargin=0.3cm]
+template SMMain<event : Expression, eventRef : Expression, 
+        commandRef : Expression> : Symbol+ 
+{
+    system : <?event>* stateMachine;
+    stateMachine : 'statemachine' NAME '{' state* '}';
+    state : 'state' NAME '{' do? (transition ';')* '}';
+    do : 'do' block;
+    transition : 'on' <?eventRef> 'goto' stateRef;
+    stateRef : NAME;
+    block : '{' (<?commandRef> ';')* '}';
+}
+\end{lstlisting}
+Применение шаблона:
+\begin{lstlisting}[xleftmargin=0.3cm]
+<SMMain event, eventRef, commandRef>
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Аспекты}
+\begin{itemize}
+\item Точки присоединения (join points) --- любые элементы грамматики
+	\begin{itemize}
+		\item символы, выражения, продукции...
+	\end{itemize}
+\item Срезы (point cuts) --- образцы, сопоставляемые с объектами в грамматике
+	\begin{itemize}
+		\item цитирование
+		\item подстановочные знаки
+		\item переменные
+	\end{itemize}
+\item Советы (advice)
+	\begin{itemize}
+		\item замена значения переменной (instead)
+		\item добавление перед (before) или после (after) переменной
+		\item удаление вхождений переменной (remove)
+		\item присоединение метаданных (@)
+	\end{itemize}
+\end{itemize}	
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Примеры использования аспектов}
+Замена:
+\begin{lstlisting}[xleftmargin=0.3cm]
+?i=.. (?sep=#lex ?i);
+    instead sep : <?sep>+;
+\end{lstlisting}
+Вставка перед вхождением переменной:
+\begin{lstlisting}[xleftmargin=0.3cm]
+.. ?n=NUM ..;
+    before n : '-'?;
+\end{lstlisting}
+Присоединение метаданных:
+\begin{lstlisting}[xleftmargin=0.3cm]
+example : .. ?e=('(' .. ')') .. ;
+    @e : {a = 10} ;
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Сравнение с существующими подходами}
+\input{grammatic.table.tex}
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Применение}
+\begin{itemize}
+\item Диалекты языка SQL
+	\begin{itemize}
+		\item SQL92, PostgreSQL, Derby
+		\item шаблоны для повторяющихся конструкций
+		\item аспекты для отличий от стандарта
+	\end{itemize}
+\item Описание компонент IDE: подсветка синтаксиса, автоформатирование
+	\begin{itemize}
+		\item описание с помощью метаданных
+		\item присоединение с помощью аспектов к одной грамматике
+		\item сокращение дублирования
+		\item контроль синхронности изменений
+	\end{itemize}
+\end{itemize}	
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Генератор трансляторов \ATF{}}
+	
+\begin{itemize}
+\item Отсутствие ошибок в сгенерированном коде
+	\begin{itemize}
+		\item раннее обнаружение ошибок
+		\item семантические действия на абстрактном языке
+		\item проверка типов в семантических действиях
+	\end{itemize}
+\item Генерация кода на нескольких языках реализации
+	\begin{itemize}
+		\item интеграция с существующими генераторами
+		\item декларативное описание системы типов
+		\item единообразный механизм проверки и вывода типов
+		\item генерация нескольких реализаций по одной спецификации
+	\end{itemize}
+\item Разработан на основе \GRM{}
+	\begin{itemize}
+		\item несколько спецификаций для одной грамматики
+		\item механизмы композиции
+	\end{itemize}
+\end{itemize}	
+\end{frame}
+
+\renewcommand{\L}{{}}
+\newcommand{\G}{ {\mathcal{G}_\L} }
+\newcommand{\eql}{\cong_\L}
+\newcommand{\lel}{\subtype_\L}
+\newcommand{\gel}{\suptype_\L}
+\newcommand{\TUP}{TupleType}
+\newcommand{\Str}{String_\L}
+
+\begin{frame}
+	\frametitle{Параметризованная система типов}
+
+\noindent
+$\begin{array}{lll}
+
+	\begin{array}{l}
+		\trule{}{\Gamma \vdash \mathtt{NAME\#} : \Str}{token}\\
+		\\
+		\trule{}{\Gamma, \alpha : \tau \vdash \alpha : \tau }{attribute}\\
+	\end{array}
+&&
+\trule{
+\begin{array}{l}
+	\tau_1 \ldots\tau_n \in \G\\
+	\Gamma \vdash x_1 : \tau_1 \, \ldots \, \Gamma \vdash x_n : \tau_n
+\end{array}
+}{
+	\Gamma \vdash (x_1, \ldots, x_n) : (\tau_1, \ldots, \tau_n)
+}{tuple}
+
+\\
+&&\hspace{10pt}\\
+\multicolumn{3}{c}{
+\trule{	
+%\begin{array}{lll}
+		\tau_1 \ldots\tau_n,\, \sigma_1 \ldots \sigma_n,\, \rho_1 \ldots \rho_m \in \G
+		&\,&
+		\sigma_1 \gel \rho_1\,\ldots\, \sigma_m \gel \rho_m\\
+		\Gamma \vdash f : (\sigma_1,\,\ldots,\,\sigma_m) \rightarrow (\tau_1,\,\ldots,\,\tau_n)
+		&\,&
+		\Gamma \vdash x_1 : \rho_1 \, \ldots \, \Gamma \vdash x_n : \rho_n\\
+%\end{array}
+}{\Gamma \vdash f(x_1,\,\ldots,\,x_m) : (\tau_1,\,\ldots,\,\tau_n)}{app}
+}
+\end{array}$
+
+Параметры:
+\begin{itemize}
+\item множество \term{базовых типов} $\G$ (от \emph{ground});
+\item выделенный \term{строковый тип} $\Str \in \G$;
+\item отношение ``подтип-спертип'' $\lel \;\subseteq \G \times \G$.
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+	\frametitle{Сравнение с существующими подходами}
+	
+\input{atf.table.tex}
+
+Пример:
+\begin{lstlisting}[language=Grammatic]
+factor : VAR | INT | '(' expr ')' ;           
+  factor(env : Environment) -> (result : Int) { 
+    after VAR : result = value(env, VAR#);
+    after INT : result = strToInt(INT#);
+    at expr   : result = expr(env);     
+  }
+\end{lstlisting}
+
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Расширение языков поддержкой шаблонов}
+\begin{block}{Механическая процедура}
+\begin{itemize}
+\item Расширение целевой мета-модели
+	\begin{itemize}
+		\item добавление понятий ``шаблон'', ``применение'', ``переменная''
+		\item добавление специфичных шаблонных выражений
+	\end{itemize}
+\item Расширение конкретного синтаксиса
+	\begin{itemize}
+		\item возможны неоднозначности
+		\item требуется коррекция вручную
+	\end{itemize}
+\item Расширение семантики и системы типов
+	\begin{itemize}
+		\item шаблонные правила для специфичных конструкций
+	\end{itemize}
+\end{itemize}	
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Базовые понятия в мета-модели}
+{
+\begin{tabular}{p{.45\textwidth}p{.45\textwidth}}
+\begin{lstlisting}[xleftmargin=-.8cm]
+class Type {
+  attr typeName : String;
+  attr multiplicity 
+  			: Multiplicity;
+}
+
+enum Multiplicity {
+  VAL, MANY_VAL, REF
+}
+
+class Abstraction {
+  attr name : String;
+  val parameters : Variable*;
+  val body : Term;
+  val type : Type?;
+}
+
+\end{lstlisting}
+&
+\begin{lstlisting}[xleftmargin=-.1cm]
+abstract class Term {}
+
+class VariableRef extends Term {
+  ref variable : Variable;
+}
+
+class Application extends Term {
+  ref abstraction : Abstraction;
+  val arguments : Term*;
+}
+
+class Variable {
+  attr name : String;
+  val type : Type?;
+}
+\end{lstlisting}
+\end{tabular}
+}
+\end{frame}
+
+
+\newcommand{\TM}{\mathcal{TM}}
+\newcommand{\TC}[1]{\mathcal{TC}\left(#1\right)}
+\newcommand{\TR}[1]{\mathcal{TR}\left(#1\right)}
+\newcommand{\TA}[1]{\mathcal{TA}\left(#1\right)}
+
+\begin{frame}[fragile]
+	\frametitle{Семантика разворачивания}
+{\footnotesize
+$$
+\trule{
+	\{p = e\} \subseteq \gamma
+}{
+	\Inst{\gamma}{\ang{?p}} = e
+}{var-inst}
+$$ 
+$$
+\trule{
+	\mathbf{template}\left(
+		T \, \ang{p_1, \ldots, p_n} \, \{ b \}
+	\right)
+}{
+	\gamma' = \bigcup\limits_{i=1}^{n} \{ p_i = \Inst{\gamma}{a_i} \}
+	\qquad
+	\Inst{\gamma}{\ang{T \, a_1, \ldots, a_n}} = \Inst{\gamma \cup \gamma'}{b}
+}{app-inst}
+$$
+$$
+\trule{
+%	C = \class{}{\_}{R=\{r_i\}}{A=\{a_i\}} &
+	t = \obj{\TC{C}}{id}{r_i = rv_i,\, a_j = av_j}
+}{
+	\Inst{\gamma}{t} = \obj{\TC{C}}{id'}{r_i = \Inst{\gamma}{rv_i}, \,a_j = av_j }
+}{ds-inst(С)}
+$$}
+\begin{Th}[О сохранении типов]\label{ThTP}
+Если среда $\gamma$ согласована с контекстом $\Gamma$ и \mbox{$\Gamma \vdash e : \tau$}, то \mbox{$\Gamma \vdash \Inst{\gamma}{e} : \tau$}. Другими словами, преобразование $\Inst{}{\bullet}$ сохраняет типы.
+\end{Th}
+\begin{Th}[О нормализации]\label{ThNorm}
+Если среда $\gamma = \cup \{p_i = e_i\}$ согласована с контекстом $\Gamma$, все $e_i$ имеют нормальную форму и $\Gamma \vdash e : \tau$, то результат вычисления $\Inst{\gamma}{e}$ имеет нормальную форму.
+\end{Th}
+
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Система типов}
+\scriptsize
+$$
+\trule{}{\Gamma \cup \{v : \tau\} \vdash \ang{?v} : \tau}{var}
+$$ 
+$$
+\trule{
+	\Gamma \cup \bigcup\limits_{i=1}^{n} \{ p_i : \tau_i \} \vdash b : \sigma
+}{
+	\Gamma \vdash \mathbf{template}\left(
+		T \ang{p_1 : \tau_1, \ldots, p_n : \tau_n} \,: \sigma \, \{ b \}
+	\right)
+}{abstr}
+$$
+$$
+\trule{
+	\Gamma \vdash \mathbf{template}\left(
+		T \ang{p_1 : \tau_1, \ldots, p_n : \tau_n} \,: \sigma \, \{ b \}
+	\right)
+	&
+	\forall i : [1:n].\; \Gamma \vdash a_i : \tau_i \
+}{
+	\Gamma \vdash \ang{T \, a_1, \ldots, a_n} : \sigma
+}{appl}
+$$
+$$
+\myinfer[null]{
+	\Gamma \vdash NULL : \tau^?
+}{}
+\quad
+\myinfer[relax]{
+	\Gamma \vdash x : \tau^?
+}{
+	\Gamma \vdash x : \tau
+}
+\quad
+\myinfer[relax$^+$]{
+	\Gamma \vdash x : \tau^*
+}{
+	\Gamma \vdash x : \tau^+
+}
+$$
+$$
+\myinfer[subtype]{
+	\Gamma \vdash x : \sigma
+}{
+	\Gamma \vdash x : \tau &
+	\tau \subtype \sigma
+}
+$$
+$$
+\myinfer[elist]{\Gamma \vdash [] : \tau*}{}
+\quad
+\myinfer[list]{
+	\Gamma \vdash [t_1,\ldots,t_n] : \tau^+
+}{
+	\forall i \in [1:n].\; \Gamma \vdash Item(t_i, \tau)
+}
+$$
+$$
+\myinfer[eset]{\Gamma \vdash \{\} : \tau*}{}
+\quad
+\myinfer[set]{
+	\Gamma \vdash \{t_1,\ldots,t_n\} : \tau^+
+}{
+	\forall i \in [1:n].\; \Gamma \vdash Item(t_i, \tau)
+}
+$$
+$$
+\myinfer[item]{
+	\Gamma \vdash Item(t, \tau)
+}{
+	\Gamma \vdash t : \tau
+}
+\quad
+\myinfer[item*]{
+	\Gamma \vdash Item(\ang{?v}, \tau)
+}{
+	\Gamma \vdash v : \tau^*
+}
+\quad
+\myinfer[item$^+$]{
+	\Gamma \vdash Item(\ang{?v}, \tau)
+}{
+	\Gamma \vdash v : \tau^+
+}
+$$
+$$
+\myinfer[\mbox{ds-type(C)}]{
+	\Gamma \vdash x : C
+}{
+	\begin{array}{l}
+	x = \obj{\TC{C}}{id}{r_i = v_i; a_j = {v'}_j}\\
+	\TM \Vdash x : \TC{C} 
+	\end{array}	
+	&
+	\begin{array}{l}
+	r_i = \TR{\rho_i : \tau_i}\\
+	\Gamma \vdash v_i : \tau_i\\
+	\end{array}	
+}
+$$
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Сравнение с существующими подходами: шаблоны}
+	
+\input{templates.table.tex}
+Пример:
+\begin{lstlisting}
+template Iterator<N : String, T : Class> : Class {
+    class <?N> {
+        fun hasNext() : Boolean
+        fun next() : <?T>
+    }
+}
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Добавление аспектов}
+\begin{itemize}
+\item Расширение целевой мета-модели
+\item Расширение конкретного синтаксиса
+\item Расширение семантики и системы типов
+	\begin{itemize}
+		\item сопоставление с образцом
+		\item применение аспекта
+	\end{itemize}
+\end{itemize}	
+
+Мета-модель:
+\begin{lstlisting}
+class Aspect {
+    rules : AspectRule*;
+}
+class AspectRule {
+    pointcut : Term;
+    advice : Map<Variable, Term>;
+}
+class Wildcard extends Term {
+    type : Type;
+}
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Семантика и типы}
+Семантика применения:	\\
+Пусть $\match{P}{e} = \ME \neq \bot$, \\$V = \left\{\langle v_i, t_i \rangle \,|\, i = 1..m \right\}$,  $\ME(v_i) = [e^i_1, \ldots, e^i_{n_i}]$, тогда
+	$$\mathcal{R}@e
+		= \apply{\bigsqcup\limits_{i=1}^{m} \bigsqcup\limits_{j=1}^{n_i}
+			\subst{e^i_j}{\Inst{\meflatten{\ME}}{t_i}}}{e}$$
+Типы:
+$$
+	\myinfer[wcard]{ \vdash \wcard{?}{\tau} : \tau}{}
+$$
+$$
+	\myinfer[aspect]{
+		(\mathbf{instead} \; \ang{?v} \, : \, t) \in Allowed(\mathcal{R})
+	}{
+		\mathcal{R} = \langle p, T, V \rangle &
+		\Gamma(p) \vdash v : \tau &
+		\Gamma(p) \vdash t : \sigma &
+		\sigma \preceq \tau
+	}
+$$
+\begin{Th}
+Если $\mathcal{R}$ таково, что $V \subseteq Allowed(\mathcal{R})$, то в результате применения $\mathcal{R}@e$ не нарушаются структурные ограничения, накладываемые мета-моделью.
+\end{Th}
+
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Сравнение с существующими подходами: аспекты}
+	
+\input{aspects.table.tex}
+Пример:
+\begin{lstlisting}[xleftmargin=0.3cm]
+on class <? : String> { ?funs=<? : Function*> } perform
+    instead funs : <?funs>; fun toString() : String;
+\end{lstlisting}
+
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Основные результаты}
+	
+\input{results.tex}
+\end{frame}
+
+\end{document}
