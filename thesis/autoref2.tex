@@ -24,7 +24,7 @@ template List<element : Expression, sep : Expression> : Expression {
 Приведем пример \term{аспектного правила}, использующего данные понятия:
 \begin{lstlisting}
 example : .. e=example  .. ;    // Срез
-	instead ?e : '(' <?e> ')' ; // Совет
+	instead e : '(' <?e> ')' ; // Совет
 \end{lstlisting}
 Данный пример заменяет рекурсивное вхождение символа \code{example} в правой части на тот же символ, заключенный в скобки.
 
