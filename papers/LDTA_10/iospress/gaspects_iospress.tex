@@ -3,8 +3,8 @@
 %
 
 \documentclass{IOS-Book-Article}     %[seceqn,secfloat,secthm]
-\usepackage[T1]{fontenc}
-\usepackage{times}%
+%\usepackage[T1]{fontenc}
+%\usepackage{times}%
 \normalfont%
 %\usepackage[mtplusscr,mtbold]{mathtime}%
 %\usepackage{authblk}
@@ -27,14 +27,14 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%% Put your definitions here
-%\definecolor{Brown}{cmyk}{0,0.81,1,0.60}
-%\definecolor{OliveGreen}{cmyk}{0.64,0,0.95,0.40}
-%\definecolor{CadetBlue}{cmyk}{0.62,0.57,0.23,0}
-%\definecolor{StringBlue}{rgb}{0,0,1}
-\definecolor{Brown}{rgb}{0,0,0}
-\definecolor{OliveGreen}{rgb}{0,0,0}
-\definecolor{CadetBlue}{rgb}{0,0,0}
-\definecolor{StringBlue}{rgb}{0,0,0}
+\definecolor{Brown}{cmyk}{0,0.81,1,0.60}
+\definecolor{OliveGreen}{cmyk}{0.64,0,0.95,0.40}
+\definecolor{CadetBlue}{cmyk}{0.62,0.57,0.23,0}
+\definecolor{StringBlue}{rgb}{0,0,1}
+%\definecolor{Brown}{rgb}{0,0,0}
+%\definecolor{OliveGreen}{rgb}{0,0,0}
+%\definecolor{CadetBlue}{rgb}{0,0,0}
+%\definecolor{StringBlue}{rgb}{0,0,0}
 \renewcommand{\ttdefault}{pcr}
 
 \newcommand{\bad}[1]{\textcolor{red}{#1}}
@@ -42,6 +42,9 @@
 \sloppy
 %\newcommand{\note}[1]{\noindent \begin{tabular}{|c|}\hline \textcolor{blue}{#1}\\ \hline \end{tabular}}
 \newcommand{\comment}[1]{}
+
+\newcommand{\abstr}[3]{\lambda \, #1 \approx #2 \,.\, #3}
+\newcommand{\sem}[1]{[\![#1]\!]}
 
 \newcommand{\fig}[2]{%
 \begin{figure}%
@@ -100,8 +103,8 @@
 \begin{frontmatter}          % The preamble begins here.
 %
 %\pretitle{}
-\title{Grammatical Aspects for Language Descriptions\thanks{This work was partly done while the author was a visiting PhD student at University of Tartu, under a scholarship from European Regional Development Funds through Archimedes Foundation. Author would like to acknowledge the advice received from Professor Marlon Dumas.}}
-\runningtitle{Grammatical Aspects for Language Descriptions}
+\title{Grammatical Aspects: Coping with Duplication and Tangling in Language Specifications\thanks{This work was partly done while the author was a visiting PhD student at University of Tartu, under a scholarship from European Regional Development Funds through Archimedes Foundation. Author would like to acknowledge the advice received from Professor Marlon Dumas.}}
+\runningtitle{Grammatical Aspects: Coping with Grammar Duplication and Tangling}
 %\subtitle{}
 
 % For one author:
@@ -111,7 +114,7 @@
 %
 \begin{abstract}
 	For the purposes of tool development, computer languages are usually described using context-free grammars with annotations such as semantic actions or pretty-printing instructions. 
-	These descriptions are processed by generators which automatically build software, e.g., parsers, pretty-printers and editing support.
+	These specifications are processed by generators which automatically build software, e.g., parsers, pretty-printers and editing support.
 
 	In many cases the annotations make grammars unreadable, and when generating code for several tools supporting the same language, one usually needs to duplicate the grammar in order to provide different annotations for different generators.
 
@@ -135,7 +138,9 @@ DSL, Grammar, Aspect
   stringstyle=\color{StringBlue},
   tabsize=4,
   captionpos=b,
-  showstringspaces=false
+  showstringspaces=false,
+  aboveskip=.5\smallskipamount,
+  belowskip=.5\smallskipamount
 }
 \lstdefinelanguage{Grammatic}
 	{
@@ -154,7 +159,7 @@ With the growing popularity of Domain-Specific Languages, the following types of
 	\item Integrated Development Environment (IDE) add-ons for syntax highlighting, code folding and outline views.
 \end{itemize}
 
-Nowadays these types of tools are usually developed with the help of generators which accept language descriptions in the form of annotated (context-free) grammars. 
+Nowadays these types of tools are usually developed with the help of generators which accept language specifications in the form of annotated (context-free) grammars. 
 
 % Downsides of the existing solutions
 For example, tools such as \tool{YACC} \cite{YACC} and \tool{ANTLR} \cite{ANTLR} use grammars annotated with embedded semantic actions. As an illustration of this approach first consider an annotation-free grammar for arithmetic expressions (\lstref{arithexpr}).
@@ -215,95 +220,72 @@ An \emph{aspect} is basically a unit comprising of a number of such pointcut-adv
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Overview of the approach}\label{Approach}
 
-\Grammatic{} employs the principles of AOP in order to tackle the problems of tangling and duplication in annotated grammars. We will use the grammar from \lstref{arithexpr} and the annotated rule from \lstref{annotated_rule} to illustrate how the terms such as ``pointcut'' and ``advice'' are embodied for annotated grammars. 
+Out approach employs the principles of AOP in order to tackle the problems of tangling and duplication in annotated grammars. We will use the grammar from \lstref{arithexpr} and the annotated rule from \lstref{annotated_rule} to illustrate how the terms such as ``pointcut'' and ``advice'' are embodied for annotated grammars. 
 
 % Join points
 \subsection{Grammatical join points}
 \figref{structured} shows a structured representation (a syntax diagram) of the annotated rule from \lstref{annotated_rule}. 
 \fig{structured}{Annotations attached to a grammar rule}
-It shows the annotations attached to a symbol definition \texttt{expr}, three symbol references: \texttt{term} (two times) and \texttt{MINUS}, and an alternative~\texttt{(PLUS | MINUS)} (marked ``\emph{alt}'' in the figure). All these are examples of \emph{grammatical join points} (in \figref{structured} they are marked with black circles). The full list of join point types comprises all the types of nodes of the abstract syntax trees (ASTs) of the \emph{language of grammars}. To avoid confusion with ASTs of languages defined by the grammar, we will refer to the AST of the grammar itself as \emph{grammar tree} (GT).
+It shows the annotations attached to a symbol definition \texttt{expr}, three symbol references: \texttt{term} (two times) and \texttt{MINUS}, and an alternative~\texttt{(PLUS | MINUS)} (marked ``\emph{alt}'' in the figure). All these are examples of \emph{grammatical join points} (in \figref{structured} they are marked with black circles). 
 
-\Grammatic{} uses a notation for grammars which is based on the one used by \tool{ANTLR}. The only two differences are (i) in \Grammatic{} productions are explicit and separated by ``\texttt{:}'', and (ii) an empty string is denoted explicitly by ``\texttt{\#empty}''. Here is the list of types of GT nodes (which are also the types of the join points) with comments about the concrete syntax:
-\begin{itemize}
-	\item Grammar;
-	\item Definitions of terminal and nonterminal symbols (grammar rules) and references to them;
-	\item Individual productions (a rule comprises one or more productions separated by ``\texttt{:}'');
-	\item Concatenation (sequence), Alternative (``\texttt{|}''), Iteration (``\texttt{*}'', ``\texttt{+}'', ``\texttt{?}'');
-	\item Empty string (``\texttt{\#empty}'');
-	\item Lexical literals (quoted strings).
-\end{itemize}
-The grammars given in this paper (e.g., \lstref{patterns}) may serve as example usages of this notation.
+Below we use \tool{ANTLR}'s notation for context-free grammars. To avoid confusion with ASTs of languages defined by the grammar, we will refer to the AST of the grammar itself as \emph{grammar tree} (GT). The language of GTs is given by the following type definitions:
+\begin{lstlisting}[language=Haskell]
+data Grammar = Grammar {rules :: Set(Rule)}
+data Rule = Rule {name :: String, body :: Expression}
+data Expr -- Expressions
+	= SymRef {name :: String}  -- Symbol reference
+	| Literal {value :: String} | Empty
+	| Seq {exprs :: List(Expr)} -- Sequence
+	| Alt {exprs :: Set(Expr)}  -- Alternative
+	| Iter {exprs :: Expr, multiplicity :: Mult}  -- Iteration
+data Mult = Star | Plus | Option
+\end{lstlisting}
+Every node in a GT can be a join point, thus we have as many join pint types as data constructors in the GT language above.
 
 % Pointcuts
 \subsection{Grammatical pointcuts}
 
-\Grammatic{} implements pointcuts using \emph{patterns} over the grammar language. A pattern is an expression that matches a set of nodes in a GT. The syntax of the pattern language is given in \lstref{patterns}. 
-\begin{lstlisting}[language=Grammatic,label=patterns,float,caption=Grammar of the pattern language]
-rulePattern 
-	: var? symbolPattern productionPattern* ';' ;
-var 
-	: '$' NAME '=' ;
-symbolPattern
-	: '#'        // any symbol 
-	: NAME ;
-productionPattern 
-	: var? ':' alternativePattern
-	: ':' var? '{...}' ;
-alternativePattern 
-	: sequencePattern ('|' (sequencePattern | (var? '...')))* ;
-sequencePattern
-	: iterationPattern+ ;
-iterationPattern
-	: var? atomicPattern ('*' | '+' | '?')? ;
-atomicPattern
-	: '(' alternativePattern ')'
-	: symbolReferencePattern
-	: '#empty'   // empty string
-	: '..'       // any sequence
-	: '#lex'     // any lexical literal
-	: '$' NAME ; // a variable
-\end{lstlisting}
-
-The most basic form of a pattern is a direct citation from a grammar:
-
-\lstinline!expr: term ((PLUS | MINUS) term)*;!\\
-This pattern matches a rule of exactly the same form (rule \texttt{expr} from \lstref{arithexpr}). 
-
-In addition to this capability the pattern language makes use of various types of wildcards which make patterns more abstract and flexible. \tabref{wildcards} summarizes available wildcards and the node types they each match.
-
+Pointcuts are expressions denoting sets of join points, i.e. \emph{patterns} over the GT language. The language of pointcuts is obtained from the GT language by adding special constructs, namely wildcards and variable bindings (see \tabref{wildcards}).
+%
 \begin{table}[h!]
 \centering
-\begin{tabular}{|@{\tt}c|l|}
+\begin{tabular}{|@{}c|l|}
 	\hline
 	\bf Notation & \bf Matches any\ldots \\
 	\hline
-	\# & Symbol \\
-	\#lex & Lexical literal \\
-	.. & Sequence \\
-	... & Nonempty set of alternatives \\
-	\{...\} & Nonempty set of productions \\
+	?\emph{Type} & Any instance of type \emph{Type} \\
+	? & Any symbol (?SymRef)\\
+	?lex & Any lexical literal (?Literal) \\
+	{}[?]& Any sequence \\
+	\{?\}& Any set of alternatives \\
+	$\;\abstr{var}{expr_1}{expr_2(var)}$ & Variable binding \\
 	\hline
 \end{tabular}
-\caption{Wildcards}\label{wildcards}
+\caption{Notions introduced in the pointcut language (in addition to the GT nodes)}\label{wildcards}
 \end{table}
-
-Consider some examples of patterns for rules from \lstref{arithexpr}:
+%
+Consider some examples of patterns for the rules from \lstref{arithexpr}:
 \begin{itemize}
-	\item \lstinline!expr : {...}! --- a rule defining a symbol ``expr'', comprising any number of any productions (in \lstref{arithexpr} it matches only the rule for \texttt{expr});
-	\item \lstinline!# : term ..! --- a production for any symbol, starting with a reference to a symbol named ``term'' (also matches only the rule for \texttt{expr});
-	\item \lstinline!# : # (..)*! --- a symbol reference followed by a star iterating an arbitrary sequence (matches the rules for \texttt{expr} and \texttt{term}).
+	\item[(a)] \lstinline!expr : [?]! --- a rule defining a symbol ``expr'' with an arbitrary expression on the right-hand side (in \lstref{arithexpr} it matches only the rule for \texttt{expr});
+	\item[(b)] \lstinline!? : term [?]! --- a production for any symbol, starting with a reference to a symbol named ``term'' (also matches only the rule for \texttt{expr});
+	\item[(c)] \lstinline!? : ? [?]*! --- a symbol reference followed by a star iterating an arbitrary sequence (matches the rules for \texttt{expr} and \texttt{term}).
 \end{itemize}
+Note that constructors of the GT language are used in patterns (typing is relaxed). Here is the example (b) from above written in the abstract syntax (``$:$'' denotes the \emph{cons} operation on lists):
+ $Rule(?SymRef, Seq(SymRef(term)\,:\,?List(Expr)))$.
 
-The pattern language also supports variables: a part of a pattern may be associated with a name which may be used later in the same pattern, for example:
+Variables are used to label a subexpression and refer to it later. In the abstract syntax this is written as\\
+\indent
+$
+\abstr{tr}{?SymRef}{tr\;((\mathtt{PLUS} \,|\, \mathtt{MINUS})\; tr)^*}
+$\\
+Here the variable \texttt{tr} is defined with the pattern \texttt{?} (any symbol) which means that all usages of the variable will match only occurrences of the same symbol. This pattern matches the rule for \texttt{expr} because the same symbol \texttt{term} is referenced in the positions matched by the variable \texttt{\$tr}. In concrete syntax, variables are defined inside the pattern, and prefixed by a dollar sign so that the pattern given above is written as\\
+\indent\lstinline!? : $tr=? ((PLUS | MINUS) $tr)*!
 
-\lstinline!# : $tr=# ((PLUS | MINUS) $tr)*!\\
-Here the variable \texttt{\$tr} is defined with the pattern \texttt{\#} (any symbol) which means that all usages of the variable will match only occurrences of the same symbol. This pattern matches the rule for \texttt{expr} because the same symbol \texttt{term} is referenced in the positions matched by the variable \texttt{\$tr}. 
-
-Note that in general a variable is bound to a \emph{set} of GT nodes: if we match the rule for \texttt{expr} against the pattern in the example above, the variable \texttt{\$tr} will be bound to a set comprised by two distinct references to the symbol \texttt{term}.
+For our purposes we assume that GT nodes are \emph{not} shared, and subtrees of the same shape occuring at different positions are distinct\footnote{This corresponds to having unique numbers implicitly assigned to nodes.}. In this regard, note that a variable is in general bound to a \emph{set} of GT nodes: if we match the rule for \texttt{expr} against the pattern in the example above, the variable \texttt{tr} will be bound to a set comprised by two distinct references to the symbol \texttt{term}.
 
 % Advice
 \subsection{Grammatical advice}
-Annotations attached to grammars (they are analogous to AspectJ's \emph{advice}) may have an arbitrarily complicated structure: in general, a generator may need a very rich annotation system. \Grammatic{} provides a \emph{generic annotation language}, which represents the annotations as sets of name-value pairs (see \lstref{advice}) which we call \emph{attributes}. Examples of such pairs are given in \tabref{value_types} which shows all the predefined value types. Values may also have user-defined types which can be plugged into the position marked by \texttt{<additionalValueTypes>} in the grammar.
+Annotations attached to grammars (they are analogous to AspectJ's \emph{advice}) may have an arbitrarily complicated structure: in general, a generator may need a very rich annotation system. We define a \emph{generic annotation language}, which represents the annotations as sets of name-value pairs which we call \emph{attributes}. Examples of such pairs are given in \tabref{value_types} which shows all the predefined value types. Values may also have user-defined types which can be plugged in. The annotations in \figref{structured} may be represented, for example, as values of type String (other representations are also possible).
 
 \begin{table}[h!]
 \centering
@@ -314,123 +296,86 @@ Annotations attached to grammars (they are analogous to AspectJ's \emph{advice})
 	int&10 & Integer \\
 	str&'Hello' & String \\
 	id&SomeName & Name literal\\
-	rec&\{b = c; d = 5\} & Annotation\\
-	seq&\{\{1, a b 'str'\}\} \,& Sequence of values \\
+	rec&\{b = c; d = 5\}\, & Annotation\\
+	seq&[1, a b 'str'] \,& Sequence of values \\
 	\hline
 \end{tabular}
 \caption{Predefined value types}\label{value_types}
 \end{table}
 
-\begin{lstlisting}[language=Grammatic,label=advice,float,caption=Grammar of the advice language]
-annotation
-	: '{' (attribute (';' attribute?)*)? '}' 
-	: '.' attribute ;
-namespace
-	: NAME ':' ;
-attribute 
-	: namespace? NAME ('=' value)? ;
-value
-	: character
-	: INT
-	: STRING
-	: NAME
-	: annotation 
-	: '{{' (value | punctuation)* '}}'
-	: <additionalValueTypes> ;
-punctuation
-	: '`' | '~' | '!' | '@' | '#' | '$' | '%' | '^' | '&' | '*' 
-	| '(' | ')' | '-' | '+' | '=' | '|' | '\\'| '[' | ']' | ';' 
-	| ':' | ',' | '.' | '/' | '?' | '<' | '>' ;
-\end{lstlisting}
-
-For example, the annotations in \figref{structured} may be represented as values of type String (other representations are also possible).
-
-As the usage of the term ``attribute'' may be misleading in this context, we would like to note that the approach presented here does not directly correspond to attribute grammars \cite{ATG}. In fact, grammars with annotations do not have any particular execution semantics (each generator interprets the annotations in its own way), as opposed to attributed grammars which have a fixed execution semantics. One can describe attribute grammars using \Grammatic{} and define corresponding semantics in a generator, but this is just an example application.
+As the usage of the term ``attribute'' may be misleading in this context, we would like to note that the approach presented here does not directly correspond to attribute grammars \cite{ATG}. In fact, grammars with annotations do not have any particular execution semantics (each generator interprets the annotations in its own way), as opposed to attribute grammars which have a fixed execution semantics. One can describe attribute grammars using our approach and define corresponding semantics in a generator, but this is just an example application.
 
 % Aspects
 \subsection{Grammatical aspects}
-Now, having described all the components, we can assemble a \emph{grammatical aspect} as a set of pointcuts-advice pairs.
-Usage of grammatical aspects is illustrated by \figref{problems_and_solution}~(right side).
+Now, having described all the components, we can assemble a \emph{grammatical aspect} as a set of pointcut-advice pairs.
+Usage of grammatical aspects is illustrated by \figref{problems_and_solution}.
 
-The syntax of grammatical aspects is given in \lstref{aspects}. 
-\begin{lstlisting}[language=Grammatic,float,label=aspects,caption=Grammar of the aspect language]
-aspect
-	: grammarAnnotation? annotationRule* ;
-grammarAnnotation
-	: annotation ;
-annotationRule
-	: multiplicity? rulePattern subrules ; 
-subrules
-	: (subpattern | variableAnnotation)* ;
-subpattern
-	: '@' multiplicity?  (productionPattern | alternativePattern) 
-	      ':' (subrules | annotation) ;
-variableAnnotation
-	: '$' NAME annotation ;
-multiplicity
-	: '[' intOrInfinity ('..' intOrInfinity)? ']' ;
-intOrInfinity
-	: INT | '*' ;
-\end{lstlisting}
 An aspect consists of an optional \emph{grammar annotation} and zero or more \emph{annotation rules}. Annotation rules associate grammatical pointcuts (rule patterns) with advice (annotations). Here is an example of an annotation rule:
 \begin{lstlisting}[language=Grammatic]
-expr : $tr=# (.. $tr)*   // pointcut (pattern)
-    $tr.varName = 't' ;  // advice (annotation)
-\end{lstlisting}
-In a simple case exemplified here, an annotation (\texttt{.varName = 't'}, the alternative syntax is \texttt{\{varName = 't'\}}) is attached to GT nodes to which a variable (\texttt{\$tr}) is bound.
-For more complicated cases, one can define \emph{subpatterns} --- patterns which are matched against nodes situated under the matched one in the GT. For example, the following construct attaches an attribute named \texttt{varName} to each reference to the symbol \texttt{term} \emph{inside a rule matched by a top-level pattern}:
+expr : $tr=? ([?] $tr)*    // pointcut (pattern)
+    $tr {varName = 't'} ;  // advice (annotation)
+\end{lstlisting}%$
+In a simple case exemplified here, an annotation \lstinline!{varName = 't'}! is attached to GT nodes to which a variable \texttt{tr} is bound.
+For more complicated cases, one can define arbitrarily nested \emph{subpatterns} --- patterns being matched against nodes situated in a particular GT subtree. For example, the following construct attaches an attribute named \texttt{varName} to each reference to the symbol \texttt{term} \emph{inside a rule matched by a top-level pattern}:
 \begin{lstlisting}[language=Grammatic]
-expr : ..                  // pointuct (pattern) 
-    @$tr=(term):           // pointcut (subpattern)
-       $tr.varName = 't' ; // advice (annotation)
+expr : [?]                   // pointuct (pattern) 
+    @$tr=(term):             // pointcut (subpattern)
+       $tr {varName = 't'} ; // advice (annotation)
 \end{lstlisting}
-This example illustrates the typical usage of subpatters where all annotations are associated with a variable bound to the whole pattern. As a shorthand for this situation \Grammatic{} allows to omit the variable (it will be created implicitly). Using this shorthand we can abridge the previous example to the following:
+This example illustrates the typical usage of subpatterns where all annotations are associated with a variable bound to the whole pattern. As a shorthand for this situation the variable can be omitted (it will be created implicitly). Using this shorthand we can abridge the previous example to the following:
 \begin{lstlisting}[language=Grammatic]
-expr : ..               
-    @term: { varName = 't' } ; // '{ a = b }' equals '.a = b'
+expr : [?]
+    @term: { varName = 't' } ; 
 \end{lstlisting}
-Note that subpatterns may have their own subpatterns.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Semantics of pointcuts and aspects}
 
+To precisely define what happens when an aspect is applied to a language specification, in this section we give a formal semantics to the constructs described above. The key point in this formalization is to characterize pointcut matching by establishing a system of inequalities over sets of terms corresponding to pointcuts. Solutions of these inequalities give valuations to variables defined inside patterns and subpatterns.
+
+A system of inequalities over 
+
+\newcommand{\fresh}[1]{#1^\dagger}
+\begin{figure}%
+\centering%
+$$
+\begin{array}{rcl}
+Eq(V, \mathbf{Type}(t_1, \ldots, t_n)) &=& \{V \approx \mathbf{Type}(\fresh{v_1}, \ldots, \fresh{v_n})\} \cup 
+\bigcup_1^n Eq(v_i, t_n),\\
+\mbox{where } \mathbf{Type} &\in& \{
+	\mathtt{Grammar}, \mathtt{Rule}, \mathtt{Iter}, \mathtt{SymRef}, \mathtt{Literal}, \mathtt{Empty}\}\\
+
+Eq(V, ?Type) &=& \{V \in \sem{Type}\}\\
+
+Eq(V, \abstr{v}{e_1}{e_2}) &=& Eq(v, e_1) \cup Eq(V, e_2)\\
+
+Eq(V, Seq(e_1, \ldots, e_n)) &=& \{V \approx Seq(\fresh{L})\} \cup \{ L = \fresh{L_1} \oplus \ldots \oplus \fresh{L_n}\} \cup \bigcup Eq(L_i, e_i)\\
+
+Eq(V, [?]) &=& \{ V \in \sem{List(Expr)} \}\\
+
+Eq(V, Alt(e_1, \ldots, e_n, \{?\})) &=& \{V \approx Alt(\fresh{S})\}
+                                   \cup \bigcup Eq(\fresh{t_i}, e_i) \cup \\
+                               &&    
+                                   \cup \bigcup \{ t_i \in S\}
+                                   \cup \{ \fresh{R} = S \setminus
+                                                          \bigcup\{t_i\}\}\\
+Eq(V, v) &=& \{V = v\}
+\end{array}
+$$
+\caption{Transforming a pattern into a system of inequalities}\label{Eq}%
+\end{figure}%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Controlling numbers of matched nodes}
 Patterns and subpatterns may be preceded by a \emph{multiplicity directive}, for example
 \begin{lstlisting}[language=Grammatic]
-[0..1] # : $tr=# (.. $tr)* // pointcut with multiplicity
+(0..1) ? : $tr=? ([?] $tr)* // pointcut with multiplicity
     // some advice
 \end{lstlisting}
-Multiplicity determines a number of times the pattern is allowed to match. The default multiplicity is \texttt{[1..*]} which means that each pattern with no explicit multiplicity is allowed to match one or more times. When an aspect is applied to a grammar, if the actual number of matches goes beyond the range allowed by a multiplicity directive, \Grammatic{} generates an error message. In the example above, such a message will be generated for the grammar from \lstref{arithexpr} because the pattern matches two rules: \texttt{expr} and \texttt{term}, which violates the specified multiplicity \texttt{[0..1]}.
+Multiplicity determines a number of times the pattern is allowed to match. The default multiplicity is \texttt{(1..*)} which means that each pattern with no explicit multiplicity is allowed to match one or more times. When an aspect is applied to a grammar, if the actual number of matches goes beyond the range allowed by a multiplicity directive, an error message will be generated. In the example above, there will be an error when matching against the grammar from \lstref{arithexpr} because the pattern matches two rules: \texttt{expr} and \texttt{term}, which violates the specified multiplicity \texttt{(0..1)}.
 
-\subsection{Generation-time behaviour}
+!!!!!!!!!!!!!
 
-Grammatical aspects are applied at generation time. Before a generator starts working, in order to prepare the data for it, \Grammatic{} performs the following steps:
-\begin{itemize}
-	\statement{parse the \var{grammar} and the \var{aspect}}
-	\statement{attach the \emph{grammar annotation} to the root node of the \var{grammar}}
-	\foreach{annotation rule}{aspect} {
-		\call{ApplyPattern}{\var{rule pattern}, \var{grammar}}
-	}
-\end{itemize}
-Where \textsc{ApplyPattern} is a recursive subroutine defined by the following pseudocode:
-\begin{center}
-\parbox{0.9\textwidth}{%
-\subroutine{ApplyPattern}{\var{pattern}, \var{node}}{%
-	\statement{find \var{subnodes} matching \var{pattern} among descendants of \var{node}%
-	\emph{\quad (Variable bindings are saved in \texttt{boundTo} map)}}%
-	\ifst{the number of \var{subnodes} violates \var{pattern.multiplicity}}{%
-		\statement{Report \textbf{error} and stop}%
-	}{}
-	\foreach{subnode}{subnodes}{%
-		\foreach{subpattern}{pattern.subpatterns}{%
-			\call{ApplyPattern}{\var{subpattern}, \var{subnode}}%
-		}%
-		\foreach{var}{pattern.variables}{%
-			\foreach{boundNode}{boundTo(var)} {%
-				\statement{attach \var{var.annotation} to \var{boundNode}}%
-			}%
-		}%
-	}%
-}%
-\textbf{end}
-}
-\end{center}
 The innermost loop goes through the set of GT nodes to which the variable \var{var} is bound (see \secref{Approach}) and attaches the annotations associated with this variable to each of these nodes.
 
 If no error was reported, the resulting structure (GT nodes with attached annotations) is passed to the generator which processes it as a whole and needs no information about aspects. 
@@ -478,21 +423,21 @@ typeArgument
 \end{lstlisting}
 
 \lstset{language=Grammatic}
-Each annotation rule from \lstref{java_aspect} contains two subpatterns. The first one is \texttt{\#lex}: it matches every lexical literal. For example, for the first rule it matches \texttt{'class'}, \texttt{'extends'} and \texttt{'implements'}; the highlighting group \texttt{keyword} is assigned to all these literals.
+Each annotation rule from \lstref{java_aspect} contains two subpatterns. The first one is \texttt{?lex}: it matches every lexical literal. For example, for the first rule it matches \texttt{'class'}, \texttt{'extends'} and \texttt{'implements'}; the highlighting group \texttt{keyword} is assigned to all these literals.
 
 The second subpattern in each annotation rule is used to set a corresponding highlighting group for a declaring occurrence: for classes and type parameters it matches \texttt{IDENTIFIER} and for wildcards --- the \texttt{'?'} literal.
 
 When the aspect is applied to the grammar, \Grammatic{} attaches the \texttt{group} attribute to the GT nodes matched by the patterns in the aspect. The obtained annotated grammar is processed by a generator which produces code for a highlighter.
 
 \begin{lstlisting}[language=Grammatic,caption=Highlighting aspect for class declarations in Java,float,label=java_aspect]
-# : 'class' IDENTIFIER ..
-	@#lex: { group = keyword } ;
+? : 'class' IDENTIFIER [?]
+	@?lex: { group = keyword } ;
 	@IDENTIFIER: { group = classDeclaration } ;
-typeParameter : IDENTIFIER ..
-	@#lex: { group = keyword } ;
+typeParameter : IDENTIFIER [?]
+	@?lex: { group = keyword } ;
 	@IDENTIFIER: { group = typeParameterDeclaration } ;
-typeArgument : {...}
-	@#lex: { group = keyword } ;
+typeArgument : [?]
+	@?lex: { group = keyword } ;
 	@'?': { group = typeParameterDeclaration } ;
 \end{lstlisting}
 
@@ -507,20 +452,20 @@ The most widely used values of \texttt{before} and \texttt{after} are specified 
 
 \begin{lstlisting}[language=Grammatic,caption=Pretty-printing aspect for class declarations in Java,label=pp_aspect,float]
 { // Grammar annotation
-	defaultAfter = {{ ' ' }}; 
-	defaultBefore = {{ '' }};
+	defaultAfter = [ ' ' ]; 
+	defaultBefore = [ '' ];
 } 
 	
 classBody : '{' classBodyDeclaration* '}'
-	@'{': { after = {{ '\n' increaseIndent }} } ;
-	@classBodyDeclaration: { after = {{ '\n' }} } ;
+	@'{': { after = [ '\n' increaseIndent ] } ;
+	@classBodyDeclaration: { after = [ '\n' ] } ;
 	@'}': {
-		before = {{ decreaseIndent '\n' }};
-		after = {{ '\n' }};
+		before = [ decreaseIndent '\n' ];
+		after = [ '\n' ];
 	};
 typeParameters : '<' typeParameter (',' typeParameter)* '>' 
-	@'<': { after = {{ '' }} } ;
-	@typeParameter: { after = {{ '' }} } ;
+	@'<': { after = [ '' ] } ;
+	@typeParameter: { after = [ '' ] } ;
 \end{lstlisting}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
