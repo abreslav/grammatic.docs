@@ -8,6 +8,7 @@
 \normalfont%
 %\usepackage[mtplusscr,mtbold]{mathtime}%
 %\usepackage{authblk}
+\usepackage{amsthm}
 \usepackage{graphicx}
 \usepackage{color}
 \usepackage{listings}
@@ -45,6 +46,9 @@
 
 \newcommand{\abstr}[3]{\lambda \, #1 \approx #2 \,.\, #3}
 \newcommand{\sem}[1]{[\![#1]\!]}
+\newcommand{\fresh}[1]{#1^\dagger}
+\newcommand{\Eq}{\mathcal{S}}
+\newtheorem{Def}{Definition}
 
 \newcommand{\fig}[2]{%
 \begin{figure}%
@@ -281,7 +285,7 @@ $\\
 Here the variable \texttt{tr} is defined with the pattern \texttt{?} (any symbol) which means that all usages of the variable will match only occurrences of the same symbol. This pattern matches the rule for \texttt{expr} because the same symbol \texttt{term} is referenced in the positions matched by the variable \texttt{\$tr}. In concrete syntax, variables are defined inside the pattern, and prefixed by a dollar sign so that the pattern given above is written as\\
 \indent\lstinline!? : $tr=? ((PLUS | MINUS) $tr)*!
 
-For our purposes we assume that GT nodes are \emph{not} shared, and subtrees of the same shape occuring at different positions are distinct\footnote{This corresponds to having unique numbers implicitly assigned to nodes.}. In this regard, note that a variable is in general bound to a \emph{set} of GT nodes: if we match the rule for \texttt{expr} against the pattern in the example above, the variable \texttt{tr} will be bound to a set comprised by two distinct references to the symbol \texttt{term}.
+For our purposes, we assume that GT nodes are \emph{not} shared, and subtrees of the same shape occurring at different positions are distinct. This corresponds to having unique numbers implicitly assigned to nodes, below we refer to this numbers as \emph{identity labeling} and write $\mathcal{IL}(n)$ for the identity-label of a node $n$. In this regard, note that a variable is in general bound to a \emph{set} of GT nodes: if we match the rule for \texttt{expr} against the pattern in the example above, the variable \texttt{tr} will be bound to a set comprised by two distinct references to the symbol \texttt{term}.
 
 % Advice
 \subsection{Grammatical advice}
@@ -333,50 +337,76 @@ expr : [?]
 
 To precisely define what happens when an aspect is applied to a language specification, in this section we give a formal semantics to the constructs described above. The key point in this formalization is to characterize pointcut matching by establishing a system of inequalities over sets of terms corresponding to pointcuts. Solutions of these inequalities give valuations to variables defined inside patterns and subpatterns.
 
-A system of inequalities over 
+\begin{Def}
+Given an infinite set of variables $\mathcal{V}$, a set of types $\mathcal{T}$ and value constructors $\mathcal{C}$ (we denote the set of all possible constructor application as $\overline{\mathcal{C}}$),
+a \emph{system of set inequalities} is a finite set of expressions of the form
+$x \in S$, where $x \in \mathcal{V} \cup \overline{\mathcal{C}}$, or $S_1 = S_2$, where $S_i \in \mathcal{V} \cup \overline{\mathcal{C}}$ or $S_i \subseteq \overline{\mathcal{C}}$.
 
-\newcommand{\fresh}[1]{#1^\dagger}
+Given such a system $S$, a function $\sigma : \mathcal{V}  \rightarrow \overline{\mathcal{C}}$ is called a \emph{solution} of $S$, iff replacing every occurrence of every $v \in \mathcal{V}$ in $S$ by $\sigma(v)$ turns all the entries of $S$ into true statements.
+\end{Def}
+In addition to the common set operations, we use the following conventions:
+\begin{itemize}
+	\item $\sem{T}$, where $T \in \mathcal{T}$ denotes a set of all values of type $T$.
+	\item If $C \in \mathcal{C}$, then $C(S_1, \ldots, S_n) = \{C(s_1, \ldots, s_n) \,|\, s_1 \in S_1, \ldots, s_n \in S_n\}$.
+	\item For $t \in \overline{\mathcal{C}}$, $Subterms(t)$ is the set of all direct and indirect subterms of $t$ (identity-labeled).
+	\item $L_1 \oplus L_2 = \{l_1 \oplus l_2 \,|\, l_1 \in L_1, l_2 \in L_2\}$, where $\oplus$ denotes list concatenation.
+	\item A single value can be treated as a singleton set or singleton list containing this value, if the required by the context.
+\end{itemize}
+
+\figref{Eq} defines a function $\Eq{}$ that takes a variable and a pattern as arguments and returns a system of set inequalities. To save space, we denote as $\fresh{v}$ variables $v$ which are supposed to be fresh with respect to the rest of the system. This function constructs a \emph{corresponding system} for a given pattern:
+\begin{Def}\label{SPT}
+Given a pointcut expression $P$ and a GT $t$, let 
+$$S_P(t) = \Eq{}(\fresh{R}, P) \cup \{R = t\}$$
+$R$ is called the \emph{root variable}. Then, $P$ \emph{matches} $t$ iff there is a solution $\sigma$ to $S_P(t)$.
+\end{Def}
+
 \begin{figure}%
 \centering%
-$$
+$
 \begin{array}{rcl}
-Eq(V, \mathbf{Type}(t_1, \ldots, t_n)) &=& \{V \approx \mathbf{Type}(\fresh{v_1}, \ldots, \fresh{v_n})\} \cup 
-\bigcup_1^n Eq(v_i, t_n),\\
+\Eq(V, \mathbf{Type}(t_1, \ldots, t_n)) &=& \{V \in \mathbf{Type}(\fresh{v_1}, \ldots, \fresh{v_n})\} \cup 
+\bigcup_1^n \Eq{}(v_i, t_i),\\
 \mbox{where } \mathbf{Type} &\in& \{
 	\mathtt{Grammar}, \mathtt{Rule}, \mathtt{Iter}, \mathtt{SymRef}, \mathtt{Literal}, \mathtt{Empty}\}\\
 
-Eq(V, ?Type) &=& \{V \in \sem{Type}\}\\
+\Eq{}(V, ?Type) &=& \{V \in \sem{Type}\}\\
 
-Eq(V, \abstr{v}{e_1}{e_2}) &=& Eq(v, e_1) \cup Eq(V, e_2)\\
+\Eq{}(V, \abstr{v}{e_1}{e_2}) &=& \Eq{}(v, e_1) \cup \Eq{}(V, e_2)\\
 
-Eq(V, Seq(e_1, \ldots, e_n)) &=& \{V \approx Seq(\fresh{L})\} \cup \{ L = \fresh{L_1} \oplus \ldots \oplus \fresh{L_n}\} \cup \bigcup Eq(L_i, e_i)\\
+\Eq{}(V, Seq(e_1, \ldots, e_n)) &=& \{V \in Seq(\fresh{L})\} \cup \{ L = \fresh{L_1} \oplus \ldots \oplus \fresh{L_n}\} \cup \bigcup_1^n \Eq{}(L_i, e_i)\\
 
-Eq(V, [?]) &=& \{ V \in \sem{List(Expr)} \}\\
+\Eq{}(V, [?]) &=& \{ V \in \sem{List(Expr)} \}\\
 
-Eq(V, Alt(e_1, \ldots, e_n, \{?\})) &=& \{V \approx Alt(\fresh{S})\}
-                                   \cup \bigcup Eq(\fresh{t_i}, e_i) \cup \\
+\Eq{}(V, Alt(e_1, \ldots, e_n, \{?\})) &=& \{V \in Alt(\fresh{S})\}
+                                   \cup \bigcup_1^n \Eq{}(\fresh{t_i}, e_i) \cup \\
                                &&    
-                                   \cup \bigcup \{ t_i \in S\}
+                                   \cup \bigcup_1^n \{ t_i \in S\}
                                    \cup \{ \fresh{R} = S \setminus
-                                                          \bigcup\{t_i\}\}\\
-Eq(V, v) &=& \{V = v\}
+                                                          \bigcup_1^n\{t_i\}\}\\
+\Eq{}(V, v) &=& \{V = v\}
 \end{array}
-$$
+$
 \caption{Transforming a pattern into a system of inequalities}\label{Eq}%
 \end{figure}%
 
+According to these definitions, if $P$ matches $t$, then if we substitute all variables in $S_P(t)$ by their values given by $\sigma$, all the entries in the system turn into true statements. This gives a precise definition of matching, but does not yet define what values are bound to variables defined in $P$. We refer to the set of such variables as $\mathcal{V}_P$. Note that according to \figref{Eq} every $v \in \mathcal{V}_P$ appears in $S_P(t)$, and thus, $\sigma(v)$ seems to be a good candidate, but it is not: it only gives a term \emph{structurally equivalent} to all values bound by $v$, but not the set of actual identity labels for particular subnodes. However, this set can be reconstructed during the substitution of $\sigma(v)$ into $S_P(t)$: whenever we substitute a node for $v \in \mathcal{V}_P$, we label this term with $v$ (a single term may be labeled by many variables). In the end, we substitute a term $t'$ for the root variable $R$, and it is structurally equivalent to $t$ as stated by the Definition \ref{SPT}. Given the identity labels in $t$ and variable labels in $t'$, we can derive a function called \emph{$\sigma$-labeling} of $t$:
+$$\mathcal{L}_\sigma : \mathcal{IL}(Subterms(t)) \rightarrow 2^{\mathcal{V}},$$
+where $(\mathcal{L}_\sigma(n)$ is the labeling of the corresponding node in $t'$. Using this function, we can define the set of variables bounded to a variable $v$:
+\begin{Def}
+A function $\mathcal{B}_\sigma : \mathcal{V}_P \rightarrow 2^{\mathcal{IL}(Subterms(t))}$, such that $$\mathcal{B}_\sigma(v) = \{n \,|\, v \in \mathcal{L}_\sigma(n)\},$$
+is called a \emph{bounding function} for $S_P(t)$.
+\end{Def}
+
+To complete the semantics of aspects, note that an aspect rule $r$ gives a function $V_r(v)$ returning an annotation to be associated to every $n \in \mathcal{B}_\sigma(v)$.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \subsection{Controlling numbers of matched nodes}
-Patterns and subpatterns may be preceded by a \emph{multiplicity directive}, for example
+Patterns and subpatterns may be preceded by a \emph{multiplicity directive}, for examples
 \begin{lstlisting}[language=Grammatic]
 (0..1) ? : $tr=? ([?] $tr)* // pointcut with multiplicity
     // some advice
 \end{lstlisting}
 Multiplicity determines a number of times the pattern is allowed to match. The default multiplicity is \texttt{(1..*)} which means that each pattern with no explicit multiplicity is allowed to match one or more times. When an aspect is applied to a grammar, if the actual number of matches goes beyond the range allowed by a multiplicity directive, an error message will be generated. In the example above, there will be an error when matching against the grammar from \lstref{arithexpr} because the pattern matches two rules: \texttt{expr} and \texttt{term}, which violates the specified multiplicity \texttt{(0..1)}.
-
-!!!!!!!!!!!!!
-
-The innermost loop goes through the set of GT nodes to which the variable \var{var} is bound (see \secref{Approach}) and attaches the annotations associated with this variable to each of these nodes.
 
 If no error was reported, the resulting structure (GT nodes with attached annotations) is passed to the generator which processes it as a whole and needs no information about aspects. 
 
