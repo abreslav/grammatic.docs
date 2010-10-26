@@ -1,0 +1,68 @@
+\begin{thebibliography}{00}
+\providecommand{\natexlab}[1]{#1}
+
+\bibitem[{Aho, 1986}]{DragonBook}
+Aho, A.V., Sethi, R., Ullman, J.D. (1986). \emph{Compilers: principles,
+  techniques, and tools}.
+\newblock Addison-Wesley Longman Publishing Co., Inc., Boston, MA, USA.
+
+\bibitem[{Budinsky, 2003}]{EMF}
+Budinsky, F., Brodsky, S.A., Merks, E. (2003). \emph{Eclipse Modeling
+  Framework}.
+\newblock Pearson Education.
+
+\bibitem[{Gagnon, 1998}]{SableCC}
+Gagnon, E.M., Hendren, L.J. (1998). {SableCC}, an object-oriented compiler
+  framework.
+\newblock In: \emph{TOOLS '98: Proceedings of the Technology of Object-Oriented
+  Languages and Systems}. IEEE Computer Society, Washington, DC, USA, pp.
+  140--154.
+
+\bibitem[{Gray, 1992}]{Eli}
+Gray, R.W., Levi, S.P., Heuring, V.P., Sloane, A.M., Waite, W.M. (1992). Eli: a
+  complete, flexible compiler construction system.
+\newblock \emph{Communications of the ACM}, \textbf{35}(2), 121--130.
+
+\bibitem[{Hedin, 2003}]{JastAdd}
+Hedin, G., Magnusson, E. (2003). {JastAdd}: an aspect-oriented compiler
+  construction system.
+\newblock \emph{Science of Computer Programming}, \textbf{47}(1), 37--58.
+
+\bibitem[{Johnson, 1979}]{YACC}
+Johnson, S.C. (1979). Yacc: Yet another compiler-compiler.
+\newblock Tech. rep., Bell Laboratories.
+
+\bibitem[{Khedker, 2009}]{DataFlow}
+Khedker, U., Sanyal, A., Karkare, B. (2009). \emph{Data Flow Analysis: Theory
+  and Practice}.
+\newblock CRC Press, Inc., Boca Raton, FL, USA.
+
+\bibitem[{Kiczales, 2001}]{AspectJ}
+Kiczales, G., Hilsdale, E., Hugunin, J., Kersten, M., Palm, J., Griswold, W.G.
+  (2001). An overview of {AspectJ}.
+\newblock In: \emph{ECOOP '01: Proceedings of the 15th European Conference on
+  Object-Oriented Programming}. Springer-Verlag, London, UK, pp. 327--353.
+
+\bibitem[{Knuth, 1968}]{ATG}
+Knuth, D.E. (1968). Semantics of context-free languages.
+\newblock \emph{Theory of Computing Systems}, \textbf{2}(2), 127--145.
+
+\bibitem[{Kodaganallur, 2004}]{JavaCC}
+Kodaganallur, V. (2004). Incorporating language processing into java
+  applications: A {JavaCC} tutorial.
+\newblock \emph{IEEE Software}, \textbf{21}(4), 70--77.
+
+\bibitem[{Mossenbock, 1990}]{Coco/R}
+Mossenbock, H. (1990). Coco/R - a generator for fast compiler front ends.
+\newblock Tech. rep.
+
+\bibitem[Parr, 2007]{ANTLR}
+Parr, T. (2007). \emph{The Definitive ANTLR Reference: Building Domain-Specific
+  Languages}.
+\newblock Pragmatic Programmers, Pragmatic Bookshelf, first ed.
+
+\bibitem[{Pierce, 2002}]{Pierce}
+Pierce, B.C. (2002). \emph{Types and programming languages}.
+\newblock MIT Press, Cambridge, MA, USA.
+
+\end{thebibliography}
