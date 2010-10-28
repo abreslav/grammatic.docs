@@ -1,0 +1,104 @@
+Dear Authors,
+
+We had an additional reviewer for each Baltic DB&IS post proceeding paper. We also asked reviewers to evaluate the quality of English used in the paper. If a reviewer has suggested that something should be improved, below you can find reviewer comments. We have also listed formatting errors found in your paper (if found). Please provide a corrected version of your paper as soon as possible. If you are not able to do it by Friday October 29, please let us know.
+
+---------------------------Reviewer comments----------------:
+
+It seems that the part of the text that is new in this paper is of somewhat low quality.
+
+There are a number of issues that need to be addressed before the paper can be included in the Proceedings. In the case, if some of the issues is raised in error, a short rebuttal of the issue would be appreciated.
+
+[X]Section 2.2., row 1:
+Reframe sentence so that the patterns are not defined to be sets of join points.
+
+[X]Page 5, row 4:
+'Here is ..' - bad style
+
+Page 5 row 5, and other places:
+GT (abstract) structure definitions are given in a fixed width font, while patterns that use GT language elements are written in examples in italics. The abstract syntax of the pattern language needs to be explained.
+
+[X]Page 5 row 6:
+Singleton vs. plural issue - 'Variables are used to label a subexpression'
+
+[X]Page 5 row 7:
+It is not clear to what 'this' refers to
+
+[?]Page 5 row 11:
+'This pattern ..' - which pattern?
+
+[X]Page 5 row 18:
+'this' -> 'these'
+
+[X]Page 5, section 2.3.
+It is not clear, what a grammatical advice is. If it is an annotation set, state so; if not, explain.
+
+[X]Page 5, section 2.3., row 2:
+What is a 'generator'?
+
+[?]Page 5, section 2.3, row 6:
+What does it mean to "plug-in" a user-defined datatype?
+
+[X]Page 6, Table 2:
+- Make all table rows similarly indented (e.g. to the left)
+- The sequence of values list - make it uniformly comma separated, or not
+
+[X]Page 6, Section 2.4., row 16:
+What is meant by the '@' symbol?
+
+[!]Section 2.5.
+It is strange to put the formal semantics definition within an overall section titled 'Overview of the approach'.
+
+[X]Section 2.5, row 2: 'give formal semantics'
+I would not agree that a formal semantics is given within the section, would recommend using 'outline' instead of 'give'.
+
+[X]Figure 3:
+Mixed use of concrete and abstract syntax (e.g. using Seq and Alt in abstract syntax, while Grammar, Rule, .. in the concrete syntax)
+
+[X]Page 7 Definition 1:
+What is "set of all possible constructor applications"? Is it the set of all terms / some sort of terms? Explain, or choose appropriate terminology.
+
+Page 7 Definition 3:
+- Given the not very clear explanation of v^{+}, it is not possible to tell, whether R^{+} and R denote the same term, or not (if the same term, then why two different notations for it in the same mathematical expression)?
+- 'R is called the root variable' needs at least the qualification 'for matching P and t'. Furthermore, the outlined expression within Definition 3 is not formed in a way to define R explicitly, therefore a further comment, how this expression comes to define R would be in order.
+
+[X]Page 8, row 2:
+(we refer to .. v_p) - bring out the notation from parentheses
+
+Page 8, row 5:
+- The term 'structural equivalence' seems not to be defined anywhere, the term is unclear
+- Check: do you really mean a single term to be structurally equivalent to all values (= any value) bound by v? Explanation needed for this to be understandable
+
+Page 8, row 6:
+Does it really suffice to "reconstruct" the set of identity labels, or the association of the labels to particular subterms is also important? In the later case it would not be adequate to call the reconstructed data structure a "set", it would be rather a mapping.
+
+Page 8, row 7:
+Substitution of \sigma(v) into S_p(t) - this seems to be a process that is not explained anywhere. How does this process correspond to identity label set building?
+
+Page 8, row 9:
+The term t' does not appear to be defined by the text in the paper.
+
+Page 8, paragraph 1:
+to sum up: The presentation does not allow to follow, what is meant by it. May be an example could help to improve the understanding (however, the technical details mentioned above need to be clarified, as well).
+
+Page 8, footnote 4:
+The same footnote as 2 on page 3.
+
+It would be appreciated very much, if the simple example of Figure 2 would at some point in the paper be presented in the syntax of the new approach.
+
+The paper would perhaps also benefit from a more concentrated Discussion section (still keeping the principal ideas presented there).
+
+---------------------------Formatting errors ----------------:
+• References should be ordered as they appear in text. “Use the Citation-Sequence System, which means they are “listed and numbered in the sequence in which they are 1st cited.
+• Table caption should be above table. “Place figure captions below the figure, table captions above the table.”
+• Please check footnote formatting.
+----Recommendations:
+• “The recommended type font for running text (body text) is 10 point Times NewRoman.”
+• It would be nice to use formatting similar to figure/table captions for listing captions. (Although nothing is said about listing formatting in IOSpress formatting guide.)
+
+
+Best regards,
+Elina Kalnina
+Conference Secretary
+Baltic DB & IS 2010
+http://www.lumii.lv/dbis2010/
+dbis2010@lumii.lv
