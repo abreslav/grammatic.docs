@@ -14,6 +14,10 @@
 \usepackage{soul}
 \usepackage{graphicx}
 
+\newcommand{\report}[1]{%
+%#1
+}%
+
 \sloppy
 
 \definecolor{Brown}{cmyk}{0,0.81,1,0.60}
@@ -388,14 +392,15 @@ This code assigns the first component of a returned tuple to the attribute \text
 Before the first assignment, a value of an attribute is not defined and thus can not be read. To ensure that every attribute is initialized before the first usage, \ATF{} performs conventional data-flow analysis \cite{DataFlow}.
 If the analysis finds a read-access which may not be preceded by a corresponding write-access, the front-end reports an error. This analysis relies on the construction of a control flow graph. \ATF{} does not support conditional operators and loops as such, and all the branching and repetition happens according to the structure of grammar rules which is denoted by the common regular operations: concatenation (sequence), alternative (``$|$'') and iteration (``+''). Optional constructs (``?'' and ``*'') are viewed as alternatives with an empty option.
 
-A control flow graph is constructed as follows: concatenation corresponds to sequential execution, alternative corresponds to branching and iteration corresponds to a loop. \figref{cfg} shows a control flow graph for the \lstref{exprTF}; edges are labeled with corresponding sequences of attribute reads and writes indicated as ``[r]'' and ``[w]'' respectively.
+A control flow graph is constructed as follows: concatenation corresponds to sequential execution, alternative corresponds to branching and iteration corresponds to a loop. 
+\report{\figref{cfg} shows a control flow graph for the \lstref{exprTF}; edges are labeled with corresponding sequences of attribute reads and writes indicated as ``[r]'' and ``[w]'' respectively.
 
 \begin{figure}[h!]
 	\includegraphics[width=\textwidth]{cfg}
 	\caption{Control flow graph for \texttt{expr} with attribute access labels}\label{cfg}
-\end{figure}
+\end{figure}}
 
-
+\report{
 \subsection{Local type inference.}\label{TypeInf}
 
 \ATF{} checks translation functions for type safety: when a value is assigned to an attribute (passing as an argument can also be interpreted as an assignment to an input attribute of a function), the type of the right-hand side must be a subtype of the type of the left-hand side. This prevents \ATF{} from generating code with typing errors such as those we discussed in \secref{Introduction}.
@@ -432,7 +437,7 @@ We provide a more detailed description of type checking and type inference in \A
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+}
 
 \section{Type system.}\label{TypeSystem}
 
@@ -661,6 +666,7 @@ In such a case one describes an abstract \emph{type system} as shown above and p
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\report{
 \section{Language-specific front-end extensions.}\label{Java}
 
 To provide tighter integration with a particular implementation language one can use a language-specific extension of the \ATF{} front-end instead of the default one described in the previous section. 
@@ -787,7 +793,7 @@ Correctness of external function signatures is guaranteed by the following desig
 
 To summarize, we have demonstrated how a back-end can prevent all the errors which are imposed by the structure of the generated code (and thus not present in the specification, and not checked by a front-end). These techniques vary over implementation languages, but the essence stays unchanged: we can always generate code in such a way that these errors do not appear.
 Thus, we have reached our goal: as soon as a specification is successfully type-checked, the generated code is error-free.
-
+}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
