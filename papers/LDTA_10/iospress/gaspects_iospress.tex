@@ -4,7 +4,7 @@
 
 \documentclass{IOS-Book-Article}     %[seceqn,secfloat,secthm]
 %\usepackage[T1]{fontenc}
-%\usepackage{times}%
+\usepackage{times}%
 \normalfont%
 %\usepackage[mtplusscr,mtbold]{mathtime}%
 %\usepackage{authblk}
@@ -69,6 +69,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%% Pseudocode
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \newcommand{\itemsepdelta}{%
 %	\setlength{\itemsep}{0pt}%
 %	\setlength{\topsep}{0pt}%
@@ -152,6 +153,23 @@ DSL, Grammar, Aspect
 		morekeywords={lex,empty,*,?,+},
 		morecomment=[l]{//},
 	}
+\lstdefinelanguage{Haskell}
+    {
+      basicstyle=\small\it\rmfamily,%\ttfamily,
+      flexiblecolumns=false,
+      basewidth={0.5em,0.45em},
+  	  morecomment=[l]{--},
+  	  morekeywords={data},
+	  commentstyle=\normalfont\ttfamily\color{OliveGreen},
+      literate={+}{{$+$}}1 {/}{{$/$}}1 {*}{{$*$}}1 {=}{{$=$}}1
+               {>}{{$>$}}1 {<}{{$<$}}1 {\\}{{$\lambda$}}1
+               {\\\\}{{\char`\\\char`\\}}1
+               {->}{{$\rightarrow$}}2 {>=}{{$\geq$}}2 {<-}{{$\leftarrow$}}2
+               {<=}{{$\leq$}}2 {=>}{{$\Rightarrow$}}2 
+               {\ .}{{$\circ$}}2 {\ .\ }{{$\circ$}}2
+               {>>}{{>>}}2 {>>=}{{>>=}}2
+               {|}{{$\mid$}}1               
+    }
 
 % State-of-the-art
 With the growing popularity of Domain-Specific Languages, the following types of supporting tools are created \bad{more and} more frequently:
@@ -338,7 +356,7 @@ expr : [?]
 To precisely define what happens when an aspect is applied to a language specification, in this section we outline formal semantics to the constructs described above. The key point in this formalization is to characterize pointcut matching by establishing a system of inequalities over sets of terms\footnote{Since terms are trees, in this section we use ``GT node'' and ``term'' interchangeably.} corresponding to pointcuts. Solutions of these inequalities give valuations to variables defined inside patterns and subpatterns.
 
 \begin{Def}[System of set inequalities]
-Given an infinite set of variables $\mathcal{V}$, finite set of types $\mathcal{T}$ and value constructors $\mathcal{C}$ (we denote the set of all possible terms that use constructors from $\mathcal{C}$ as $\overline{\mathcal{C}}$),
+Given an infinite set of variables $\mathcal{V}$, finite set of types $\mathcal{T}$ and value constructors $\mathcal{C}$ (we denote the set of all possible terms that use constructors from $\mathcal{C}$ and variables from $\mathcal{V}$ as $\overline{\mathcal{C}}$),
 a \emph{system of set inequalities} is a finite set of expressions of the following forms:
 \begin{itemize}
 \item $x \in S$, where $x \in \mathcal{V} \cup \overline{\mathcal{C}}$, 
@@ -393,7 +411,7 @@ $
 
 To incorporate a subpattern $P_1$ into this definition, it is enough to consider an extended system $S_{P, P_1}(t) = S_P(t) \cup S_{P_1}(t) \cup \{R_1 \in Subterms(R)\}$, where $R$ is the root variable for $S_P(t)$, and $R_1$ is the root variable for $S_{P_1}(t)$. Arbitrarily nesting subpatterns are easily expressible in this manner.
 
-According to these definitions, if $P$ matches $t$, then if we substitute all variables in $S_P(t)$ by their values given by $\sigma$, all the entries in the system turn into true statements. This gives a precise definition of matching, but does not yet define what values are bound to variables defined in $P$; we refer to the set of such variables as $\mathcal{V}_P$. Note that according to \figref{Eq}, every $v \in \mathcal{V}_P$ appears in $S_P(t)$, and thus, $\sigma(v)$ seems to be a good candidate, but it is not: it only gives a term \emph{structurally equivalent} to all values bound by $v$, but not the set of actual identity labels for particular subterms. However, this set can be reconstructed during the substitution of $\sigma(v)$ into $S_P(t)$: whenever we substitute a term for $v \in \mathcal{V}_P$, we label this term with $v$ (a single term may be labeled by many variables). In the end, we substitute a term $t'$ for the root variable $R$, and it is structurally equivalent to $t$ as stated by the Definition \ref{SPT}. Given the identity labels in $t$ and variable labels in $t'$, we can derive a function called \emph{$\sigma$-labeling} of $t$:
+According to these definitions, if $P$ matches $t$, then if we substitute all variables in $S_P(t)$ by their values given by $\sigma$, all the entries in the system turn into true statements. This gives a precise definition of matching, but does not yet define what values are bound to variables defined in $P$; we refer to the set of such variables as $\mathcal{V}_P$. Note that according to \figref{Eq}, every $v \in \mathcal{V}_P$ appears in $S_P(t)$, and thus, $\sigma(v)$ seems to be a good candidate, but it is not: it only gives a term \emph{structurally equivalent} to all values bound by $v$, but not the set of actual identity labels for particular subterms. However, this set can be reconstructed during the substitution of $\sigma(v)$ into $S_P(t)$: whenever we substitute a term for $v \in \mathcal{V}_P$, we label this term with $v$ (a single term may be labeled by many variables). In the end, we substitute a term $t' = \sigma(R)$ for the root variable $R$, and it is structurally equivalent to $t$ as stated by the Definition \ref{SPT}. Given the identity labels in $t$ and variable labels in $t'$, we can derive a function called \emph{$\sigma$-labeling} of $t$:
 $$\mathcal{L}_\sigma : \mathcal{IL}(Subterms(t)) \rightarrow 2^{\mathcal{V}},$$
 where $\mathcal{L}_\sigma(n)$ is the labeling of the corresponding term in $t'$. Using this function, we can define the set of variables bounded to a variable $v$:
 \begin{Def}[Bounding function]
