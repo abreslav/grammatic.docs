@@ -1,45 +1,45 @@
 This is BibTeX, Version 0.99c (TeX Live 2009/Debian)
 The top-level auxiliary file: gaspects_iospress.aux
-The style file: plain.bst
+The style file: unsrt.bst
 Database file #1: grammatic_ldta_10.bib
 You've used 15 entries,
-            2118 wiz_defined-function locations,
-            610 strings with 6576 characters,
-and the built_in function-call counts, 4869 in all, are:
-= -- 494
-> -- 195
+            1791 wiz_defined-function locations,
+            558 strings with 6101 characters,
+and the built_in function-call counts, 3464 in all, are:
+= -- 333
+> -- 120
 < -- 6
-+ -- 82
-- -- 62
-* -- 296
-:= -- 794
++ -- 47
+- -- 32
+* -- 191
+:= -- 524
 add.period$ -- 51
 call.type$ -- 15
-change.case$ -- 76
+change.case$ -- 16
 chr.to.int$ -- 0
 cite$ -- 15
-duplicate$ -- 208
-empty$ -- 408
-format.name$ -- 62
-if$ -- 1064
+duplicate$ -- 178
+empty$ -- 360
+format.name$ -- 32
+if$ -- 822
 int.to.chr$ -- 0
 int.to.str$ -- 15
 missing$ -- 13
 newline$ -- 78
-num.names$ -- 32
-pop$ -- 98
+num.names$ -- 17
+pop$ -- 65
 preamble$ -- 1
-purify$ -- 60
+purify$ -- 0
 quote$ -- 0
-skip$ -- 145
+skip$ -- 85
 stack$ -- 0
-substring$ -- 243
+substring$ -- 163
 swap$ -- 54
 text.length$ -- 6
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 56
+type$ -- 0
 warning$ -- 0
-while$ -- 47
+while$ -- 32
 width$ -- 17
 write$ -- 176

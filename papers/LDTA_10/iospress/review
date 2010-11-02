@@ -57,27 +57,27 @@ Mixed use of concrete and abstract syntax (e.g. using Seq and Alt in abstract sy
 [X]Page 7 Definition 1:
 What is "set of all possible constructor applications"? Is it the set of all terms / some sort of terms? Explain, or choose appropriate terminology.
 
-Page 7 Definition 3:
+[X]Page 7 Definition 3:
 - Given the not very clear explanation of v^{+}, it is not possible to tell, whether R^{+} and R denote the same term, or not (if the same term, then why two different notations for it in the same mathematical expression)?
 - 'R is called the root variable' needs at least the qualification 'for matching P and t'. Furthermore, the outlined expression within Definition 3 is not formed in a way to define R explicitly, therefore a further comment, how this expression comes to define R would be in order.
 
 [X]Page 8, row 2:
 (we refer to .. v_p) - bring out the notation from parentheses
 
-Page 8, row 5:
+[X]Page 8, row 5:
 - The term 'structural equivalence' seems not to be defined anywhere, the term is unclear
 - Check: do you really mean a single term to be structurally equivalent to all values (= any value) bound by v? Explanation needed for this to be understandable
 
-Page 8, row 6:
+[X]Page 8, row 6:
 Does it really suffice to "reconstruct" the set of identity labels, or the association of the labels to particular subterms is also important? In the later case it would not be adequate to call the reconstructed data structure a "set", it would be rather a mapping.
 
-Page 8, row 7:
+[X]Page 8, row 7:
 Substitution of \sigma(v) into S_p(t) - this seems to be a process that is not explained anywhere. How does this process correspond to identity label set building?
 
-Page 8, row 9:
+[X]Page 8, row 9:
 The term t' does not appear to be defined by the text in the paper.
 
-Page 8, paragraph 1:
+[X]Page 8, paragraph 1:
 to sum up: The presentation does not allow to follow, what is meant by it. May be an example could help to improve the understanding (however, the technical details mentioned above need to be clarified, as well).
 
 Page 8, footnote 4:
@@ -88,12 +88,12 @@ It would be appreciated very much, if the simple example of Figure 2 would at so
 The paper would perhaps also benefit from a more concentrated Discussion section (still keeping the principal ideas presented there).
 
 ---------------------------Formatting errors ----------------:
-• References should be ordered as they appear in text. “Use the Citation-Sequence System, which means they are “listed and numbered in the sequence in which they are 1st cited.
-• Table caption should be above table. “Place figure captions below the figure, table captions above the table.”
+[X]• References should be ordered as they appear in text. “Use the Citation-Sequence System, which means they are “listed and numbered in the sequence in which they are 1st cited.
+[X]• Table caption should be above table. “Place figure captions below the figure, table captions above the table.”
 • Please check footnote formatting.
 ----Recommendations:
-• “The recommended type font for running text (body text) is 10 point Times NewRoman.”
-• It would be nice to use formatting similar to figure/table captions for listing captions. (Although nothing is said about listing formatting in IOSpress formatting guide.)
+[X]• “The recommended type font for running text (body text) is 10 point Times NewRoman.”
+[X]• It would be nice to use formatting similar to figure/table captions for listing captions. (Although nothing is said about listing formatting in IOSpress formatting guide.)
 
 
 Best regards,

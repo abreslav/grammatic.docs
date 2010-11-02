@@ -5,6 +5,7 @@
 \documentclass{IOS-Book-Article}     %[seceqn,secfloat,secthm]
 %\usepackage[T1]{fontenc}
 \usepackage{times}%
+\usepackage[footnotesize,bf,labelsep=period]{caption}
 \normalfont%
 %\usepackage[mtplusscr,mtbold]{mathtime}%
 %\usepackage{authblk}
@@ -44,6 +45,7 @@
 %\newcommand{\note}[1]{\noindent \begin{tabular}{|c|}\hline \textcolor{blue}{#1}\\ \hline \end{tabular}}
 \newcommand{\comment}[1]{}
 
+\newcommand{\SymRef}[1]{SymRef(\mbox{#1})}
 \newcommand{\abstr}[3]{\lambda \, #1 \approx #2 \,.\, #3}
 \newcommand{\sem}[1]{[\![#1]\!]}
 \newcommand{\fresh}[1]{#1^\dagger}
@@ -258,7 +260,7 @@ Below we use \tool{ANTLR}'s notation for context-free grammars and reflect on AS
 		| Literal {value :: String} | Empty
 		| Seq {exprs :: List(Expr)} -- Sequence
 		| Alt {exprs :: Set(Expr)}  -- Alternative
-		| Iter {exprs :: Expr, multiplicity :: Mult} -- Iteration
+		| Iter {expr :: Expr, multiplicity :: Mult} -- Iteration
 	data Mult = Star | Plus | Option
 \end{lstlisting}
 Every node in a GT can be a join point, thus we have as many join point types as data constructors in the GT language above.
@@ -270,19 +272,19 @@ Pointcuts are expressions denoting sets of join points; they are described using
 %
 \begin{table}[h!]
 \centering
-\begin{tabular}{|@{}c|l|}
+\caption{Notions introduced in the pointcut language (in addition to the GT nodes)}\label{wildcards}
+\begin{tabular}{|c|c|l|}
 	\hline
-	\bf Notation & \bf Matches any\ldots \\
+	\bf Concrete Syntax & \bf Abstract Syntax & \bf Meaning \\
 	\hline
-	?\emph{Type} & Any instance of type \emph{Type} \\
-	? & Any symbol (?SymRef)\\
-	?lex & Any lexical literal (?Literal) \\
-	{}[?]& Any sequence \\
-	\{?\}& Any set of alternatives \\
-	$\;\abstr{var}{expr_1}{expr_2(var)}$ & Variable binding \\
+	&$?\mathbf{Type}$ & Any instance of type \textbf{Type} \\
+	\tt ? & $?SymRef$ &Any symbol\\
+	\tt ?lex & $?Literal$ & Any lexical literal\\
+	\tt {}[?]& $[?]$&Any sequence \\
+	\tt \{?\}& $\{?\}$&Any set of alternatives \\
+	\tt ... \$v=e1 ... & $\;\abstr{v}{e_1}{e_2}$ & Variable binding \\
 	\hline
 \end{tabular}
-\caption{Notions introduced in the pointcut language (in addition to the GT nodes)}\label{wildcards}
 \end{table}
 %
 Consider some examples of patterns for the rules from \lstref{arithexpr}:
@@ -292,24 +294,26 @@ Consider some examples of patterns for the rules from \lstref{arithexpr}:
 	\item[(c)] \lstinline!? : ? [?]*! --- a symbol reference followed by a star iterating an arbitrary sequence (matches the rules for \texttt{expr} and \texttt{term}).
 \end{itemize}
 Note that constructors of the GT language are used in the pattern language abstract syntax; their typing is relaxed in order to accommodate wildcards written as $?Type$. The example (b) from above can be written in the abstract syntax (``$:$'' denotes the \emph{cons} operation on lists) as follows:\\
-$Rule(?SymRef, Seq(SymRef(\mbox{``term''})\,:\,?List(Expr)))$.
+$Rule(?SymRef, Seq(\SymRef{term}\,:\,?List(Expr)))$.
 
-Variables are used to label subexpressions and refer to them later. Consider the following example written in the abstract syntax:\\
-\indent
+Variables are used to label subexpressions and refer to them later. Variable definitions and usages are prefixed with the dollar sign. Consider the following example:\\
+\indent\lstinline!? : $tr=? ([?] $tr)*!\\
+Here the variable \texttt{tr} is defined with the pattern \texttt{?} (any symbol) which means that all usages of the variable will match only occurrences of the same symbol. This example matches the rule for \texttt{expr} because the same symbol \texttt{term} is referenced in the positions matched by the variable \texttt{tr}. In abstract syntax variables are defined with $\lambda$-abstraction:\\\indent
 $
-\abstr{tr}{?SymRef}{tr\;((\mathtt{PLUS} \,|\, \mathtt{MINUS})\; tr)^*}
-$\\
-Here the variable \texttt{tr} is defined with the pattern $?SymRef$ (any symbol) which means that all usages of the variable will match only occurrences of the same symbol. This example matches the rule for \texttt{expr} because the same symbol \texttt{term} is referenced in the positions matched by the variable \texttt{tr}. In concrete syntax variables are defined inside the pattern, and prefixed by a dollar sign so that the pattern given above is written as follows:\\
-\indent\lstinline!? : $tr=? ((PLUS | MINUS) $tr)*!
+\abstr{tr}{\,?SymRef}{Seq(tr\;:\;Iter(Seq(?List(Expr) : tr), Star))}
+$
 
-In this paper we assume that GT nodes are \emph{not} shared, and subtrees of the same shape occurring at different positions are distinct. This corresponds to having unique numbers implicitly assigned to nodes, below we refer to these numbers as \emph{identity labeling} and write $\mathcal{IL}(n)$ for the identity-label of a node $n$. In this regard, note that a variable is in general bound to a \emph{set} of GT nodes: if we match the rule for \texttt{expr} against the pattern in the example above, the variable \texttt{tr} will be bound to a set comprised by two distinct references to \texttt{term}.
+In this paper we assume that GT nodes are \emph{not} shared, and subtrees of the same shape occurring at different positions are distinct. This corresponds to having unique numbers implicitly assigned to nodes, below we refer to these numbers as \emph{identity labeling} and write them in superscripts: for example. $Rule^0(SymRef^1(x), SymRef^2(y))$. In this regard, note that a variable is in general bound to a \emph{set} of GT nodes: if we match the rule for \texttt{expr} against the pattern in the example above, the variable \texttt{tr} will be bound to a set comprised by two distinct references to \texttt{term}, with distinct identity labels.
 
 % Advice
 \subsection{Grammatical advice}
-As mentioned above, the main idea of our approach is to separate annotations used by various generators from grammars. Treated in this manner, annotations become \emph{grammatical advice}\footnote{By analogy with AspectJ's advice.}. In general, a generator may need a very rich annotation system, and grammatical advice must be capable of expressing it. In our approach, we use a \emph{generic advice language}, which represents the annotations as sets of name-value pairs which we call \emph{attributes}. Examples of such pairs are given in \tabref{value_types} which shows all the predefined value types. Developers can introduce user-defined types, but we do not describe this mechanism here, in order to save space. The annotations in \figref{structured} may be represented, for example, as values of type String (other representations are also possible).
+As mentioned above, the main idea of our approach is to separate annotations used by various generators from grammars. Treated in this manner, annotations become \emph{grammatical advice} (by analogy with AspectJ's advice). In general, a generator may need a very rich annotation system, and grammatical advice must be capable of expressing it. In our approach, we use a \emph{generic advice language}, which represents the annotations as sets of name-value pairs which we call \emph{attributes}. Examples of such pairs are given in \tabref{value_types} which shows all the predefined value types. 
+Developers can introduce user-defined types, but we do not describe this mechanism here, in order to save space. 
+The annotations in \figref{structured} may be represented, for example, as values of type String (other representations are also possible).
 
 \begin{table}[h!]
 \centering
+\caption{Predefined value types}\label{value_types}
 \begin{tabular}{|@{\tt\,\,}l|l|}
 	\hline
 	\bf Example & \bf Value type \\
@@ -321,7 +325,6 @@ As mentioned above, the main idea of our approach is to separate annotations use
 	seq = [1 a b 'str'] \,& Sequence of values \\
 	\hline
 \end{tabular}
-\caption{Predefined value types}\label{value_types}
 \end{table}
 
 As the usage of the term ``attribute'' may be misleading in this context, we would like to note that the approach presented here does not directly correspond to attribute grammars \cite{ATG}. In fact, grammars with annotations do not have any particular execution semantics (each generator interprets the annotations in its own way), as opposed to attribute grammars which have a fixed execution semantics. One can describe attribute grammars using our approach and define corresponding semantics in a generator, but this is just an example application.
@@ -353,77 +356,96 @@ expr : [?]
 
 \section{Semantics of pointcuts and aspects}
 
-To precisely define what happens when an aspect is applied to a language specification, in this section we outline formal semantics to the constructs described above. The key point in this formalization is to characterize pointcut matching by establishing a system of inequalities over sets of terms\footnote{Since terms are trees, in this section we use ``GT node'' and ``term'' interchangeably.} corresponding to pointcuts. Solutions of these inequalities give valuations to variables defined inside patterns and subpatterns.
+To precisely define what happens when an aspect is applied to a language specification, in this section we outline formal semantics of the constructs described above. The key point in this formalization is to characterize pointcut matching by establishing a system of inequalities over sets of terms\footnote{Since terms are trees, in this section we use ``GT node'' and ``term'' interchangeably.} corresponding to pointcuts. Solutions of these inequalities give valuations to variables defined inside patterns and subpatterns.
 
 \begin{Def}[System of set inequalities]
-Given an infinite set of variables $\mathcal{V}$, finite set of types $\mathcal{T}$ and value constructors $\mathcal{C}$ (we denote the set of all possible terms that use constructors from $\mathcal{C}$ and variables from $\mathcal{V}$ as $\overline{\mathcal{C}}$),
-a \emph{system of set inequalities} is a finite set of expressions of the following forms:
+Let $\mathcal{V}$ be an infinite set of variables, $\mathcal{T}$ --- a finite set of types, $\mathcal{C}$ --- a finite set of value constructors, and $\overline{\mathcal{C}}$ --- the set of all possible identity-labeled terms that use constructors from $\mathcal{C}$ and variables from $\mathcal{V}$.
+A \emph{system of set inequalities} is a finite set of expressions of the following forms:
 \begin{itemize}
-\item $x \in S$, where $x \in \mathcal{V} \cup \overline{\mathcal{C}}$, 
-\item or $S_1 = S_2$, where $S_i \in \mathcal{V} \cup \overline{\mathcal{C}}$ or $S_i \subseteq \overline{\mathcal{C}}$.
+\item $S_1 \subseteq S_2$, where $S_i \subseteq \overline{\mathcal{C}}$,
+\item or $\forall x \in S. P(x)$, where $x \in \mathcal{V}$.
 \end{itemize}
-Given such a system $S$, a function $\sigma : \mathcal{V}  \rightarrow \overline{\mathcal{C}}$ is called a \emph{solution} of $S$, iff replacing every occurrence of every $v \in \mathcal{V}$ in $S$ by $\sigma(v)$ turns all the entries of $S$ into true statements.
+Given such a system $S$, a minimal function $\sigma : \mathcal{V}  \rightarrow 2^{\overline{\mathcal{C}}}$ is called a \emph{solution} of $S$, iff replacing every occurrence of every $v \in \mathcal{V}$ in $S$ by $\sigma(v)$ turns all the entries of $S$ into true statements.
 \end{Def}
 In addition to the common set operations, we use the following conventions:
 \begin{itemize}
+	\item $Strip(t)$ denotes a term $t$ with its identity labels removed.
 	\item $\sem{T}$, where $T \in \mathcal{T}$ denotes a set of all values of type $T$.
 	\item If $C \in \mathcal{C}$, then $C(S_1, \ldots, S_n) = \{C(s_1, \ldots, s_n) \,|\, s_1 \in S_1, \ldots, s_n \in S_n\}$.
-	\item For $t \in \overline{\mathcal{C}}$, $Subterms(t)$ is the set of all direct and indirect subterms of $t$ (identity-labeled).
+	\item For $t \in \overline{\mathcal{C}}$, $Subterms(t)$ is the set of all direct and indirect subterms of $t$.
 	\item $L_1 \oplus L_2 = \{l_1 \oplus l_2 \,|\, l_1 \in L_1, l_2 \in L_2\}$, where $\oplus$ denotes list concatenation.
 	\item A single value can be treated as a singleton set or singleton list containing this value, if required by the context.
 \end{itemize}
 
-\figref{Eq} defines a function $\Eq{}$ that takes a variable and a pattern as arguments and returns a system of set inequalities. We denote variables $v$ which are supposed to be fresh with respect to the rest of the system as $\fresh{v}$. 
-\begin{Def}[Matching, Root variable]\label{SPT}
-Given a pointcut expression $P$ and a GT $t$, let 
-$$S_P(t) = \Eq{}(\fresh{R}, P) \cup \{R = t\}$$
-$R$ is called the \emph{root variable}. Then, $P$ \emph{matches} $t$ iff there is a solution $\sigma$ to $S_P(t)$.
+\begin{Def}(Pattern projection) Let $P$ be a pattern and $\mathcal{V}_P$ be a set of all variables defined inside this pattern, then for $v \in \mathcal{V}_P$ the pattern $P_v$ is called a \emph{$v$-projection} of $P$ if it is acquired from $P$ by substituting all the variables except $v$ by their corresponding patterns defined in $\lambda$-abstractions.
+\end{Def}
+
+For example, consider the following pattern: \lstinline!$a=? : $b=$a!. %$
+In abstract syntax it is written as follows:
+\mbox{$P = \abstr{a}{\;?SymRef}{\abstr{b}{a}{Rule(a, b)}}$}. 
+Projections for $P$ are \mbox{$P_a = \abstr{a}{\;?SymRef}{Rule(a, a)}$} and \mbox{$P_b = \abstr{b}{\;?SymRef}{Rule(?SymRef, b)}$}.
+
+\figref{Eq} defines a function $\Eq{}$ that takes a variable and a pattern as arguments and returns a system of set inequalities. We denote variables $v$ which are supposed to be fresh with respect to the rest of the system as $\fresh{v}$. For example, usage of this notation in the first rule in \figref{Eq} means that fresh variables $\fresh{v_i}$ are introduced every time this rule is applied.
+
+\begin{Def}[Matching]\label{SPT}
+Given a pointcut expression $P$, a GT $t$ and $R \in \mathcal{V} \setminus \mathcal{V}_P$, let 
+$$S^R_P(t) = \{R = t\} \cup \bigcup\limits_{v \in \mathcal{V}_P} \Eq{}(R, P_v)$$
+Then, $P$ \emph{matches} $t$ iff there is a solution $\sigma$ to $S^R_P(t)$.
 \end{Def}
 
 \begin{figure}%
 \centering%
-$
-\begin{array}{rcl}
-\Eq(V, \mathbf{Type}(t_1, \ldots, t_n)) &=& \{V \in \mathbf{Type}(\fresh{v_1}, \ldots, \fresh{v_n})\} \cup 
-\bigcup_1^n \Eq{}(v_i, t_i),\\
-\mbox{where } \mathbf{Type} &\in& \{
-	Grammar, Rule, Iter, SymRef, Literal, Empty\}\\
-
-\Eq{}(V, ?Type) &=& \{V \in \sem{Type}\}\\
-
-\Eq{}(V, \abstr{v}{e_1}{e_2}) &=& \Eq{}(v, e_1) \cup \Eq{}(V, e_2)\\
-
-\Eq{}(V, Seq(e_1, \ldots, e_n)) &=& \{V \in Seq(\fresh{L})\} \cup \{ L = \fresh{L_1} \oplus \ldots \oplus \fresh{L_n}\} \cup \bigcup_1^n \Eq{}(L_i, e_i)\\
-
-\Eq{}(V, [?]) &=& \{ V \in \sem{List(Expr)} \}\\
-
-\Eq{}(V, Alt(e_1, \ldots, e_n, \{?\})) &=& \{V \in Alt(\fresh{S})\}
-                                   \cup \bigcup_1^n \Eq{}(\fresh{t_i}, e_i) \cup \\
-                               &&    
-                                   \cup \bigcup_1^n \{ t_i \in S\}
-                                   \cup \{ \fresh{R} = S \setminus
-                                                          \bigcup_1^n\{t_i\}\}\\
-\Eq{}(V, v) &=& \{V = v\}
+\framebox{$
+\begin{array}{rcl}%
+\Eq(V, \mathbf{Type}(t_1, \ldots, t_n)) &=& \{V \subseteq \mathbf{Type}(\fresh{v_1}, \ldots, \fresh{v_n})\} \cup 
+\bigcup_1^n \Eq{}(\fresh{v_i}, t_i),\\%
+\mbox{where } \mathbf{Type} &\subseteq& \{
+	Grammar, Rule, Iter, SymRef, Literal, Empty\}\\%
+%
+\Eq{}(V, ?Type) &=& \{V \subseteq \sem{Type}\}\\%
+%
+\Eq{}(V, Seq(e_1, \ldots, e_n)) &=& \{V \subseteq Seq(\fresh{L})\} \cup \{ \fresh{L} = \fresh{L_1} \oplus \ldots \oplus \fresh{L_n}\} \cup \bigcup_1^n \Eq{}(\fresh{L_i}, e_i)\\%
+%
+\Eq{}(V, [?]) &=& \{ V \subseteq \sem{List(Expr)} \}\\%
+%
+\Eq{}(V, Alt(e_1, \ldots, e_n, \{?\})) &=& \{V \subseteq Alt(\fresh{S})\}
+                                   \cup \bigcup_1^n \Eq{}(\fresh{t_i}, e_i) \cup                                 
+                                    \bigcup_1^n \{ \fresh{t_i} \subseteq \fresh{S}\}
+                                   %\cup \{ \fresh{R} = S \setminus
+                                    %  \bigcup_1^n\{t_i\}\}
+                                    \\%
+%                                                                        
+\Eq{}(V, \abstr{v}{e_1}{e_2}) &=& \Eq{}(v, e_1) \cup \Eq{}(V, e_2) 
+        \cup \{varax(v)\},\\ %
+        && \mbox{where } varax(v) = \forall x', x'' \in v. Strip(x') = Strip(x'')\\%
+%
+\Eq{}(V, v) &=& \{V \subseteq v\}%
 \end{array}
-$
+$}
 \caption{Transforming a pattern into a system of inequalities}\label{Eq}%
 \end{figure}%
 
-To incorporate a subpattern $P_1$ into this definition, it is enough to consider an extended system $S_{P, P_1}(t) = S_P(t) \cup S_{P_1}(t) \cup \{R_1 \in Subterms(R)\}$, where $R$ is the root variable for $S_P(t)$, and $R_1$ is the root variable for $S_{P_1}(t)$. Arbitrarily nesting subpatterns are easily expressible in this manner.
+To incorporate a subpattern $P_1$ into this definition, it is enough to consider an extended system $S^R_{P, P_1}(t) = S^R_P(t) \cup S^{R_1}_{P_1}(t) \cup \{R_1 \subseteq Subterms(R)\}$. Arbitrarily nesting subpatterns are easily expressible in this manner.
 
-According to these definitions, if $P$ matches $t$, then if we substitute all variables in $S_P(t)$ by their values given by $\sigma$, all the entries in the system turn into true statements. This gives a precise definition of matching, but does not yet define what values are bound to variables defined in $P$; we refer to the set of such variables as $\mathcal{V}_P$. Note that according to \figref{Eq}, every $v \in \mathcal{V}_P$ appears in $S_P(t)$, and thus, $\sigma(v)$ seems to be a good candidate, but it is not: it only gives a term \emph{structurally equivalent} to all values bound by $v$, but not the set of actual identity labels for particular subterms. However, this set can be reconstructed during the substitution of $\sigma(v)$ into $S_P(t)$: whenever we substitute a term for $v \in \mathcal{V}_P$, we label this term with $v$ (a single term may be labeled by many variables). In the end, we substitute a term $t' = \sigma(R)$ for the root variable $R$, and it is structurally equivalent to $t$ as stated by the Definition \ref{SPT}. Given the identity labels in $t$ and variable labels in $t'$, we can derive a function called \emph{$\sigma$-labeling} of $t$:
-$$\mathcal{L}_\sigma : \mathcal{IL}(Subterms(t)) \rightarrow 2^{\mathcal{V}},$$
-where $\mathcal{L}_\sigma(n)$ is the labeling of the corresponding term in $t'$. Using this function, we can define the set of variables bounded to a variable $v$:
-\begin{Def}[Bounding function]
-A function $\mathcal{B}_\sigma : \mathcal{V}_P \rightarrow 2^{\mathcal{IL}(Subterms(t))}$, such that $$\mathcal{B}_\sigma(v) = \{n \,|\, v \in \mathcal{L}_\sigma(n)\},$$
-is called a \emph{bounding function} for $S_P(t)$.
-\end{Def}
+To save space, let us denote $SymRef^{n}(X)$ as $X^n$. For the example pattern $P$ given above and a term $t$: \lstinline!X : X!, or, in abstract syntax: \mbox{$t = Rule^0(SymRef^1(X), SymRef^2(X)) = Rule^0(X^1, X^2)$} the system $S^R_P(t)$ is comprised of the following inequalities: 
+$$
+\begin{array}{llllllll|}
+\multicolumn{2}{l}{\Eq{}(R, P_a):} && \multicolumn{2}{l}{\Eq{}(R, P_b):} &&\indent\\
+\indent&a \subseteq \sem{SymRef}    &\indent&\indent& b \subseteq \sem{SymRef} &\indent& R = Rule^0(X^1, X^2)\\
+&varax(a)&&&varax(b)&&\\
+&R \subseteq Rule(v_1, v2)   &&& R \subseteq Rule(v_3, v4) &&\\
+&v_1 \subseteq a               &&& v_3 \subseteq \sem{SymRef} &&\\
+&v_2 \subseteq a               &&& v_4 \subseteq b &&\\
+\end{array}
+$$
+Recall that $varax(v)$, as defined in \figref{Eq}, is a statement saying that all terms in the set denoted by $v$ are equal modulo the identity labeling. If we change $t$ to be $t' = Rule^0(X^1, Y^2)$, then $varax(a)$ will not hold, and the system will be unsatisfiable. But with the given $t$ this system has a solution: $\sigma(a) = \{X^1, X^2\}$, $\sigma(b) = \{X^2\}$. This solution reflects the fact that $b$ is only bound to the second occurrence of $X$, whereas $a$ is bound to both occurrences.
 
-To complete the semantics of aspects, note that an aspect rule $r$ gives a function $V_r(v)$ returning an annotation to be associated to every $n \in \mathcal{B}_\sigma(v)$. To apply a particular rule $r$ (a pointcut $P_r$ and the annotation function $V_r$), for every node $t$ in the GT, if there is a solution $\sigma$ for $S_{P_r}(t)$, then for every $v \in \mathcal{V}_{P_r}$ associate $V_r(v)$ with every $n \in \mathcal{B}_\sigma(v)$. If there are two annotations associated to the same node, they are merged (duplicate attributes, if any, are kept). Naturally, the grammar annotation (if present) is simply associated to the whole grammar.
+To complete the semantics of aspects, note that an aspect rule $r$ gives a function $A_r(v)$ returning an annotation to be associated to every $n \in \sigma(v)$. To apply a particular rule $r$ (a pointcut $P_r$ and the annotation function $A_r$), for every node $t$ in the GT, if there is a solution $\sigma$ for $S^R_{P_r}(t)$, then for every $v \in \mathcal{V}_{P_r}$ associate $A_r(v)$ with every $n \in \sigma(v)$. If there are two annotations associated to the same node, they are merged (duplicate attributes, if any, are kept). Naturally, the grammar annotation (if present) is simply associated to the whole grammar.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsection{Implementation}
-Our approach is implemented as an open-source tool \Grammatic{}\footnote{The tool is available at \url{http://grammatic.googlecode.com}} written in Java. The tool provides concrete syntax for grammar specifications and aspects and implements the matching and application semantics given above. 
+\section{Implementation}
+Our approach is implemented as an open-source tool \Grammatic{}%\footnote{The tool is available at \url{http://grammatic.googlecode.com}}
+ written in Java. The tool provides concrete syntax for grammar specifications and aspects and implements the matching and application semantics given above. 
 
 \Grammatic{} works as a front-end to generators that use its API. First, it takes a specification and applies aspects. If the application was successful, the resulting structure (GT nodes with attached annotations) is passed to the generator which processes it as a whole and needs no information about aspects. To use a pre-existing tool, for example, \tool{ANTLR}, with grammatical aspects, one can employ a small generator which calls \Grammatic{} to apply aspects to grammars, and produces annotated grammars in the ANTLR format.
 
@@ -582,7 +604,7 @@ We have introduced \emph{grammatical aspects}, and showed how they may be used t
 
 The primary contributions of this paper are:
 \begin{itemize} 
-	\item Formal definition of grammatical aspects and their semantics.
+	\item Formal description of grammatical aspects and their semantics.
 	\item A tool named \Grammatic{} which provides languages for specifying grammatical pointcuts, advice and aspects, and implements the semantics of matching and aspect application.
 \end{itemize}
 
@@ -594,7 +616,7 @@ One possible way to continue this work is to support grammar adaptation techniqu
 
 Another possible direction is to generalize the presented approach to support not only grammars, but also other types of declarative languages used as inputs for generators, such as UML or XSD.
 
-\bibliographystyle{plain}
+\bibliographystyle{unsrt}
 \bibliography{grammatic_ldta_10}
 
 %%%%%%%%%%% The bibliography starts:

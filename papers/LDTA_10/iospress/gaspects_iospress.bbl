@@ -1,16 +1,15 @@
 \begin{thebibliography}{10}
 
-\bibitem{Xtext}
-The~Eclipse Foundation.
-\newblock {Xtext}.
-\newblock \url{http://www.eclipse.org/Xtext}, 2009.
+\bibitem{YACC}
+Stephen~C. Johnson.
+\newblock Yacc: Yet another compiler-compiler.
+\newblock Technical report, Bell Laboratories, 1979.
 
-\bibitem{SableCC}
-Etienne~M. Gagnon and Laurie~J. Hendren.
-\newblock {SableCC}, an object-oriented compiler framework.
-\newblock In {\em TOOLS '98: Proceedings of the Technology of Object-Oriented
-  Languages and Systems}, page 140, Washington, DC, USA, 1998. IEEE Computer
-  Society.
+\bibitem{ANTLR}
+Terence Parr.
+\newblock {\em The Definitive ANTLR Reference: Building Domain-Specific
+  Languages}.
+\newblock Pragmatic Programmers. Pragmatic Bookshelf, first edition, May 2007.
 
 \bibitem{Pretzel}
 Felix G\"artner.
@@ -19,25 +18,10 @@ Felix G\"artner.
   \\\url{http://www.informatik.tu-darmstadt.de/BS/Gaertner/pretzel/} (last
   accessed on April 28, 2010), 1998.
 
-\bibitem{JLS}
-James Gosling, Bill Joy, Guy Steele, and Gilad Bracha.
-\newblock {\em The Java Language Specification, Third Edition}.
-\newblock Addison-Wesley Longman, Amsterdam, 3 edition, June 2005.
-
-\bibitem{JastAdd}
-G\"{o}rel Hedin and Eva Magnusson.
-\newblock {JastAdd}: an aspect-oriented compiler construction system.
-\newblock {\em Science of Computer Programming}, 47(1):37--58, 2003.
-
-\bibitem{MPS}
-JetBrains.
-\newblock {Meta Programming System (MPS)}.
-\newblock \url{http://www.jetbrains.com/mps}, 2009.
-
-\bibitem{YACC}
-Stephen~C. Johnson.
-\newblock Yacc: Yet another compiler-compiler.
-\newblock Technical report, Bell Laboratories, 1979.
+\bibitem{Xtext}
+The~Eclipse Foundation.
+\newblock {Xtext}.
+\newblock \url{http://www.eclipse.org/Xtext}, 2009.
 
 \bibitem{AspectJ}
 Gregor Kiczales, Erik Hilsdale, Jim Hugunin, Mik Kersten, Jeffrey Palm, and
@@ -52,13 +36,6 @@ Donald~E. Knuth.
 \newblock Semantics of context-free languages.
 \newblock {\em Theory of Computing Systems}, 2(2):127--145, June 1968.
 
-\bibitem{Laemmel}
-Ralf L{\"a}mmel.
-\newblock Grammar adaptation.
-\newblock In Jos{\'e}~Nuno Oliveira and Pamela Zave, editors, {\em FME}, volume
-  2021 of {\em Lecture Notes in Computer Science}, pages 550--570. Springer,
-  2001.
-
 \bibitem{Island}
 Leon Moonen.
 \newblock Generating robust parsers using island grammars.
@@ -66,11 +43,26 @@ Leon Moonen.
   Reverse Engineering (WCRE'01)}, page~13, Washington, DC, USA, 2001. IEEE
   Computer Society.
 
-\bibitem{ANTLR}
-Terence Parr.
-\newblock {\em The Definitive ANTLR Reference: Building Domain-Specific
-  Languages}.
-\newblock Pragmatic Programmers. Pragmatic Bookshelf, first edition, May 2007.
+\bibitem{JLS}
+James Gosling, Bill Joy, Guy Steele, and Gilad Bracha.
+\newblock {\em The Java Language Specification, Third Edition}.
+\newblock Addison-Wesley Longman, Amsterdam, 3 edition, June 2005.
+
+\bibitem{Fragile}
+Maximilian St{\"o}rzer and Christian Koppen.
+\newblock {PCDiff}: Attacking the fragile pointcut problem.
+\newblock In {\em European Interactive Workshop on Aspects in Software},
+  Berlin, Germany, September 2004.
+
+\bibitem{JastAdd}
+G\"{o}rel Hedin and Eva Magnusson.
+\newblock {JastAdd}: an aspect-oriented compiler construction system.
+\newblock {\em Science of Computer Programming}, 47(1):37--58, 2003.
+
+\bibitem{Silver}
+Eric Van~Wyk, Derek Bodin, Jimin Gao, and Lijesh Krishnan.
+\newblock Silver: an extensible attribute grammar system.
+\newblock {\em ENTCS}, 203(2):103--116, 2008.
 
 \bibitem{LISA}
 Damijan Rebernak and Marjan Mernik.
@@ -80,15 +72,23 @@ Damijan Rebernak and Marjan Mernik.
   Computer Software and Applications Conference}, pages 11--16, Washington, DC,
   USA, 2007. IEEE Computer Society.
 
-\bibitem{Fragile}
-Maximilian St{\"o}rzer and Christian Koppen.
-\newblock {PCDiff}: Attacking the fragile pointcut problem.
-\newblock In {\em European Interactive Workshop on Aspects in Software},
-  Berlin, Germany, September 2004.
+\bibitem{MPS}
+JetBrains.
+\newblock {Meta Programming System (MPS)}.
+\newblock \url{http://www.jetbrains.com/mps}, 2009.
 
-\bibitem{Silver}
-Eric Van~Wyk, Derek Bodin, Jimin Gao, and Lijesh Krishnan.
-\newblock Silver: an extensible attribute grammar system.
-\newblock {\em ENTCS}, 203(2):103--116, 2008.
+\bibitem{SableCC}
+Etienne~M. Gagnon and Laurie~J. Hendren.
+\newblock {SableCC}, an object-oriented compiler framework.
+\newblock In {\em TOOLS '98: Proceedings of the Technology of Object-Oriented
+  Languages and Systems}, page 140, Washington, DC, USA, 1998. IEEE Computer
+  Society.
+
+\bibitem{Laemmel}
+Ralf L{\"a}mmel.
+\newblock Grammar adaptation.
+\newblock In Jos{\'e}~Nuno Oliveira and Pamela Zave, editors, {\em FME}, volume
+  2021 of {\em Lecture Notes in Computer Science}, pages 550--570. Springer,
+  2001.
 
 \end{thebibliography}
