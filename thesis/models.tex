@@ -7,23 +7,22 @@
 1) это близко к практике в мейнстримовых языках, поскольку модели хорошо отображаются на способы представления информации в ООП. 
 2) это достаточно формально, чтобы мы могли строго доказывать свои утверждения.
 
-\section{Понятие модели}
+\section{Синтаксис моделей}
 
 !Мы вводим понятие модели, начиная со структурного представления и постепенно вводя ограничения (аналогично $\lambda$-исчислениям).
 
-
 \begin{Def}[Модельный терм]
-Для некоторого конечного алфавита $\Sigma$
+\emph{Модельным термом} называется синтаксическая конструкция, удовлетворяющая следующим правилам:
 \[
 \begin{array}{rrl}
 	\ModelTerm & ::= & \Object{\ModelTerm_{id}}{\ModelTerm_{cl}}{\ModelTerm_{p_1}=\ModelTerm_{v_1},\ldots,\ModelTerm_{p_n}=\ModelTerm_{v_n}}, n \ge 0 \\ 
 	           &   | & \Ref{\ModelTerm_{id}} \\ 
 	           &   | & \List{MT_1,\ldots,MT_n}, n \ge 0 \\ 
 	           &   | & \Set{MT_1,\ldots,MT_n}, n \ge 0 \\ 
-	           &   | & \Null \OR  \StringT \OR \IntegerT \OR \BooleanT, \\
+	           &   | & \Null \OR  \CharT \OR \StringT \OR \IntegerT \OR \BooleanT, \\
 \end{array}
 \]
-где $\BooleanT = \left\{ \True, \False \right\}$.
+где $\CharT$ --- некоторый конечный алфавит, \mbox{$\StringT = \Sigma*$}, а $\BooleanT = \left\{ \True, \False \right\}$.
 \end{Def}
 
 Примеры:
@@ -38,7 +37,7 @@ $\Set{\Object{a}{\Ref{a}}{b=\False}, \Ref{x}}$
 \begin{Def}
 Отношение \emph{конгруэнтности} на модельных термах, \mbox{$\MCong \;\subset \ModelTerm \times \ModelTerm$}, есть минимальное отношение эквивалентности, обладающее следующими свойствами:
 \begin{enumerate}
-\item (Константы) $x \MCong x$, для любого $x \in \left\{\ \Null \right\} \cup \IntegerT \cup \BooleanT \cup \StringT$;
+\item (Константы) $x \MCong x$, для любого $x \in \left\{\ \Null \right\} \cup \IntegerT \cup \BooleanT \cup \StringT \cup \CharT$;
 \item (Ссылки) $\Ref{x} \MCong \Ref{y}$, если $x \MCong y$;
 \item (Списки) $\List{x_1, \ldots, x_n} \MCong \List{y_1, \ldots, y_n}$, если $x_i \MCong y_i$ для любого $i \in [1; n]$;
 \item (Объекты) Если $id_1 \MCong id_2$, а также $c_1 \MCong c_2$, и существует перестановка $\pi$ размера $n$ такая, что $x_i \MCong x_{\pi(i)}$ и $y_i \MCong y_{\pi(i)}$ для наборов модельных термов $\left\{ x \right\}_1^n$ и $\left\{ y \right\}_1^n$, то 
@@ -143,4 +142,131 @@ $$
 Будем называть правильно сформированный модельный терм $t$ \emph{пред-моделью в контексте $\RContext_0$}, если контекст $\RContext_0 \cup \RContext_t$ является замкнутым.
 \end{Def}
 
-Пред-модель обладает важным свойством: любой объект в ней однозначно определяется своим идентификатором, и любая сслыка указывает на известный объект.
+Пред-модель обладает важным свойством: любой объект в ней однозначно определяется своим идентификатором, и любая ссылка указывает на известный объект.
+
+\section{Мета-модели и типизируемость}
+
+!На практике для удобства навигации по моделям и контроля над их корректностью вводятся дополнительные ограничения (в виде системы типов), регулирующие структуру моделей. Сами эти ограничения также записываются в виде моделей...
+
+\begin{Def}[Класс]
+\emph{Классом} называется кортеж $\langle id, S, P \rangle$, где 
+\begin{enumerate}
+\item $id$ --- \emph{идентификатор} класса,
+\item $S$ --- множество классов, называемых \emph{предками} данного класса (\emph{суперклассов},
+\item $P$ --- множество пар вида $p : \tau$, где $p$ --- \emph{идентификатор} свойства, а $\tau$ --- \emph{тип} свойства (множество типов определяется ниже).
+\end{enumerate}
+Множество $P$ не содержит различных пар, в которых совпадают идентификаторы свойств.
+\end{Def}
+
+Для удобства, мы будем обозначать класс $\langle id, S, P \rangle$ через $\Class{id}{S}{P}$.
+
+\begin{Def}
+Множество типов $\Types$ описывается следующим образом:
+$$
+\begin{array}{rrl}
+\Types &::=& \CharT \OR \StringT \OR \IntegerT \OR \BooleanT \\
+         &|& \AnyT \\
+         &|& \ClassT{c}, \mbox{ где $c$ --- идентификатор некторого класса} \\
+         &|& \RefT{c}, \mbox{ где $c$ --- идентификатор некторого класса} \\
+         &|& \NullableT{\Types} \\
+         &|& \SetT{\Types^+} \OR \SetT{\Types^*}\\
+         &|& \ListT{\Types^+} \OR \ListT{\Types^*}
+\end{array}
+$$
+\end{Def}
+
+!Типы используются 
+\begin{itemize}
+\item ! \code{String}, \code{Integer}, \code{Boolean} или \code{Character} --- имя примитивного типа, используется только для атрибутов;
+\item !$\reft{C}$ --- неагрегирующая ссылка на класс $C$;
+\item !$\valt{C}$ --- агрегирующая ссылка на класс $C$;
+\item !$\tau^?$ --- ссылка может иметь значение $NULL$, атрибут может быть не указан;
+\item !$\tau^*$ --- коллекция может содержать ноль или более элементов;
+\item !$\tau^+$ --- коллекция может содержать один или более элементов.
+\end{itemize}
+%
+
+!Мета-модель накладывает ограничения на структуру объектов через типы и кратность ссылок и атрибутов. Эти ограничения мы записываем в виде системы типов, которая связывает мета-модель и объект отношением $\Vdash$. Запись $\fromMM x : \tau$ следует читать как ``\term{объект $x$ удовлетворяет ограничениям мета-модели $\MM{M}$ и имеет тип $\tau$}''.
+
+!Правила указанной системы типов приведены на \figref{TypesMM}. В этих правилах используется отношение ``подтип'', обозначаемое следующим образом:
+$$
+	\mbox{подтип} \subtype \mbox{супертип}.
+$$
+!Это отношение является транзитивным рефлексивным замыканием минимального отношения, удовлетворяющего следующему требованию: $\classf{C}{\{S_i\}}{\_} \subtype S_i$. + множества, списки и null, ref и val
+
+!Enums!!!!
+
+!define: $\AllProps{C}$
+
+\begin{figure}[htbp]
+	\centering
+$$
+	\infer[object]{
+		\fromMM \Object{id}{C}{p_i = v_i} : \ClassT{C}
+	}{
+		\Class{C}{S}{P} \in \MM{M}&
+		\AllProps{C} = \{p_i : \tau_i\}&
+		\fromMM v_i : \tau_i
+	}
+$$
+$$
+\infer[ref]{
+	\fromMM \Ref{id} : \RefT{C}
+}{
+	\fromMM \RContext(id) : \ClassT{C}
+}
+\quad
+\infer[null]{
+	\fromMM \Null : \NullableT{\tau}
+}{}
+$$
+$$
+\infer[elist]{
+	\fromMM \List{\,} : \ListT{\tau^*}
+}{}
+\quad
+\infer[list]{
+	\fromMM \List{x_1, \ldots, x_n} : \List{\type{TO}{\tau}^+}
+}{
+	\forall i\in[1:n]. \; \fromMM x_i : \type{TO}{\tau} &
+	TO \in \{\valts,\, \refts\}
+}
+$$
+$$
+\infer[eset]{
+	\fromMM \Set{\,} : \SetT{\tau^*}
+}{}
+\quad
+\infer[set]{
+	\fromMM \Set{x_1, \ldots, x_n} : \SetT{\type{TO}{\tau}^+}
+}{
+	\forall i\in[1:n]. \; \fromMM x_i : \type{TO}{\tau} &
+	TO \in \{\valts,\, \refts\}
+}
+$$
+$$
+\infer[subtype]{
+	\fromMM x : \sigma
+}{
+	\fromMM x : \tau &
+	\tau \subtype \sigma
+}
+$$
+$$
+\infer[enum]{
+	\forall i \in [1:n]. \; \fromMM T.L_i : T
+}{
+	\mathbf{enum}\;T\{L_1,\ldots,L_n\} \in \MM{M}
+}
+\quad
+\infer[primitive]{
+	\fromMM x : \Types_P
+}{
+	x \in \Types_P & 
+	\Types_P = \{\IntegerT, \CharT, \StringT, \BooleanT\}
+}
+$$
+	\caption{Структурная корректность объектов}\label{TypesMM}
+\end{figure}
+
+

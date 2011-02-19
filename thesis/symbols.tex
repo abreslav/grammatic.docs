@@ -1,3 +1,16 @@
+\newcommand{\GRM}{\tool{Grammatic}}
+\newcommand{\ATF}{\tool{Grammatic$^{SDT}$}}
+
+\newcommand{\figref}[1]{Рис.~\ref{#1}}
+\newcommand{\lstref}[1]{Лист.~\ref{#1}}
+\newcommand{\tabref}[1]{Таб.~\ref{#1}}
+\newcommand{\term}[1]{\emph{#1}}
+\newcommand{\code}[1]{\mbox{\footnotesize\texttt{#1}}}
+\newcommand{\tool}[1]{\textsc{#1}}
+\newcommand{\bad}[1]{{\color{red}\textbf{#1}}}
+
+
+
 \newcommand{\SideNote}[1]{\marginpar{\color{red}#1}}
 
 \newcommand{\OR}{\;\,|\;\,}
@@ -5,12 +18,14 @@
 
 %%%%% ModelTerms
 \newcommand{\ModelTerm}{\mbox{MT}}
-\newcommand{\StringT}{\Sigma^{*}}
+\newcommand{\CharT}{\Sigma}
+\newcommand{\StringT}{\mathbb{S}_\CharT}
 \newcommand{\IntegerT}{\mathbb{Z}}
 \newcommand{\BooleanT}{\mathbb{B}}
-\newcommand{\Null}{\mbox{\small \tt null}}
-\newcommand{\True}{\mbox{\small \tt true}}
-\newcommand{\False}{\mbox{\small \tt false}}
+\newcommand{\constantstyle}{\scriptsize \tt}
+\newcommand{\Null}{\mbox{\constantstyle null}}
+\newcommand{\True}{\mbox{\constantstyle true}}
+\newcommand{\False}{\mbox{\constantstyle false}}
 \newcommand{\Ref}[1]{@#1}
 \newcommand{\Object}[3]{\mathbf{object}\;#1 : #2 \left\{ #3 \right\}}
 \newcommand{\List}[1]{\left[#1\right]}
@@ -23,9 +38,56 @@
 \newcommand{\Objects}[1]{\mathfrak{O}\left(#1\right)}
 \newcommand{\Sets}[1]{\mathfrak{S}\left(#1\right)}
 \newcommand{\Refs}[1]{\mathfrak{R}\left(#1\right)}
+
+\newcommand{\Class}[3]{\mathbf{class }\;#1 : #2 \left\{#3\right\}}
+\newcommand{\Types}{\mathfrak{T}}
+
+\newcommand{\AnyT}{\top}
+\newcommand{\type}[2]{#1\left(#2\right)}%
+\newcommand{\valts}{\mathbf{val}}%
+\newcommand{\valt}[1]{\type{\valts}{#1}}%
+\newcommand{\refts}{\mathbf{ref}}%
+\newcommand{\reft}[1]{\type{\refts}{#1}}%
+\newcommand{\ClassT}[1]{\type{\valts}{#1}}
+\newcommand{\RefT}[1]{\type{\refts}{#1}}
+\newcommand{\ListT}[1]{\List{#1}}
+\newcommand{\SetT}[1]{\Set{#1}}
+\newcommand{\NullableT}[1]{{#1}^?}
+
+\newcommand{\AllProps}[1]{\mathfrak{P}\left(#1\right)}
+
 %
 \newcommand{\class}[4]{\mathbf{class}\; #1 \langle #2, #3, #4\rangle}%
 \newcommand{\classf}[3]{\mathbf{class}\; #1 \langle #2, #3\rangle}%
 \newcommand{\reference}[3]{\mathbf{#1}\langle #2 : #3\rangle}%
 \newcommand{\attribute}[2]{\mathbf{attr}\langle #1 : #2\rangle}%
 %
+%
+\newcommand{\fromMM}{\RContext, \MM{M} \Vdash}
+\newcommand{\obj}[3]{#1@#2\left\{#3\right\}}%
+\newcommand{\refv}[2]{\mathbf{ref}\; #1@#2}%
+%
+
+\newcommand{\MM}[1]{\mathfrak{#1}}%
+\newcommand{\Inst}[2]{\mathcal{I}_{#1} \left[ #2 \right]}%
+\newcommand{\match}[3][]{#2 \; \mathbf{match}_{#1} \; #3}
+\newcommand{\matchNV}[3][]{#2 \; \overline{\mathbf{match}}_{#1} \; #3}
+\newcommand{\ang}[1]{\mathsf{<}#1\mathsf{>}}
+\newcommand{\wcard}[2]{\mathsf{<} #1 : #2 \mathsf{>} }
+\newcommand{\ME}{\Upsilon}
+\newcommand{\meitem}[2]{\left\{ #1 \mapsto #2 \right\}}
+\newcommand{\meempty}{\left\{\right\}}
+\DeclareMathOperator{\MEjoin}{\mbox{\Large$\uplus$\hspace{-2pt}}}
+\DeclareMathOperator{\mejoin}{\uplus}
+%\newcommand{\mejoin}{\uplus}
+\newcommand{\mereplace}{\pitchfork}
+\newcommand{\meflatten}[1]{\overline{#1}}
+\newcommand{\subtype}{\preceq}
+\newcommand{\suptype}{\succeq}
+\newcommand{\myinfer}[3][]{\infer[\mbox{#1}]{#2}{#3}}
+\newcommand{\matchList}[3]{\mathit{matchList}_{#1}(#2,\, #3)}
+\newcommand{\matchSet}[3]{\mathit{matchSet}_{#1}(#2,\, #3)}
+\newcommand{\trule}[3]{%
+\myinfer[#3]{#2}{#1}%(\mbox{\textsc{#3}})%
+}%
+\newcommand{\rref}[1]{\mbox{\textit{#1}}}
