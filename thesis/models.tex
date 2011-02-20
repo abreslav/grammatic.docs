@@ -67,7 +67,7 @@ $$
 	\Objects{t} = \left\{
 \begin{array}{ll}
 %
-\multicolumn{2}{l}{\{t\} \cup \Objects{id} \cup \Objects{c} \cup \bigcup\limits_i \Objects{p_i} \cup \Objects{v_i},} \\
+\multicolumn{2}{l}{\{t\} \cup \Objects{id} \cup \Objects{c} \cup \bigcup\limits_i \Objects{p_i} \cup \bigcup\limits_i\Objects{v_i},} \\
 &          t = \Object{id}{c}{p_1=v_1, \ldots, p_n=v_n}\\
 %
 \Objects{r},& t = \Ref{r}\\
@@ -144,7 +144,7 @@ $$
 
 Пред-модель обладает важным свойством: любой объект в ней однозначно определяется своим идентификатором, и любая ссылка указывает на известный объект.
 
-\section{Мета-модели и типизируемость}
+\section{Классы и типы}
 
 !На практике для удобства навигации по моделям и контроля над их корректностью вводятся дополнительные ограничения (в виде системы типов), регулирующие структуру моделей. Сами эти ограничения также записываются в виде моделей...
 
@@ -202,7 +202,7 @@ C = \{\Class{id_i}{S_i}{p^i_j : \tau^i_j \OR j \in [1;m_i]}\OR i \in [1;n]\},
 $$
 обозначим $\AllSuperclasses{C} = C \cup \AllSuperclasses{\bigcup_1^n S_i}$ множество всех классов из $C$, их предков, предков их предков и т.д.
 
-Аналогично вводится множество всех свойств класса $c = \Class{id}{S}{p_i : \tau_i}$. Кроме свойств $p_i$, объявленных в самом $c$, рассматриваются также свойства, \emph{унаследованные} из суперклассов:  $\AllProps{C} = \bigcup\limits_{i = 1}^n\{p^i_j : \tau^i_j \OR j \in [1;m_i]\} \cup \AllProps{\AllSuperclasses{C}}$.
+Аналогично определяется множество всех свойств класса $c = \Class{id}{S}{p_i : \tau_i}$. Кроме свойств $p_i$, объявленных в самом $c$, рассматриваются также свойства, \emph{унаследованные} из суперклассов:  $\AllProps{C} = \bigcup\limits_{i = 1}^n\{p^i_j : \tau^i_j \OR j \in [1;m_i]\} \cup \AllProps{\AllSuperclasses{C}}$.
 
 \begin{Def}
 Конечный набор классов $C$ называется \emph{корректным}, если выполняются следующие свойства:
@@ -248,6 +248,68 @@ $$ $$
 }
 $$
 
+Классы и типы используются для описания допустимых конфигураций модельных термов. Пусть зафиксирован замкнутый ссылочный контекст $\RContext$. Введем функцию $\semRC{\bullet} : \Types \rightarrow 2^{\ModelTerm}$, которая возвращает все модельные термы, упомянутые в контексте $\RContext$, принадлежащие к данному типу. Эта функция задается следующим образом. Типу $\ClassT{c}$ ставится в соответствие множество $\semRC{\ClassT{c}}$ всех объектов из $\Objects{\RContext}$, имеющих ссылкой на класс $\Ref{c}$ и имеющих все свойства из множества $\AllProps{c}$ и только их, причем значение каждого свойства имеет тип, указанный для данного свойства в классе:
+$$
+\infer[objects]{
+	\semRC{\ClassT{c}} = \left\{
+		\Object{id}{\Ref{c}}{p_i = v_i} \in \Objects{\RContext}
+		\,|\,
+		v_i \in \semRC{\tau_i} 
+	\right\}
+}{
+	\Class{c}{S}{\ldots}&
+	\AllProps{c} = \left\{p_1 : \tau_1, \ldots, p_n : \tau_n\right\}
+}
+$$ 
+Другие типы характеризуются следующим образом:
+$$
+\infer[refs]{
+	\semRC{\RefT{c}} = \left\{ \Ref{id} \in \Refs{\RContext} \,|\, \RContext(id) \in \semRC{\ClassT{c}} \right\}
+}{
+	\Class{c}{S}{\ldots}
+}
+$$ $$
+\infer[set]{
+	\semRC{\SetT{\tau^+}} = \left\{ \Set{x_1,\ldots,x_n} \,|\, x_i \in \semRC{\tau}\right\}
+}{
+}
+$$ $$
+\infer[list]{
+	\semRC{\ListT{\tau^+}} = \left\{ \List{x_1,\ldots,x_n} \,|\, x_i \in \semRC{\tau}\right\}
+}{
+}
+$$ $$
+\infer[eset]{
+	\semRC{\SetT{\tau^*}} = \semRC{\SetT{\tau^+}} \cup \left\{ \Set{} \right\}
+}{}	
+\quad
+\infer[elist]{
+	\semRC{\ListT{\tau^*}} = \semRC{\ListT{\tau^+}} \cup \left\{ \List{} \right\}
+}{}	
+$$ $$
+\infer[null]{
+	\semRC{\NullableT{\tau}} = \semRC{\tau} \cup \{\Null\}
+}{
+}
+\quad
+\infer[primitive]{
+	\sem{\Types_P} = \Types_P
+}{
+	\Types_P \in \{\IntegerT, \CharT, \StringT, \BooleanT\}
+}
+\quad
+$$
+
+Определение функции $\semRC{\bullet}$ не согласуется с отношением $\subtype$: отношение наследования (предок-потомок) на классах не отражено во вложенности множеств, соответствующих типам. Чтобы устранить этот недостаток, введем для корректного набора классов $C$ функцию $\denotRCC{\bullet}$, определяемую следующим образом:
+$$
+\begin{array}{rcl}
+	\denotRCC{\tau} &=& \semRC{\tau} \cup \bigcup_{\sigma \subtype \tau} \semRC{\sigma}\\
+	\denotRCC{\top} &=& \bigcup\limits_\tau \semRC{\tau}\\
+\end{array}	
+$$
+
+\section{Модели и мета-модели}
+
 !Мета-модель накладывает ограничения на структуру объектов через типы и кратность ссылок и атрибутов. Эти ограничения мы записываем в виде системы типов, которая связывает мета-модель и объект отношением $\Vdash$. Запись $\fromMM x : \tau$ следует читать как ``\term{объект $x$ удовлетворяет ограничениям мета-модели $\MM{M}$ и имеет тип $\tau$}''.
 
 !Enums!!!!
@@ -256,18 +318,18 @@ $$
 	\centering
 $$
 	\infer[object]{
-		\fromMM \Object{id}{C}{p_i = v_i} : \ClassT{C}
+		\fromMM \Object{id}{\Ref{c}}{p_i = v_i} : \ClassT{c}
 	}{
-		\Class{C}{S}{P} \in \MM{M}&
-		\AllProps{C} = \{p_i : \tau_i\}&
+		\Class{c}{S}{P} \in \MM{M}&
+		\AllProps{c} = \{p_i : \tau_i\}&
 		\fromMM v_i : \tau_i
 	}
 $$
 $$
 \infer[ref]{
-	\fromMM \Ref{id} : \RefT{C}
+	\fromMM \Ref{id} : \RefT{c}
 }{
-	\fromMM \RContext(id) : \ClassT{C}
+	\fromMM \RContext(id) : \ClassT{c}
 }
 \quad
 \infer[null]{
@@ -280,10 +342,9 @@ $$
 }{}
 \quad
 \infer[list]{
-	\fromMM \List{x_1, \ldots, x_n} : \List{\type{\mbox{TO}}{\tau}^+}
+	\fromMM \List{x_1, \ldots, x_n} : \List{\tau^+}
 }{
-	\forall i\in[1:n]. \; \fromMM x_i : \type{\mbox{TO}}{\tau} &
-	\mbox{TO} \in \{\valts,\, \refts\}
+	\fromMM x_i : \tau & \forall i\in[1:n]
 }
 $$
 $$
@@ -292,10 +353,9 @@ $$
 }{}
 \quad
 \infer[set]{
-	\fromMM \Set{x_1, \ldots, x_n} : \SetT{\type{\mbox{TO}}{\tau}^+}
+	\fromMM \Set{x_1, \ldots, x_n} : \SetT{\tau^+}
 }{
-	\forall i\in[1:n]. \; \fromMM x_i : \type{\mbox{TO}}{\tau} &
-	\mbox{TO} \in \{\valts,\, \refts\}
+	\fromMM x_i : \tau & \forall i\in[1:n]
 }
 $$
 $$
@@ -317,7 +377,7 @@ $$
 	\fromMM x : \Types_P
 }{
 	x \in \Types_P & 
-	\Types_P = \{\IntegerT, \CharT, \StringT, \BooleanT\}
+	\Types_P \in \{\IntegerT, \CharT, \StringT, \BooleanT\}
 }
 $$
 	\caption{Структурная корректность объектов}\label{TypesMM}
