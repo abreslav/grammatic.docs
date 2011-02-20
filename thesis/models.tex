@@ -158,7 +158,7 @@ $$
 Множество $P$ не содержит различных пар, в которых совпадают идентификаторы свойств.
 \end{Def}
 
-Для удобства, мы будем обозначать класс $\langle id, S, P \rangle$ через $\Class{id}{S}{P}$.
+Для удобства, мы будем обозначать класс $\langle id, S, P \rangle$ через \mbox{$\Class{id}{S}{P}$}. 
 
 \begin{Def}
 Множество типов $\Types$ описывается следующим образом:
@@ -174,29 +174,83 @@ $$
 \end{array}
 $$
 \end{Def}
-
-!Типы используются 
+\noindent Поясним интуитивное значение типов:
 \begin{itemize}
-\item ! \code{String}, \code{Integer}, \code{Boolean} или \code{Character} --- имя примитивного типа, используется только для атрибутов;
-\item !$\reft{C}$ --- неагрегирующая ссылка на класс $C$;
-\item !$\valt{C}$ --- агрегирующая ссылка на класс $C$;
-\item !$\tau^?$ --- ссылка может иметь значение $NULL$, атрибут может быть не указан;
-\item !$\tau^*$ --- коллекция может содержать ноль или более элементов;
-\item !$\tau^+$ --- коллекция может содержать один или более элементов.
+\item $\CharT, \StringT, \IntegerT, \BooleanT$ --- примитивные типы: символы, строки, целые числа, булевские значения;
+\item $\ClassT{c}$ --- агрегирующая ссылка на класс $c$;
+\item $\RefT{c}$ --- неагрегирующая ссылка на класс $c$;
+\item $\tau^?$ --- величина, которая может принимать значение $\Null$;
+\item $\SetT{\tau^*}$ ($\ListT{\tau^*}$) --- множество (список), содержащее ноль или более элементов;
+\item $\SetT{\tau^*}$ ($\ListT{\tau^*}$)  --- множество (список), содержащееодин или более элементов;
+\item $\AnyT$ (``Top'') --- супертип всех остальных типов (см. ниже).
 \end{itemize}
-%
+
+Для типа $\tau$, множество упомянутых в данном типе классов определяется следующим образом:
+$$
+	\Classes{\tau} = \left\{
+	\begin{array}{ll}
+		\{c\}, & \tau \in \left\{\ClassT{c}, \RefT{c}\right\}\\
+		\Classes{\sigma}, & \tau \in \left\{\ListT{\sigma^+}, \ListT{\sigma^*}, \SetT{\sigma^+}, \SetT{\sigma^*}, \NullableT{\sigma}\right\}\\
+		\emptyset, & \mbox{в остальных случаях}\\
+	\end{array}
+	\right.
+$$
+
+Пусть дано множество классов 
+$$
+C = \{\Class{id_i}{S_i}{p^i_j : \tau^i_j \OR j \in [1;m_i]}\OR i \in [1;n]\},
+$$
+обозначим $\AllSuperclasses{C} = C \cup \AllSuperclasses{\bigcup_1^n S_i}$ множество всех классов из $C$, их предков, предков их предков и т.д.
+
+Аналогично вводится множество всех свойств класса $c = \Class{id}{S}{p_i : \tau_i}$. Кроме свойств $p_i$, объявленных в самом $c$, рассматриваются также свойства, \emph{унаследованные} из суперклассов:  $\AllProps{C} = \bigcup\limits_{i = 1}^n\{p^i_j : \tau^i_j \OR j \in [1;m_i]\} \cup \AllProps{\AllSuperclasses{C}}$.
+
+\begin{Def}
+Конечный набор классов $C$ называется \emph{корректным}, если выполняются следующие свойства:
+\begin{enumerate}
+\item Все предки классов из $C$ содержатся в $C$: $\AllSuperclasses{C} = C$.
+\item Все типы свойств классов из $C$ упоминают только классы из $C$: пусть $\AllProps{C} = \left\{p_i : \tau_i\right\}$, тогда $\bigcup_i \Classes{\tau_i} \subseteq C$.
+\item Никакой класс из $C$ не является прямым или непрямым предком самого себя: если $c = \Class{id}{S}{\ldots} \in C$, то $c \notin \AllSuperclasses{S}$.
+\end{enumerate}
+\end{Def}
+
+На типах, порожденных корректным набором классов $C$, вводится отношение ``подтип'' ($\subtype$) --- это наименьшее транзитивное рефлексивное отношение, обладающее следующими свойствами:
+$$
+\infer[subclass]{
+\type{\mbox{TO}}{c} \subtype \type{\mbox{TO}}{s}
+}{
+	\Class{c}{S}{\ldots} \in C &
+	s \in S & 
+	\mbox{TO} \in \{\valts,\, \refts\}
+}
+$$  $$
+\infer[option]{
+	\tau \subtype \NullableT{\tau}
+}{}
+\quad
+\infer[multiplicity]{
++ < *
+}{}
+$$ $$
+\infer[set]{
+	\SetT{\tau^\iota} \subtype \SetT{\sigma^\kappa}
+}{
+	\tau \subtype \sigma &
+	\iota, \kappa \in \{+, *\} &
+	\iota \le \kappa
+}
+\quad
+\infer[list]{
+	\ListT{\tau^\iota} \subtype \ListT{\sigma^\kappa}
+}{
+	\tau \subtype \sigma &
+	\iota, \kappa \in \{+, *\} &
+	\iota \le \kappa
+}
+$$
 
 !Мета-модель накладывает ограничения на структуру объектов через типы и кратность ссылок и атрибутов. Эти ограничения мы записываем в виде системы типов, которая связывает мета-модель и объект отношением $\Vdash$. Запись $\fromMM x : \tau$ следует читать как ``\term{объект $x$ удовлетворяет ограничениям мета-модели $\MM{M}$ и имеет тип $\tau$}''.
 
-!Правила указанной системы типов приведены на \figref{TypesMM}. В этих правилах используется отношение ``подтип'', обозначаемое следующим образом:
-$$
-	\mbox{подтип} \subtype \mbox{супертип}.
-$$
-!Это отношение является транзитивным рефлексивным замыканием минимального отношения, удовлетворяющего следующему требованию: $\classf{C}{\{S_i\}}{\_} \subtype S_i$. + множества, списки и null, ref и val
-
 !Enums!!!!
-
-!define: $\AllProps{C}$
 
 \begin{figure}[htbp]
 	\centering
@@ -226,10 +280,10 @@ $$
 }{}
 \quad
 \infer[list]{
-	\fromMM \List{x_1, \ldots, x_n} : \List{\type{TO}{\tau}^+}
+	\fromMM \List{x_1, \ldots, x_n} : \List{\type{\mbox{TO}}{\tau}^+}
 }{
-	\forall i\in[1:n]. \; \fromMM x_i : \type{TO}{\tau} &
-	TO \in \{\valts,\, \refts\}
+	\forall i\in[1:n]. \; \fromMM x_i : \type{\mbox{TO}}{\tau} &
+	\mbox{TO} \in \{\valts,\, \refts\}
 }
 $$
 $$
@@ -238,10 +292,10 @@ $$
 }{}
 \quad
 \infer[set]{
-	\fromMM \Set{x_1, \ldots, x_n} : \SetT{\type{TO}{\tau}^+}
+	\fromMM \Set{x_1, \ldots, x_n} : \SetT{\type{\mbox{TO}}{\tau}^+}
 }{
-	\forall i\in[1:n]. \; \fromMM x_i : \type{TO}{\tau} &
-	TO \in \{\valts,\, \refts\}
+	\forall i\in[1:n]. \; \fromMM x_i : \type{\mbox{TO}}{\tau} &
+	\mbox{TO} \in \{\valts,\, \refts\}
 }
 $$
 $$
