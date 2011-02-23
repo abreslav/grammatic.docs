@@ -1,3 +1,5 @@
+\newcommand{\red}[1]{{\color{red}#1}}
+
 \newcommand{\GRM}{\tool{Grammatic}}
 \newcommand{\ATF}{\tool{Grammatic$^{SDT}$}}
 
@@ -22,16 +24,17 @@
 
 %%%%% ModelTerms
 \newcommand{\ModelTerm}{\mbox{MT}}
-\newcommand{\CharT}{\Sigma}
-\newcommand{\StringT}{\mathbb{S}_\CharT}
-\newcommand{\IntegerT}{\mathbb{Z}}
-\newcommand{\BooleanT}{\mathbb{B}}
-\newcommand{\constantstyle}{\scriptsize \tt}
-\newcommand{\Null}{\mbox{\constantstyle null}}
-\newcommand{\True}{\mbox{\constantstyle true}}
-\newcommand{\False}{\mbox{\constantstyle false}}
+\newcommand{\CharT}{\mathsf{Char}}
+\newcommand{\StringT}{\mathsf{String}}
+\newcommand{\IntegerT}{\mathsf{Int}}
+\newcommand{\BooleanT}{\mathsf{Bool}}
+\newcommand{\constantstyle}[1]{\mathtt{#1}}
+\newcommand{\Null}{\constantstyle{null}}
+\newcommand{\True}{\constantstyle{true}}
+\newcommand{\False}{\constantstyle{false}}
 \newcommand{\Ref}[1]{@#1}
-\newcommand{\Object}[3]{\mathbf{object}\;#1 : #2 \left\{ #3 \right\}}
+\newcommand{\ObjectH}[2]{\mathbf{object}\;#1 : #2}
+\newcommand{\Object}[3]{\ObjectH{#1}{#2}\left\{ #3 \right\}}
 \newcommand{\List}[1]{\left[#1\right]}
 \newcommand{\Set}[1]{\left\{#1\right\}}
 \newcommand{\RContext}{\Psi}

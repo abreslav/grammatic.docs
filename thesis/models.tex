@@ -19,10 +19,10 @@
 	           &   | & \Ref{\ModelTerm_{id}} \\ 
 	           &   | & \List{MT_1,\ldots,MT_n}, n \ge 0 \\ 
 	           &   | & \Set{MT_1,\ldots,MT_n}, n \ge 0 \\ 
-	           &   | & \Null \OR  \CharT \OR \StringT \OR \IntegerT \OR \BooleanT, \\
+	           &   | & \Null \OR \Sigma^* \OR \mathbb{Z} \OR \mathbb{B}, \\
 \end{array}
 \]
-где $\CharT$ --- некоторый конечный алфавит, \mbox{$\StringT = \Sigma*$}, а $\BooleanT = \left\{ \True, \False \right\}$.
+где $\Sigma$ --- некоторый конечный алфавит символов, а $\mathbb{B} = \left\{ \True, \False \right\}$.
 \end{Def}
 
 Примеры:
@@ -40,27 +40,59 @@ $\Set{\Object{a}{\Ref{a}}{b=\False}, \Ref{x}}$
 \item (Константы) $x \MCong x$, для любого $x \in \left\{\ \Null \right\} \cup \IntegerT \cup \BooleanT \cup \StringT \cup \CharT$;
 \item (Ссылки) $\Ref{x} \MCong \Ref{y}$, если $x \MCong y$;
 \item (Списки) $\List{x_1, \ldots, x_n} \MCong \List{y_1, \ldots, y_n}$, если $x_i \MCong y_i$ для любого $i \in [1; n]$;
-\item (Объекты) Если $id_1 \MCong id_2$, а также $c_1 \MCong c_2$, и существует перестановка $\pi$ размера $n$ такая, что $x_i \MCong x_{\pi(i)}$ и $y_i \MCong y_{\pi(i)}$ для наборов модельных термов $\left\{ x \right\}_1^n$ и $\left\{ y \right\}_1^n$, то 
+\item (Множества) Если существует перестановка $\pi$ размера $n$ такая, что \mbox{$x_i \MCong x'_{\pi(i)}$} при \mbox{$i \in [1;n]$}, то $\Set{x_1, \ldots, x_n} \MCong \Set{x'_{\pi(1)}, \ldots, x'_{\pi(n)}}$.
+\item (Объекты) Аналогично, если $id_1 \MCong id_2$, а также $c_1 \MCong c_2$, и существует перестановка $\pi$ размера $n$ такая, что $p_i \MCong p'_{\pi(i)}$ и $v_i \MCong v'_{\pi(i)}$, то 
 $$ 
 \Object{id_1}{c_2}{
 	\mbox{\small$\begin{array}{c}
-		x_1=y_1,\\ 
+		p_1=v_1,\\ 
 		\ldots,\\ 
-		x_n=y_n
+		p_n=v_n
 	\end{array}$}
 } \MCong \Object{id_2}{c_2}{
 	\mbox{\small$\begin{array}{c}
-		x_{\pi(1)}=y_{\pi(1)},\\
+		p'_{\pi(1)}=v'_{\pi(1)},\\
 		\ldots,\\
-		x_{\pi(n)}=y_{\pi(n)}	
+		p'_{\pi(n)}=v'_{\pi(n)}	
 	\end{array}$}
-}
+};
 $$
-\item (Множества) Аналогично для множеств: $\Set{x_1, \ldots, x_n} \MCong \Set{x_{\pi(1)}, \ldots, x_{\pi(n)}}$.
 \end{enumerate}
 \end{Def}
 
-Другими словами, множества являются конгруэнтными, если они совпадают с точностью до порядка элементов, объекты --- с точностью до порядка свойств, а прочие термы --- только в случае попарной конгруэнтности соответствующих подтермов.
+Другими словами, термы являются конгруэнтными в случае попарной конгруэнтности соответствующих подтермов, причем при сравнении множеств порядок элементов не важен, а при сравнении объектов не важен порядок свойств. Приведем несколько примеров:
+$$
+\begin{array}{rcl}
+\Ref{abc} \MCong \Ref{abc}
+\quad 
+\List{1, 2} &\red{\nMCong} & \List{2, 1}
+\quad
+\Set{1, 2} \MCong \Set{2, 1}
+\\
+\Object{abc}{\Ref{c}}{\mbox{
+\small$\begin{array}{rcl}
+a &=& b\\
+c &=& d\\
+\end{array}$
+}} &\MCong & \Object{abc}{\Ref{c}}{\mbox{
+\small$\begin{array}{rcl}
+\mathbf{c} &=& \mathbf{d}\\
+\mathbf{a} &=& \mathbf{b}\\
+\end{array}$
+}}\\
+\Object{abc}{\Ref{c}}{\mbox{
+\small$\begin{array}{rcl}
+a &=& b\\
+c &=& d\\
+\end{array}$
+}} &\red{\nMCong} & \Object{abc}{\Ref{c}}{\mbox{
+\small$\begin{array}{rcl}
+c &=& \mathbf{\red{b}}\\
+a &=& \mathbf{\red{d}}\\
+\end{array}$
+}}
+\end{array}
+$$
 
 Введем функцию $\Objects{t}$, вычисляющую множество всех объектов, являющихся подтермами терма $t$:
 $$
@@ -84,22 +116,21 @@ $$
 Аналогично вводятся функция $\Sets{t}$, вычисляющая множество всех множеств-подтермов $t$, и функция $\Refs{t}$, вычисляющая множество всех ссылок-подтермов $t$.
 
 \begin{Def}
-Модельный терм $t$ называется \emph{правильно сформированным}, если выполняются следующие условия:\SideNote{Нужно ли здесь писать "несовпадающих"?}
+Модельный терм $t$ называется \emph{правильно сформированным}, если выполняются следующие условия:
 \begin{enumerate}
-\item В $\Objects{t}$ не существует двух несовпадающих объектов с конгруэнтными идентификаторами;
-\item В $\Objects{t}$ не существует объекта, содержащего два несовпадающих свойства с конгруэнтными именами;
-\item В $\Sets{t}$ не существует множества, содержащего два несовпадающих конгруэнтных элемента.
+\item Среди подтермов $t$ не существует двух объектов с конгруэнтными идентификаторами; \label{a}
+\item В $\Objects{t}$ не существует объекта, содержащего два свойства с конгруэнтными именами; \label{b}
+\item В $\Sets{t}$ не существует множества, содержащего два конгруэнтных элемента. \label{c}
 \end{enumerate}
 \end{Def}
-\SideNote{???
-- identities and property names are not objects and don't contain objects\\
-}
+
+Так, например, терм $\List{\Object{\red{a}}{\Ref{c}}{}, \Object{\red{a}}{\Ref{c}}{x=y}}$ не является правильно сформированным (пункт \ref{a}). Терм $\Object{a}{\Ref{c}}{\red{a} = b, \red{a} = c}$ тоже не является правильно сформированным, но по другой причине см. пункт \ref{b}. Согласно пункту \ref{c}, терм $\Set{\red{1}, 2, \red{1}}$ также не является корректно сформированным.
 
 \begin{Def}[Ссылочный контекст]
 Будем называть \emph{ссылочным контекстом} функцию 
 \mbox{$\RContext : \ModelTerm \rightarrow \ModelTerm$}, обладающую следующими свойствами: 
 \begin{enumerate}
-\item если $\RContext(id)$ определено, то $\RContext(id) = \left\{\Object{id'}{\ldots}{\ldots}\right\}$, где $id \MCong id'$;
+\item Если $\RContext(id)$ определено, то $\RContext(id) = \left\{\Object{id'}{\ldots}{\ldots}\right\}$, где $id \MCong id'$;
 \item $\RContext(id) \MCong \RContext(id')$ тогда и только тогда, когда $id \MCong id'$.
 \end{enumerate}
 \end{Def}
@@ -108,7 +139,7 @@ $$
 
 Обозначим множество всех объектов, \emph{упомянутых} в контексте $\RContext$ (то есть являющихся подтермами элементов области определения $\RContext$ и/или области значений $\RContext$) за $\Objects{\RContext}$. Аналогично вводится множество ссылок $\Refs{\RContext}$.
 
-\begin{Def}
+\begin{Def}\label{RContext}
 Будем называть ссылочный контекст $\RContext$ \emph{замкнутым}, если 
 $$
 	o=\Object{id}{\ldots}{\ldots} \in \Objects{\RContext} \Rightarrow \RContext(id)=o
@@ -119,7 +150,22 @@ $$
 $$
 \end{Def}
 
-Все объекты, упомянутые в замкнутом контексте, могут быть получены по своим идентификаторам, и каждая ссылка ссылается на существующий объект. Из этого, в частности, следует, что в таком контексте каждому объекту присвоен уникальный идентификатор.
+Все объекты, упомянутые в замкнутом контексте, могут быть получены по своим идентификаторам, и каждая ссылка ссылается на существующий объект. Из этого, в частности, следует, что в таком контексте каждому объекту присвоен уникальный идентификатор. Так, например, следующий контекст является замкнутым:
+\begin{equation*}
+	\RContext(id) = \left\{
+		a \mapsto \Object{a}{\Ref{a}}{} \right\}
+\end{equation*}
+Приведем также пример незамкнутого контекста:
+\begin{equation*}
+	\RContext(id) = \left\{
+		a  \mapsto  \Object{a}{\red{\Ref{b}}}{c = \red{\Object{b}{\Ref{a}}{}}}
+\right\}
+\end{equation*}
+в последнем примере нарушаются оба требования определения \ref{RContext}: 
+\begin{itemize}
+\item объект, упомянутый в контексте, не принадлежит области его значений;
+\item ссылка, упомянутая в контексте, не принадлежит его области определения.
+\end{itemize}
 
 \begin{Def}
 Пусть $\RContext_1$ и $\RContext_2$ -- ссылочные контексты с непересекающимися областями определения ($\forall x \in D(\RContext_1), y \in D(\RContext_2): x \nMCong y$). Тогда их \emph{объединение} определяется следующей формулой:
@@ -127,7 +173,8 @@ $$
 	\left(\RContext_1 \cup \RContext_2\right)(id) = \left\{
 	\begin{array}{ll}
 		\RContext_1(id), & \RContext_1(id) \neq \bot \\
-		\RContext_2(id), & \mbox{ в противном случае} \\
+		\RContext_2(id), & \RContext_2(id) \neq \bot \\
+		\bot,            & \mbox{в противном случае.}
 	\end{array}
 	\right.
 $$
@@ -152,7 +199,7 @@ $$
 \emph{Классом} называется кортеж $\langle id, S, P \rangle$, где 
 \begin{enumerate}
 \item $id$ --- \emph{идентификатор} класса,
-\item $S$ --- множество классов, называемых \emph{предками} данного класса (\emph{суперклассов},
+\item $S$ --- множество классов, называемых \emph{предками} данного класса (\emph{суперклассов}),
 \item $P$ --- множество пар вида $p : \tau$, где $p$ --- \emph{идентификатор} свойства, а $\tau$ --- \emph{тип} свойства (множество типов определяется ниже).
 \end{enumerate}
 Множество $P$ не содержит различных пар, в которых совпадают идентификаторы свойств.
@@ -165,23 +212,24 @@ $$
 $$
 \begin{array}{rrl}
 \Types &::=& \CharT \OR \StringT \OR \IntegerT \OR \BooleanT \\
+         &|& \NullableT{\Types} 
+         \OR \SetT{\Types^+} \OR \SetT{\Types^*}
+         \OR \ListT{\Types^+} \OR \ListT{\Types^*}\\
+         &|& \ClassT{c} \OR \RefT{c}, \mbox{ где $c$ --- идентификатор некторого класса} \\
          &|& \AnyT \\
-         &|& \ClassT{c}, \mbox{ где $c$ --- идентификатор некторого класса} \\
-         &|& \RefT{c}, \mbox{ где $c$ --- идентификатор некторого класса} \\
-         &|& \NullableT{\Types} \\
-         &|& \SetT{\Types^+} \OR \SetT{\Types^*}\\
-         &|& \ListT{\Types^+} \OR \ListT{\Types^*}
 \end{array}
 $$
 \end{Def}
-\noindent Поясним интуитивное значение типов:
+\noindent Поясним интуитивное значение данного определения:
 \begin{itemize}
-\item $\CharT, \StringT, \IntegerT, \BooleanT$ --- примитивные типы: символы, строки, целые числа, булевские значения;
-\item $\ClassT{c}$ --- агрегирующая ссылка на класс $c$;
-\item $\RefT{c}$ --- неагрегирующая ссылка на класс $c$;
-\item $\tau^?$ --- величина, которая может принимать значение $\Null$;
-\item $\SetT{\tau^*}$ ($\ListT{\tau^*}$) --- множество (список), содержащее ноль или более элементов;
-\item $\SetT{\tau^*}$ ($\ListT{\tau^*}$)  --- множество (список), содержащееодин или более элементов;
+\item $\CharT$, $\StringT$, $\IntegerT$, $\BooleanT$ обозначают примитивные типы: символы, строки, целые числа и булевские значения соответственно.
+\item Тип $\NullableT{\tau}$ допускает значение $\Null$ или значение типа $\tau$, например, $\NullableT{\CharT}$ соответствует множеству значений $\Sigma \cup \{\Null\}$.
+\item $\SetT{\tau^*}$ обозначает тип множеств, содержащих ноль или более элементов типа $\tau$. Например, $\SetT{\StringT^*}$ --- 
+это множества строк, а $\SetT{\Set{\IntegerT^*}^*}$ --- множества множеств целых чисел. 
+\item Аналогично, $\ListT{\tau^*}$ обозначает списки. 
+\item Если вместо ``*'' используется ``+'', то множество или список должны содержать не менее одного элемента. Например, $\SetT{\tau^+}$ --- непустые множества, составленные из элементов $\tau$. 
+\item $\ClassT{c}$, где $c$ --- некоторый класс (точнее, его идентификатор), соответствует \emph{агрегированному} объекту класса $c$. В качестве примера терм $\Object{a}{\Ref{c}}{a = \Object{b}{\Ref{c}}{}}$: здесь объект $b$ содержится внутри объекта $a$, такая ситуация и называется \emph{агрегированием}.
+\item $\RefT{c}$ обозначает тип ссылок на объекты класса $c$, то есть значений вида $\Ref{a}$, где $a$ --- идентификатор объекта, принадлежащего к классу $c$ (см. ниже).
 \item $\AnyT$ (``Top'') --- супертип всех остальных типов (см. ниже).
 \end{itemize}
 
@@ -309,6 +357,31 @@ $$
 $$
 
 \section{Модели и мета-модели}
+
+  @Class PropertyDescriptor {
+    @Class.abstract = false,
+    @Class.superclasses = {},
+    @Class.propertyDescriptors = {
+      @PropertyDescriptor PropertyDescriptor.type {
+        @PropertyDescriptor.type = @ObjectType { @ClassType.class = @Type }
+      }
+    }
+  },
+$$
+\Object{PropertyDescriptor}{\Ref{Class}}{\mbox{
+%\begin{itemize}
+%\item[] $\Ref{Class.abstract} = \False$,
+%\item[] $\Ref{Class.superclasses} = \Set{}$,
+%\item[] $    \Ref{Class.propertyDescriptors} = \Set{
+%      \Object{PropertyDescriptor.type}{\Ref{PropertyDescriptor}}{
+%        \Ref{PropertyDescriptor.type} = \Object{\_}{ObjectType}{ %\Ref{ClassType.class} = \Ref{Type} }
+%      }
+%    }$
+%\end{itemize}
+}}
+$$
+
+!Определяя типы, мы использовали идентификаторы классов внутри модельных термов. Чтобы это было возможно, необходимо, чтобы сами классы были модельными термами.
 
 !Мета-модель накладывает ограничения на структуру объектов через типы и кратность ссылок и атрибутов. Эти ограничения мы записываем в виде системы типов, которая связывает мета-модель и объект отношением $\Vdash$. Запись $\fromMM x : \tau$ следует читать как ``\term{объект $x$ удовлетворяет ограничениям мета-модели $\MM{M}$ и имеет тип $\tau$}''.
 
