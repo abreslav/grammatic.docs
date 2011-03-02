@@ -1,3 +1,11 @@
+\newcommand{\figdef}[2]{%
+\begin{figure}[htbp]
+\center
+\includegraphics[width=.9\textwidth]{pictures/#1.pdf}
+\caption{#2}\label{#1}
+\end{figure}}
+
+
 \newcommand{\red}[1]{{\color{red}#1}}
 
 \newcommand{\GRM}{\tool{Grammatic}}
@@ -24,10 +32,11 @@
 
 %%%%% ModelTerms
 \newcommand{\ModelTerm}{\mbox{MT}}
-\newcommand{\CharT}{\mathsf{Char}}
-\newcommand{\StringT}{\mathsf{String}}
-\newcommand{\IntegerT}{\mathsf{Int}}
-\newcommand{\BooleanT}{\mathsf{Bool}}
+\newcommand{\typestyle}[1]{\mathsf{#1}}
+\newcommand{\CharT}{\typestyle{Char}}
+\newcommand{\StringT}{\typestyle{String}}
+\newcommand{\IntegerT}{\typestyle{Int}}
+\newcommand{\BooleanT}{\typestyle{Bool}}
 \newcommand{\String}[1]{\mathsf{#1}}
 \newcommand{\constantstyle}[1]{\mathtt{#1}}
 \newcommand{\Null}{\constantstyle{null}}
@@ -47,7 +56,9 @@
 \newcommand{\Sets}[1]{\mathfrak{S}\left(#1\right)}
 \newcommand{\Refs}[1]{\mathfrak{R}\left(#1\right)}
 
-\newcommand{\Class}[3]{\mathbf{class }\;#1 : #2 \left\{#3\right\}}
+\newcommand{\Class}[3]{\mathbf{class}\;#1 : #2 \left\{#3\right\}}
+\newcommand{\CClass}[3]{\mathbf{[class]}\;#1 : #2 \left\{#3\right\}}
+\newcommand{\AClass}[3]{\mathbf{(class)}\;#1 : #2 \left\{#3\right\}}
 \newcommand{\Types}{\mathfrak{T}}
 
 \newcommand{\AnyT}{\top}
@@ -65,6 +76,7 @@
 \newcommand{\AllSuperclasses}[1]{\overline{S}\left(#1\right)}
 \newcommand{\AllProps}[1]{\overline{P}\left(#1\right)}
 \newcommand{\Classes}[1]{\overline{C}\left(#1\right)}
+\newcommand{\Aggregated}[1]{\overline{A}\left(#1\right)}
 
 %
 \newcommand{\class}[4]{\mathbf{class}\; #1 \langle #2, #3, #4\rangle}%
