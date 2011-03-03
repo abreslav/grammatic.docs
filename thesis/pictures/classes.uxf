@@ -4,7 +4,7 @@
   <element>
     <type>com.umlet.element.Class</type>
     <coordinates>
-      <x>150</x>
+      <x>180</x>
       <y>110</y>
       <w>110</w>
       <h>50</h>
@@ -17,18 +17,18 @@ name: String</panel_attributes>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>180</x>
+      <x>210</x>
       <y>130</y>
-      <w>140</w>
-      <h>140</h>
+      <w>150</w>
+      <h>90</h>
     </coordinates>
     <panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes>
-    <additional_attributes>30;30;30;120;120;120</additional_attributes>
+    <additional_attributes>30;30;30;70;130;70</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.custom.Text</type>
     <coordinates>
-      <x>210</x>
+      <x>240</x>
       <y>170</y>
       <w>100</w>
       <h>20</h>
@@ -39,8 +39,8 @@ name: String</panel_attributes>
   <element>
     <type>com.umlet.element.Class</type>
     <coordinates>
-      <x>300</x>
-      <y>220</y>
+      <x>340</x>
+      <y>170</y>
       <w>120</w>
       <h>50</h>
     </coordinates>
@@ -52,19 +52,19 @@ var: @Variable</panel_attributes>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>390</x>
-      <y>160</y>
-      <w>150</w>
-      <h>90</h>
+      <x>430</x>
+      <y>130</y>
+      <w>110</w>
+      <h>100</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
-    <additional_attributes>130;30;130;70;30;70</additional_attributes>
+    <additional_attributes>90;30;90;80;30;80</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Class</type>
     <coordinates>
       <x>470</x>
-      <y>160</y>
+      <y>130</y>
       <w>100</w>
       <h>30</h>
     </coordinates>
@@ -75,8 +75,8 @@ var: @Variable</panel_attributes>
   <element>
     <type>com.umlet.element.custom.Text</type>
     <coordinates>
-      <x>430</x>
-      <y>140</y>
+      <x>420</x>
+      <y>110</y>
       <w>80</w>
       <h>20</h>
     </coordinates>
@@ -90,10 +90,10 @@ var: @Variable</panel_attributes>
       <x>450</x>
       <y>50</y>
       <w>50</w>
-      <h>130</h>
+      <h>100</h>
     </coordinates>
     <panel_attributes>lt=-&gt;&gt;&gt;&gt;</panel_attributes>
-    <additional_attributes>30;110;30;30</additional_attributes>
+    <additional_attributes>30;80;30;30</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Relation</type>
@@ -101,16 +101,16 @@ var: @Variable</panel_attributes>
       <x>530</x>
       <y>50</y>
       <w>50</w>
-      <h>130</h>
+      <h>100</h>
     </coordinates>
     <panel_attributes>lt=-&gt;&gt;&gt;&gt;</panel_attributes>
-    <additional_attributes>30;110;30;30</additional_attributes>
+    <additional_attributes>30;80;30;30</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.custom.Text</type>
     <coordinates>
-      <x>520</x>
-      <y>140</y>
+      <x>530</x>
+      <y>110</y>
       <w>90</w>
       <h>20</h>
     </coordinates>
@@ -123,10 +123,10 @@ var: @Variable</panel_attributes>
       <x>540</x>
       <y>20</y>
       <w>120</w>
-      <h>170</h>
+      <h>140</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
-    <additional_attributes>30;150;100;150;100;30;80;30</additional_attributes>
+    <additional_attributes>30;120;100;120;100;30;80;30</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Class</type>
@@ -145,7 +145,7 @@ argument: val(Term)</panel_attributes>
   <element>
     <type>com.umlet.element.Class</type>
     <coordinates>
-      <x>280</x>
+      <x>310</x>
       <y>40</y>
       <w>120</w>
       <h>30</h>
@@ -157,7 +157,7 @@ argument: val(Term)</panel_attributes>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>180</x>
+      <x>210</x>
       <y>30</y>
       <w>120</w>
       <h>100</h>
@@ -168,7 +168,7 @@ argument: val(Term)</panel_attributes>
   <element>
     <type>com.umlet.element.custom.Text</type>
     <coordinates>
-      <x>210</x>
+      <x>240</x>
       <y>90</y>
       <w>80</w>
       <h>20</h>
@@ -180,12 +180,12 @@ argument: val(Term)</panel_attributes>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>320</x>
+      <x>350</x>
       <y>40</y>
-      <w>170</w>
-      <h>150</h>
+      <w>140</w>
+      <h>120</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
-    <additional_attributes>150;130;30;130;30;30</additional_attributes>
+    <additional_attributes>120;100;30;100;30;30</additional_attributes>
   </element>
 </diagram>
