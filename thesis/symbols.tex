@@ -28,6 +28,7 @@
 \newcommand{\semRC}[1]{\sem{#1}_\RContext}
 \newcommand{\denot}[1]{[\![#1]\!]}
 \newcommand{\denotRCC}[1]{\denot{#1}_\RContext^C}
+\newcommand{\denotRCCm}[2]{\denot{#2}_{\RContext_{#1}}^C}
 
 
 %%%%% ModelTerms
@@ -60,6 +61,9 @@
 \newcommand{\CClass}[3]{\mathbf{[class]}\;#1 : #2 \left\{#3\right\}}
 \newcommand{\AClass}[3]{\mathbf{(class)}\;#1 : #2 \left\{#3\right\}}
 \newcommand{\Types}{\mathfrak{T}}
+
+\newcommand{\TContext}{\Types}
+\newcommand{\MMM}{\mathfrak{M}}
 
 \newcommand{\AnyT}{\top}
 \newcommand{\type}[2]{#1\left(#2\right)}%
