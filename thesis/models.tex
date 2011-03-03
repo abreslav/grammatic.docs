@@ -429,36 +429,10 @@ $$
 
 \section{Модели и мета-модели}
 
-Выше мы потребовали, чтобы экземпляры класса $c = \Class{c}{S}{P}$, имели вид $\Object{id}{\Ref{c}}{\ldots}$, то есть содержали ссылку на идентификатор класса $c$.
+Выше мы потребовали, чтобы экземпляры класса $C = \Class{c}{S}{P}$, имели вид $\Object{id}{\Ref{c}}{\ldots}$, то есть содержали ссылку на идентификатор класса $c$. Если класс $C$ сам не является объектом, то контекст, в котором упоминаются его экземпляры, не может быть замкнутым. Для того, чтобы устранить это неудобство, мы представим классы в виде объектов и сделаем, таким образом, синтаксис модельных термов замкнутым.
 
-  @Class PropertyDescriptor {
-    @Class.abstract = false,
-    @Class.superclasses = {},
-    @Class.propertyDescriptors = {
-      @PropertyDescriptor PropertyDescriptor.type {
-        @PropertyDescriptor.type = @ObjectType { @ClassType.class = @Type }
-      }
-    }
-  },
-$$
-\Object{PropertyDescriptor}{\Ref{Class}}{\mbox{
-%\begin{itemize}
-%\item[] $\Ref{Class.abstract} = \False$,
-%\item[] $\Ref{Class.superclasses} = \Set{}$,
-%\item[] $    \Ref{Class.propertyDescriptors} = \Set{
-%      \Object{PropertyDescriptor.type}{\Ref{PropertyDescriptor}}{
-%        \Ref{PropertyDescriptor.type} = \Object{\_}{ObjectType}{ %\Ref{ClassType.class} = \Ref{Type} }
-%      }
-%    }$
-%\end{itemize}
-}}
-$$
-
-!Определяя типы, мы использовали идентификаторы классов внутри модельных термов. Чтобы это было возможно, необходимо, чтобы сами классы были модельными термами.
-
-!Мета-модель накладывает ограничения на структуру объектов через типы и кратность ссылок и атрибутов. Эти ограничения мы записываем в виде системы типов, которая связывает мета-модель и объект отношением $\Vdash$. Запись $\fromMM x : \tau$ следует читать как ``\term{объект $x$ удовлетворяет ограничениям мета-модели $\MM{M}$ и имеет тип $\tau$}''.
-
-!Enums!!!!
+\figdef{metametamodel}{Классы как объекты}
+\figdef{types}{Классы для типов}
 
 \begin{figure}[htbp]
 	\centering
