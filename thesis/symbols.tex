@@ -51,16 +51,22 @@
 \newcommand{\Set}[1]{\left\{#1\right\}}
 \newcommand{\RContext}{\Psi}
 
+%%% Congruence
 \newcommand{\MCong}{\cong}
 \newcommand{\nMCong}{\ncong}
 
-\newcommand{\Objects}[1]{\mathfrak{O}\left(#1\right)}
-\newcommand{\Sets}[1]{\mathfrak{S}\left(#1\right)}
-\newcommand{\Refs}[1]{\mathfrak{R}\left(#1\right)}
+%%% Subterms
+\newcommand{\SubtermsName}{\mathcal{S}}
+\newcommand{\SubtermsT}[2]{\SubtermsName_{#1}\left(#2\right)}
+\newcommand{\Subterms}[1]{\SubtermsT{}{#1}}
+\newcommand{\Objects}[1]{\SubtermsT{obj}{#1}}
+\newcommand{\Sets}[1]{\SubtermsT{set}{#1}}
+\newcommand{\Refs}[1]{\SubtermsT{ref}{#1}}
 
+%%% Classes
 \newcommand{\Class}[3]{\mathbf{class}\;#1 : #2 \left\{#3\right\}}
-\newcommand{\CClass}[3]{\mathbf{[class]}\;#1 : #2 \left\{#3\right\}}
-\newcommand{\AClass}[3]{\mathbf{(class)}\;#1 : #2 \left\{#3\right\}}
+\newcommand{\CClass}[3]{\underline{\mathbf{class}}\;#1 : #2 \left\{#3\right\}}
+\newcommand{\AClass}[3]{\mbox{\textbf{\textit{class}}}\;#1 : #2 \left\{#3\right\}}
 \newcommand{\Types}{\mathfrak{T}}
 
 \newcommand{\TContext}{\Types}
