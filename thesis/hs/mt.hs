@@ -52,6 +52,11 @@ data Class = Class {
 
 data PropertyDescriptor = PropertyDescriptor String Type
 
+data Enum = Enum {
+    enum_id :: String,
+    literals :: [String]
+  }
+
 data Type
   = CharT
   | StringT
@@ -62,6 +67,7 @@ data Type
   | ListT Type Bool
   | ValT Class
   | RefT Class
+  | EnumT Main.Enum
   | TopT
 
 extractClasses :: ModelTerm -> [Class]
@@ -116,8 +122,32 @@ extractClasses t@(Set objects) = map (extractClass (rcontext t)) objects
          (Property (Ref (String "CollectionType.elementType")) elementType)
       ]) = ListT (toType context elementType) nonEmpty
 
+    toType context 
+        (Object 
+            _ 
+            (Ref (String "EnumType")) 
+            [Property 
+                (Ref (String "EnumType.enum"))
+                (Ref enumId)]) = EnumT (toEnum (lookup enumId context))
+
     toType context (Object _ (Ref (String "AnyType")) []) = TopT
     toType context _ = TopT
+
+    toEnum :: Maybe ModelTerm -> Main.Enum
+    toEnum (Just 
+        (Object 
+            (String id)
+            (Ref (String "Enum"))
+            [Property 
+                (Ref (String "Enum.literals"))
+                (List literals)])) = Enum id (map toLiteral literals)
+
+    toLiteral :: ModelTerm -> String
+    toLiteral 
+        (Object 
+            (String id) 
+            (Ref (String "EnumLiteral")) 
+            []) = id
 
 instance Show Property where
   show (Property name value) = (show name) ++ " = " ++ (show value)
