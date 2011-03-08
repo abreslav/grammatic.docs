@@ -1,0 +1,196 @@
+\appendix{Преобразование объектного представления метамоделей в классы}\label{objects-to-classes}
+
+\begin{lstlisting}[language=Haskell]
+import Data.List
+
+data ModelTerm
+  = Object {
+      id :: ModelTerm,
+      classRef :: ModelTerm,
+      properties :: [Property]
+    }
+  | Ref { base :: ModelTerm }
+  | List [ModelTerm]
+  | Set [ModelTerm]
+  | Null
+  | Int Int
+  | Bool Bool
+  | Char Char
+  | String String
+  deriving (Eq)
+  
+data Property = Property {
+    name :: ModelTerm,
+    value :: ModelTerm
+  }
+  deriving (Eq)
+
+pSubterms :: Property -> [ModelTerm]
+pSubterms (Property n v) = (subterms n) ++ (subterms v)
+
+subterms :: ModelTerm -> [ModelTerm]
+subterms o = o : case o of
+  Object id cr p -> (subterms id) ++ (subterms cr) ++ (concat (map pSubterms p))
+  Ref    b       -> subterms b
+  List   l       -> concat (map subterms l)
+  Set    l       -> concat (map subterms l)
+  _              -> []  
+
+type RContext = [(ModelTerm, ModelTerm)]
+
+rcontext :: ModelTerm -> RContext
+rcontext t = map toPair (filter isObject (subterms t))
+  where
+    toPair o@(Object id _ _) = (id, o)
+
+    isObject (Object _ _ _) = True
+    isObject _              = False
+
+data Class = Class {
+    abstract :: Bool, 
+    class_id :: String, 
+    superclasses :: [Class], 
+    propertyDescriptors :: [PropertyDescriptor]
+  }
+
+data PropertyDescriptor = PropertyDescriptor String Type
+
+data Type
+  = CharT
+  | StringT
+  | IntT
+  | BoolT
+  | NullableT Type
+  | SetT Type Bool
+  | ListT Type Bool
+  | ValT Class
+  | RefT Class
+  | TopT
+
+extractClasses :: ModelTerm -> [Class]
+extractClasses t@(Set objects) = map (extractClass (rcontext t)) objects
+
+extractClass :: RContext -> ModelTerm -> Class
+extractClass context (Object (String id) (Ref (String "Class")) props) 
+   = Class 
+       (extractAbstract props) 
+       id 
+       (concat (map (superclasses context) props)) 
+       (concat (map (toDescriptors context) props))
+
+extractAbstract :: [Property] -> Bool
+extractAbstract l = head (concat (map isAbstract l))
+
+isAbstract :: Property -> [Bool] 
+isAbstract (Property (Ref (String "Class.abstract")) (Bool v)) = [v]
+isAbstract _                                      = []
+
+superclasses :: RContext -> Property -> [Class]
+superclasses context 
+	(Property 
+			(Ref (String "Class.superclasses")) 
+			(Set refs)) = map (toClass context) refs
+superclasses _ _ = []
+
+toClass :: RContext -> ModelTerm -> Class
+toClass context (Ref id) = 
+	case lookup id context of 
+		Just a -> extractClass context a
+toClass _ r = Class False ("E: " ++ (show r)) [] []
+
+toDescriptors :: RContext -> Property -> [PropertyDescriptor]
+toDescriptors context 
+	(Property 
+		(Ref (String "Class.propertyDescriptors")) 
+		(Set s)) = map (toDescriptor context) s
+toDescriptors _ _ = []
+
+toDescriptor :: RContext -> ModelTerm -> PropertyDescriptor
+toDescriptor context 
+	(Object 
+		(String id) 
+		(Ref (String "PropertyDescriptor")) 
+		[Property 
+			(Ref (String "PropertyDescriptor.type")) 
+			propType]) = PropertyDescriptor id (toType context propType)
+
+toType :: RContext -> ModelTerm -> Type
+toType context 
+	(Object 
+		_ 
+		(Ref (String "PrimitiveType")) 
+		[(Property 
+			(Ref (String "PrimitiveType.type")) 
+			(String "Boolean"))]) = BoolT
+toType context 
+	(Object 
+		_ 
+		(Ref (String "PrimitiveType")) 
+		[(Property 
+			(Ref (String "PrimitiveType.type")) 
+			(String "String"))]) = StringT
+toType context 
+	(Object 
+		_ 
+		(Ref (String "PrimitiveType")) 
+		[(Property 
+			(Ref (String "PrimitiveType.type")) 
+			(String "Integer"))]) = IntT
+toType context 
+	(Object 
+		_ 
+		(Ref (String "PrimitiveType")) 
+		[(Property 
+			(Ref (String "PrimitiveType.type")) 
+			(String "Char"))]) = CharT
+
+toType context 
+	(Object 
+		_ 
+		(Ref (String "NullableType")) 
+		[(Property 
+			(Ref (String "NullableType.type")) 
+			body)]) = NullableT (toType context body)
+toType context 
+	(Object 
+		_ 
+		(Ref (String "ReferenceType")) 
+		[(Property 
+			(Ref (String "ClassType.class")) 
+			(classRef))]) = RefT (toClass context classRef)
+toType context 
+	(Object 
+		_ 
+		(Ref (String "ObjectType")) 
+		[(Property 
+			(Ref (String "ClassType.class")) 
+			(classRef))]) = ValT (toClass context classRef)
+
+toType context 
+	(Object 
+		_ 
+		(Ref (String "SetType")) 
+		[
+			(Property 
+				(Ref (String "CollectionType.nonEmpty")) 
+				(Bool nonEmpty)),
+			(Property 
+				(Ref (String "CollectionType.elementType")) 
+				elementType)
+		]) = SetT (toType context elementType) nonEmpty
+toType context 
+	(Object 
+		_ 
+		(Ref (String "ListType")) 
+		[
+			(Property 
+				(Ref (String "CollectionType.nonEmpty")) 
+				(Bool nonEmpty)),
+			(Property 
+				(Ref (String "CollectionType.elementType")) 
+				elementType)
+		]) = ListT (toType context elementType) nonEmpty
+
+toType context (Object _ (Ref (String "AnyType")) []) = TopT
+toType context _ = TopT
+\end{lstlisting}
