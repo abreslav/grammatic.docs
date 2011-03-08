@@ -56,7 +56,7 @@ rcontext t = map toPair (filter isObject (subterms t))
     isObject _              = False
 \end{lstlisting}
 %
-Типы данных для классов и типов (см. определения \ref{defclass} и \ref{deftype}):
+Типы данных для классов и типов (см. определения \ref{defclass}, \ref{defenum} и \ref{deftype}):
 %
 \begin{lstlisting}[language=Haskell]
 data Class = Class {
@@ -67,6 +67,11 @@ data Class = Class {
   }
 
 data PropertyDescriptor = PropertyDescriptor String Type
+
+data Enum = Enum {
+    enum_id :: String,
+    literals :: [String]
+  }
 
 data Type
   = CharT
@@ -209,6 +214,30 @@ toType context
 				elementType)
 		]) = ListT (toType context elementType) nonEmpty
 
+toType context 
+(Object 
+    _ 
+    (Ref (String "EnumType")) 
+    [Property 
+        (Ref (String "EnumType.enum"))
+        (Ref enumId)]) = EnumT (toEnum (lookup enumId context))
+
 toType context (Object _ (Ref (String "AnyType")) []) = TopT
 toType context _ = TopT
+
+toEnum :: Maybe ModelTerm -> Main.Enum
+toEnum (Just 
+(Object 
+    (String id)
+    (Ref (String "Enum"))
+    [Property 
+        (Ref (String "Enum.literals"))
+        (List literals)])) = Enum id (map toLiteral literals)
+
+toLiteral :: ModelTerm -> String
+toLiteral 
+(Object 
+    (String id) 
+    (Ref (String "EnumLiteral")) 
+    []) = id
 \end{lstlisting}
