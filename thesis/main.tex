@@ -189,18 +189,16 @@
 \begin{flushleft}\bf \thesection. #1\end{flushleft}%
 \addcontentsline{toc}{section}{\hspace{1em}\thesection. #1}%
 }
-\ignore{
 \renewcommand{\subsection}[1]{%
 \nopagebreak[4]%
 \refstepcounter{subsection}%
 \begin{flushleft}\bf \thesubsection. #1\end{flushleft}%
 }
-}
 
 %\renewcommand \thepart {\@arabic\c@part}
 %\renewcommand \thechapter {\@arabic\c@chapter.}
 %\renewcommand \thesection {\thechapter.\@arabic\c@section.}
-\renewcommand\thesubsection   {\thesection.\@arabic\c@subsection.}
+%\renewcommand\thesubsection   {\thesection.\@arabic\c@subsection.}
 %\renewcommand \thefigure
 %     {\ifnum \c@chapter>\z@ \thechapter\fi \@arabic\c@figure}
 

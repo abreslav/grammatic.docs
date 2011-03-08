@@ -1,9 +1,13 @@
-\newcommand{\figdef}[2]{%
+\newcommand{\figdefw}[3]{%
 \begin{figure}[htbp]
 \center
-\includegraphics[width=.9\textwidth]{pictures/#1.pdf}
-\caption{#2}\label{#1}
+\includegraphics[width=#1]{pictures/#2.pdf}
+\caption{#3}\label{#2}
 \end{figure}}
+
+\newcommand{\figdef}[2]{\figdefw{.9\textwidth}{#1}{#2}}
+
+\newcommand{\eqdef}{\stackrel{\text{\tiny def}}{=}}
 
 
 \newcommand{\red}[1]{{\color{red}#1}}
@@ -87,7 +91,7 @@
 \newcommand{\AllSuperclasses}[1]{\overline{S}\left(#1\right)}
 \newcommand{\AllProps}[1]{\overline{P}\left(#1\right)}
 \newcommand{\Classes}[1]{\overline{C}\left(#1\right)}
-\newcommand{\Aggregated}[1]{\overline{A}\left(#1\right)}
+\newcommand{\Composed}[1]{\overline{C}_{comp}\left(#1\right)}
 
 %
 \newcommand{\class}[4]{\mathbf{class}\; #1 \langle #2, #3, #4\rangle}%
