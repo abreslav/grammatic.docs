@@ -1,5 +1,6 @@
 \appendix{Преобразование объектного представления метамоделей в классы}\label{objects-to-classes}
 
+Ниже приводится программа на языке \tool{Haskell} \cite{Haskell}, которая преобразует модельный терм (такой, например, как на \figref{metametamodel}) набор классов (согласно определению \ref{defclass}). Вначале определяются типы данных для модельных термов (согласно определению \ref{defmt}):
 \begin{lstlisting}[language=Haskell]
 import Data.List
 
@@ -24,10 +25,11 @@ data Property = Property {
     value :: ModelTerm
   }
   deriving (Eq)
-
-pSubterms :: Property -> [ModelTerm]
-pSubterms (Property n v) = (subterms n) ++ (subterms v)
-
+\end{lstlisting}
+%
+Далее определяется функция $\Subterms{t}$ (см. формулу \ref{defsubterms}).
+%
+\begin{lstlisting}[language=Haskell]
 subterms :: ModelTerm -> [ModelTerm]
 subterms o = o : case o of
   Object id cr p -> (subterms id) ++ (subterms cr) ++ (concat (map pSubterms p))
@@ -36,6 +38,13 @@ subterms o = o : case o of
   Set    l       -> concat (map subterms l)
   _              -> []  
 
+pSubterms :: Property -> [ModelTerm]
+pSubterms (Property n v) = (subterms n) ++ (subterms v)
+\end{lstlisting}
+%
+Тип данных и функция для построения ссылочных контекстов (см. определение \ref{defrcontext}):
+%
+\begin{lstlisting}[language=Haskell]
 type RContext = [(ModelTerm, ModelTerm)]
 
 rcontext :: ModelTerm -> RContext
@@ -45,7 +54,11 @@ rcontext t = map toPair (filter isObject (subterms t))
 
     isObject (Object _ _ _) = True
     isObject _              = False
-
+\end{lstlisting}
+%
+Типы данных для классов и типов (см. определения \ref{defclass} и \ref{deftype}):
+%
+\begin{lstlisting}[language=Haskell]
 data Class = Class {
     abstract :: Bool, 
     class_id :: String, 
@@ -67,6 +80,11 @@ data Type
   | RefT Class
   | TopT
 
+\end{lstlisting}
+%
+Функция, преобразующая модельный терм в набор классов (см. раздел~\ref{models-and-metamodels}):
+%
+\begin{lstlisting}[language=Haskell]
 extractClasses :: ModelTerm -> [Class]
 extractClasses t@(Set objects) = map (extractClass (rcontext t)) objects
 
