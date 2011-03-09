@@ -106,7 +106,7 @@
       <w>50</w>
       <h>100</h>
     </coordinates>
-    <panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes>
+    <panel_attributes>lt=&lt;&lt;&lt;-</panel_attributes>
     <additional_attributes>30;30;30;80</additional_attributes>
   </element>
   <element>
@@ -117,7 +117,7 @@
       <w>130</w>
       <h>120</h>
     </coordinates>
-    <panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes>
+    <panel_attributes>lt=&lt;&lt;&lt;-</panel_attributes>
     <additional_attributes>30;30;110;30;110;100</additional_attributes>
   </element>
   <element>
@@ -326,7 +326,7 @@ name = "String"</panel_attributes>
       <w>140</w>
       <h>100</h>
     </coordinates>
-    <panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes>
+    <panel_attributes>lt=&lt;&lt;&lt;-</panel_attributes>
     <additional_attributes>30;80;120;30</additional_attributes>
   </element>
   <element>
