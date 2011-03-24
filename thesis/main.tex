@@ -261,26 +261,41 @@
 \newcommand{\afsubsection}[1]{\par \textbf{#1}}
 
 %\intro{Введение}
+%\input{intro.tex}
 
-\part{Расширение предметно-ориентированных языков механизмами композиции}\label{part4}
+\part{Предварительные сведения из области технологии разработки компьютерных языков}\label{background.part}
 
 В этой главе...
 
-\input{models.tex}
+%\input{models.tex}
 
-%\input{intro.tex}
-%\input{chap1.tex}
-%\input{chap4.tex}
+\chapter{Постановка задачи}
+
+Целью настоящей работы является \textbf{автоматизация разработки механизмов композиции в предметно-ориентированных языках}. Для достижения поставленной цели необходимо решить следующие задачи:
+\begin{itemize}
+\item Разработать автоматизированный метод расширения предметно-ориентированных языков поддержкой типизированных макроопределений. 
+\item Разработать автоматизированный метод расширения предметно-ориентированных языков поддержкой аспектов. 
+\item Формально описать разработанные методы и обосновать их корректность.
+\item Продемонстрировать применение разработанных методов, применив их к предметно-ориентированному языку, полезному для решения практических задач.
+\end{itemize}
+
+%\input{chap4temp.tex}
+%\input{chap4aspects.tex}
+
+
+\part{Расширение предметно-ориентированных языков механизмами композиции}\label{part4}
+\input{chap4.tex}
 %\input{chap2.tex}
 %\input{chap3.tex}
 %\intro{Заключение}
 %\input{conclusion.tex}
-\input{objects-to-metamodels.tex}
 
-%\bibliographystyle{gost780s}  %% стилевой файл для оформления по ГОСТу
-%\providecommand{\bblsep}{Сентябрь}
-%\providecommand{\bblmay}{Май}
-%\bibliography{literature.bib}     %% имя библиографической базы (bib-файла)
+%\input{objects-to-metamodels.tex}
+
+\bibliographystyle{gost780s}  %% стилевой файл для оформления по ГОСТу
+\providecommand{\bblsep}{Сентябрь}
+\providecommand{\bblmay}{Май}
+\bibliography{literature.bib}     %% имя библиографической базы (bib-файла)
 
 %\input{autoref.bbl}
 \end{document}

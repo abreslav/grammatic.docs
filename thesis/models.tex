@@ -10,7 +10,7 @@
 
 \begin{Def}[Модельный терм]\label{defmt}
 \emph{Модельным термом} называется формула, построенная по следующим правилам\footnote{
-Для краткости мы пишем $t_1, \ldots, t_n$ вместо использования рекурсивных продукций вида $$tList ::= t \OR t \;,\; tList$$
+Для краткости мы пишем $t_1, \ldots, t_n$ вместо использования рекурсивных продукций вида $$tList ::= t \Or t \;,\; tList$$
 }:
 \[
 \begin{array}{rrl}
@@ -18,7 +18,7 @@
 	           &   | & \Ref{\ModelTerm_{id}} \\ 
 	           &   | & \List{MT_1,\ldots,MT_n}, n \ge 0 \\ 
 	           &   | & \Set{MT_1,\ldots,MT_n}, n \ge 0 \\ 
-	           &   | & \Null \OR \Sigma^* \OR \mathbb{Z} \OR \mathbb{B}, \\
+	           &   | & \Null \Or \Sigma^* \Or \mathbb{Z} \Or \mathbb{B}, \\
 	\Property & ::= & \ModelTerm_{p}=\ModelTerm_{v}\\
 \end{array}
 \]
@@ -302,11 +302,11 @@ $$
 Множество типов $\Types$ описывается следующим образом:
 $$
 \begin{array}{rrl}
-\Types &::=& \CharT \OR \StringT \OR \IntegerT \OR \BooleanT \\
+\Types &::=& \CharT \Or \StringT \Or \IntegerT \Or \BooleanT \\
          &|& \NullableT{\Types} 
-         \OR \SetT{\Types^+} \OR \SetT{\Types^*}
-         \OR \ListT{\Types^+} \OR \ListT{\Types^*}\\
-         &|& \ClassT{c} \OR \RefT{c}, \mbox{ где $c$ --- идентификатор некоторого класса} \\
+         \Or \SetT{\Types^+} \Or \SetT{\Types^*}
+         \Or \ListT{\Types^+} \Or \ListT{\Types^*}\\
+         &|& \ClassT{c} \Or \RefT{c}, \mbox{ где $c$ --- идентификатор некоторого класса} \\
          &|& \EnumT{e}, \mbox{ где $e$ --- идентификатор некоторого перечисления} \\
          &|& \AnyT \\
 \end{array}
@@ -359,14 +359,14 @@ $$
 
 Пусть дано множество классов 
 $$
-C = \{\Class{id_i}{S_i}{p^i_j : \tau^i_j \OR j \in [1;m_i]}\OR i \in [1;n]\},
+C = \{\Class{id_i}{S_i}{p^i_j : \tau^i_j \Or j \in [1;m_i]}\Or i \in [1;n]\},
 $$
 обозначим $\AllSuperclasses{C} \eqdef C \cup \AllSuperclasses{\bigcup_1^n S_i}$ множество всех классов из $C$, их предков, предков их предков и т.д.
 
-Аналогично определяется множество всех свойств класса $c = \Class{id}{S}{p_i : \tau_i}$. Кроме свойств $p_i$, объявленных в самом $c$, рассматриваются также свойства, \emph{унаследованные} из суперклассов:  $\AllProps{c} \eqdef \bigcup\limits_{i = 1}^n\{p^i_j : \tau^i_j \OR j \in [1;m_i]\} \cup \AllProps{\AllSuperclasses{c}}$.
+Аналогично определяется множество всех свойств класса $c = \Class{id}{S}{p_i : \tau_i}$. Кроме свойств $p_i$, объявленных в самом $c$, рассматриваются также свойства, \emph{унаследованные} из суперклассов:  $\AllProps{c} \eqdef \bigcup\limits_{i = 1}^n\{p^i_j : \tau^i_j \Or j \in [1;m_i]\} \cup \AllProps{\AllSuperclasses{c}}$.
 Определим также множество всех классов, встраиваемых в $c$: 
 $$\begin{array}{ll}
-\Composed{c} \eqdef \left\{c' \OR  \right.&\exists (p : \tau) \in \AllProps{c},\\
+\Composed{c} \eqdef \left\{c' \Or  \right.&\exists (p : \tau) \in \AllProps{c},\\
 &\left.\mbox{где } \tau \in \left\{\ClassT{c'}, \SetT{\ClassT{c'}^+}, \ListT{\ClassT{c'}^+}\right\}
 \right\}.
 \end{array}$$
@@ -584,7 +584,7 @@ $$
 Обратите внимание на то, что все ссылки на подтермы $\MMM$ на \figref{lambda-classes-as-objects} являются не \emph{значениями} свойств объектов, а лишь \emph{ссылками на классы} и \emph{маркерами свойств}, то есть они лишь играют роль ``разметки'' для данных, задавая их структуру. Эта ``разметка'' называется \emph{метаинформацией}. Такая ситуация является типичной: хотя объекты могут ссылаться на классы как на равноправные себе сущности, первоочередная роль классов в том, чтобы контролировать структуру термов. Удобно отделять описание классов от данных, структуру которых они регламентируют, поэтому мы вводим понятие \emph{метамодели} как множества всех классов, составляющих метаинформацию для данной модели. Для этого нам понадобится определить несколько вспомогательных понятий.
 
 Пусть $m$ является моделью в контексте $\RContext_0$, и пусть $\Metainfo_0(m)$ --- множество всех описаний классов, на которые указывают ссылки на классы из объектов в $\Objects{m}$:
-$$\Metainfo_0(m) \eqdef \left\{ \RContext_m(cid) \OR \Object{id}{\Ref{cid}}{\ldots} \in \Objects{m}\right\}.$$
+$$\Metainfo_0(m) \eqdef \left\{ \RContext_m(cid) \Or \Object{id}{\Ref{cid}}{\ldots} \in \Objects{m}\right\}.$$
 Фактически, $\Metainfo_0(m)$ --- это множество тех классов, которые регламентируют структуру модели $m$.
 
 Пусть $\ObjectsNoMi{t}$ --- множество всех объектов, упомянутых в терме $t$ и термах, на которые $t$ ссылается, но не только в качестве метаинформации (мы считаем, что сам терм $t$ упомянут в замкнутом контексте $\RContext_m$):
