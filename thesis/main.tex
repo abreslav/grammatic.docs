@@ -48,45 +48,7 @@
 %\usepackage{bold-extra}
 %\renewcommand{\ttdefault}{pcr}
 
-\definecolor{Brown}{cmyk}{0,0.81,1,0.60}
-\definecolor{OliveGreen}{cmyk}{0.64,0,0.95,0.40}
-\definecolor{CadetBlue}{cmyk}{0.62,0.57,0.23,0}
-\definecolor{MyDarkBlue}{rgb}{0,0.08,0.45} 
-
-\lstset{
-	inputencoding=utf8x, 
-	extendedchars=\true, 
-	basicstyle=\ttfamily\scriptsize,
-	keywordstyle=\sffamily\bfseries,
-	stringstyle=\sffamily,
-	commentstyle=\color{OliveGreen}\ttfamily,
-	tabsize=4,
-	captionpos=b,
-	showstringspaces=false,
-	xleftmargin=1cm,
-	texcl,
-	basewidth=.7em
-}
-\lstdefinelanguage{Grammatic}
-	{
-		morestring=[b]',
-		morekeywords={lex,empty,*,?,+,before,after,at},
-		morecomment=[l]{//},
-	}
-\lstdefinelanguage{Typesystem}
-	{
-		morestring=[b]',
-		morekeywords={typesystem,language,for,backend,type},
-		morecomment=[l]{//},
-	}
-\lstdefinelanguage{ANTLR}{
-	morecomment=[s][\itshape\color{MyDarkBlue}]{\{}{\}},
-	morekeywords={returns,int},
-	morestring=[b]',
-	morecomment=[l][\color{red}]{//!},
-	morecomment=[l]{//},
-}
-
+\input{listing-options.tex}
 
 %% Define a new style for the package that will use a smaller font.
 \makeatletter
@@ -260,15 +222,8 @@
 
 \newcommand{\afsubsection}[1]{\par \textbf{#1}}
 
-%\intro{Введение}
+\intro{Введение}
 %\input{intro.tex}
-
-\part{Предварительные сведения из области технологии разработки компьютерных языков}\label{background.part}
-
-В этой главе...
-
-%\input{models.tex}
-
 \chapter{Постановка задачи}
 
 Целью настоящей работы является \textbf{автоматизация разработки механизмов композиции в предметно-ориентированных языках}. Для достижения поставленной цели необходимо решить следующие задачи:
@@ -279,10 +234,17 @@
 \item Продемонстрировать применение разработанных методов, применив их к предметно-ориентированному языку, полезному для решения практических задач.
 \end{itemize}
 
+
+\part{Предварительные сведения из области технологии разработки компьютерных языков}\label{background.part}
+
+В этой главе...
+
+\input{models.tex}
+\input{languages-as-metamodels.tex}
 %\input{chap4temp.tex}
 %\input{chap4aspects.tex}
 
-
+ 
 \part{Расширение предметно-ориентированных языков механизмами композиции}\label{part4}
 \input{chap4.tex}
 %\input{chap2.tex}
@@ -290,7 +252,8 @@
 %\intro{Заключение}
 %\input{conclusion.tex}
 
-%\input{objects-to-metamodels.tex}
+\input{objects-to-metamodels.tex}
+\input{grammar-notation.tex}
 
 \bibliographystyle{gost780s}  %% стилевой файл для оформления по ГОСТу
 \providecommand{\bblsep}{Сентябрь}

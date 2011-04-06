@@ -1,0 +1,75 @@
+\appendix{Нотация для контекстно-свободных грамматик}\label{grammar-notation}
+
+\begin{lstlisting}
+grammar{[Symbol*]}
+  : symbol{>>}*;
+
+symbol{Symbol}
+  : NAME{>name} (":" expression{>>expressions})+
+  ;
+
+expression{abstract Expression}
+  : singleCharacter
+  : positiveRange
+  : negativeRange
+  : stringLiteral
+  : option
+  : iteration
+  : alternative
+  : sequence
+  : empty
+  : symbolReference
+  : "(" expression{>} ")"
+  ;
+
+positiveRange{Alternative}
+  : "[" rangeEntry{>>expressions} "]"
+  : "[" rangeEntry{>>expressions} rangeEntry{>>expressions}+ "]"
+  ;
+
+negativeRange{NegativeCharacterRange}
+  : "[" "^" rangeEntry{>>ranges}+ "]"
+  ;
+
+singleCharacter{CharacterRange}
+  : CHARACTER {>from >to}
+  ;
+
+rangeEntry{CharacterRange}
+  : singleCharacter
+  : CHARACTER{>from} "-" CHARACTER{>to}
+  ;
+
+stringLiteral{StringLiteral}
+  : STRING{~>value}
+  ;
+
+option{Option}
+  : expression{>body} "?"
+  ;
+
+iteration{Iteration}
+  : expression{>body} iterationKind{>kind}
+  ;
+
+iterationKind{enum IterationKind}
+  : "*"{ZERO_OR_MORE}
+  : "+"{ONE_OR_MORE}
+  ;
+
+alternative{Alternative}
+  : expression{>>expressions} ("|" expression{>>expressions})*
+  ;
+
+sequence{Sequence}
+  : expression{>>expressions} expression{>>expressions}+
+  ;
+
+empty{Empty}
+  : "#empty"
+  ;
+
+symbolReference{SymbolReference}
+  : NAME{~~>symbol} // ~~> for late resolve
+  ;
+\end{lstlisting}
