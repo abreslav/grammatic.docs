@@ -138,7 +138,7 @@ var: @Variable</panel_attributes>
     </coordinates>
     <panel_attributes>*Application*
 --
-funciton: val(Term)
+function: val(Term)
 argument: val(Term)</panel_attributes>
     <additional_attributes/>
   </element>

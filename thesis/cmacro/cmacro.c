@@ -1,7 +1,7 @@
 #include <stdio.h>
 
-#define _DEFLIST(name, type) struct name##List { \
-	struct name##List *next; \
+#define _DEFLIST(name, type) typedef struct _##name##List name##List; struct _##name##List { \
+	name##List *next; \
 	type data; \
 };
 
@@ -9,12 +9,12 @@
 
 #define INT int
 
-DEFLIST(Int, int)
+_DEFLIST(Int, int)
 
-#define LIST(name) struct name##List
+#define LIST(name) name##List
 
 int main() {
-  LIST(INT) l;
+  IntList l;
   l.data = 1;
   printf("%d", l.data);
 }        
