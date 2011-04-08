@@ -22,7 +22,7 @@ lt=&lt;&lt;&lt;&lt;&lt;-</panel_attributes>
       <h>63</h>
     </coordinates>
     <panel_attributes>--
-*MacroLanguage*</panel_attributes>
+*T-Language*</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
@@ -48,7 +48,7 @@ bg=cyan</panel_attributes>
     </coordinates>
     <panel_attributes>Program
 with
-macros
+templates
 bg=green</panel_attributes>
     <additional_attributes/>
   </element>
@@ -62,7 +62,7 @@ bg=green</panel_attributes>
     </coordinates>
     <panel_attributes>Program
 without
-macros</panel_attributes>
+templates</panel_attributes>
     <additional_attributes/>
   </element>
   <element>

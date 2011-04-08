@@ -214,7 +214,7 @@
   <element>
     <type>com.umlet.element.custom.Text</type>
     <coordinates>
-      <x>150</x>
+      <x>130</x>
       <y>90</y>
       <w>70</w>
       <h>20</h>

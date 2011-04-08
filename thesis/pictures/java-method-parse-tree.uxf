@@ -6,10 +6,10 @@
     <coordinates>
       <x>70</x>
       <y>30</y>
-      <w>120</w>
+      <w>140</w>
       <h>30</h>
     </coordinates>
-    <panel_attributes>/MethodHeader/
+    <panel_attributes>/*MethodHeader*/
 </panel_attributes>
     <additional_attributes/>
   </element>
@@ -18,10 +18,10 @@
     <coordinates>
       <x>270</x>
       <y>20</y>
-      <w>170</w>
+      <w>220</w>
       <h>80</h>
     </coordinates>
-    <panel_attributes>AbstractMethodHeader
+    <panel_attributes>*AbstractMethodHeader*
 --
 abstract : Token
 signature : Signature
@@ -33,10 +33,10 @@ semicolon : Token</panel_attributes>
     <coordinates>
       <x>70</x>
       <y>110</y>
-      <w>190</w>
+      <w>220</w>
       <h>80</h>
     </coordinates>
-    <panel_attributes>ConcreteMethodHeader
+    <panel_attributes>*ConcreteMethodHeader*
 --
 static : Token?
 signature : Signature
@@ -62,7 +62,7 @@ body : Body</panel_attributes>
       <w>210</w>
       <h>100</h>
     </coordinates>
-    <panel_attributes>Signature
+    <panel_attributes>*Signature*
 --
 type : Type
 lParen : Token
@@ -78,7 +78,7 @@ rParen : Token</panel_attributes>
       <w>120</w>
       <h>60</h>
     </coordinates>
-    <panel_attributes>Body
+    <panel_attributes>*Body*
 --
 lBrace : Token
 rBrace : Token</panel_attributes>
@@ -92,7 +92,7 @@ rBrace : Token</panel_attributes>
       <w>140</w>
       <h>60</h>
     </coordinates>
-    <panel_attributes>Token
+    <panel_attributes>*Token*
 --
 type : TokenType
 text : String</panel_attributes>
@@ -107,7 +107,7 @@ text : String</panel_attributes>
       <h>110</h>
     </coordinates>
     <panel_attributes>&lt;&lt;enumeration&gt;&gt;
-TokenType
+*TokenType*
 --
 SEMICOLON, NAME, 
 VOID, LBR, RBR,
@@ -123,7 +123,7 @@ LPAR, RPAR</panel_attributes>
       <w>210</w>
       <h>60</h>
     </coordinates>
-    <panel_attributes>ParameterList
+    <panel_attributes>*ParameterList*
 --
 head : Parameter
 tail : [ParameterListItem*]</panel_attributes>
@@ -137,7 +137,7 @@ tail : [ParameterListItem*]</panel_attributes>
       <w>180</w>
       <h>60</h>
     </coordinates>
-    <panel_attributes>ParameterListItem
+    <panel_attributes>*ParameterListItem*
 --
 comma : Token
 parameter : Parameter</panel_attributes>
@@ -151,7 +151,7 @@ parameter : Parameter</panel_attributes>
       <w>110</w>
       <h>60</h>
     </coordinates>
-    <panel_attributes>Parameter
+    <panel_attributes>*Parameter*
 --
 type : Type
 name : Token</panel_attributes>
@@ -165,7 +165,7 @@ name : Token</panel_attributes>
       <w>70</w>
       <h>30</h>
     </coordinates>
-    <panel_attributes>/Type/
+    <panel_attributes>*/Type/*
 </panel_attributes>
     <additional_attributes/>
   </element>
@@ -177,7 +177,7 @@ name : Token</panel_attributes>
       <w>110</w>
       <h>50</h>
     </coordinates>
-    <panel_attributes>Void
+    <panel_attributes>*Void*
 --
 void : Token</panel_attributes>
     <additional_attributes/>
@@ -190,7 +190,7 @@ void : Token</panel_attributes>
       <w>110</w>
       <h>50</h>
     </coordinates>
-    <panel_attributes>Named
+    <panel_attributes>*Named*
 --
 name : Token</panel_attributes>
     <additional_attributes/>
@@ -198,13 +198,13 @@ name : Token</panel_attributes>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>160</x>
+      <x>180</x>
       <y>20</y>
-      <w>130</w>
+      <w>110</w>
       <h>50</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
-    <additional_attributes>30;30;110;30</additional_attributes>
+    <additional_attributes>30;30;90;30</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Relation</type>
@@ -275,24 +275,24 @@ name : Token</panel_attributes>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>410</x>
+      <x>460</x>
       <y>10</y>
-      <w>200</w>
+      <w>150</w>
       <h>100</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes>
-    <additional_attributes>30;30;180;30;180;80</additional_attributes>
+    <additional_attributes>30;30;130;30;130;80</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>230</x>
+      <x>260</x>
       <y>110</y>
-      <w>290</w>
+      <w>260</w>
       <h>50</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes>
-    <additional_attributes>30;30;270;30</additional_attributes>
+    <additional_attributes>30;30;240;30</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Relation</type>
