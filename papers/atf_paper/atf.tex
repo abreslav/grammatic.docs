@@ -1,11 +1,19 @@
 %\documentclass{article}
-%\usepackage{amsmath}
 %\newenvironment{backmatter}[0]{}{}
 %\newenvironment{biography}[0]{}{}
-\documentclass{informat} %seceqn,secfloat,secthm,number
-\usepackage{infothm}
+\documentclass{llncs2e/llncs}
+%\usepackage[T1]{fontenc}
+\usepackage{amsmath}
 \usepackage{times}
-\usepackage[T1]{fontenc}
+\newcommand{\linkcolor}{blue}
+%\newcommand{\linkcolor}{black}
+\usepackage[
+	colorlinks=true,
+	linkcolor=\linkcolor,
+	citecolor=\linkcolor,
+	urlcolor=\linkcolor
+]{hyperref}
+\usepackage{url}
 \usepackage{multirow}
 \usepackage{listings}
 \usepackage{color}
@@ -27,11 +35,15 @@
 \renewcommand{\ttdefault}{pcr}
 
 \newcommand{\comment}[1]{}
+\newcommand{\trule}[3]{%
+\dfrac{#1}{#2}(\mbox{\textsc{#3}})
+}
+
 
 \newcommand{\bad}[1]{\textcolor{red}{#1}}
 \renewcommand{\bad}[1]{#1}
 
-\newcommand{\note}[1]{\noindent \begin{tabular}{|c|}\hline \textcolor{blue}{#1}\\ \hline \end{tabular}}
+%\newcommand{\note}[1]{\noindent \begin{tabular}{|c|}\hline \textcolor{blue}{#1}\\ \hline \end{tabular}}
 
 \newcommand{\fig}[2]{%
 \begin{figure}%
@@ -84,29 +96,13 @@
 }
 
 \begin{document}
-%
-\volume{}
-\issue{}
-\pubyear{2010}
-\firstpage{}
-\lastpage{}
-\articletype{}   % RA|RP|RL|SC|ER|PI|AB|AD|BR|JP|XX
-%
-%\newtheorem{}{}
-%
-\begin{frontmatter}                           % The preamble begins here.
-%
-%\pretitle{}
-\title{EXTENSIBLE TYPE CHECKER\\ FOR PARSER GENERATION}
-\runningtitle{Extensible type checker for parser generation}
-%
-\author{\fnms{Andrey} \snm{BRESLAV}}
-\address{Mathematics Department at Natural Science Faculty,\\
-St. Petersburg State University of Information Technology, Mechanics and Optics\\
-Kronverskiy~49, 195009, St.Petersburg, Russia\\
-\email{abreslav@gmail.com}
+\title{Extensible Type Checker for Parser Generation\thanks{This work was partly done while the author was a visiting PhD student at University of Tartu, under a scholarship from European Regional Development Funds through Archimedes Foundation. Special thanks to Prof. Marlon Dumas for his advice.}}
+\author{Andrey Breslav\\\email{abreslav@gmail.com}
 }
-\runningauthor{A. Breslav}
+\institute{
+ITMO University, St.Petersburg, Russia
+}
+\maketitle
 % HISTORY:
 %
 \begin{abstract}
@@ -114,18 +110,11 @@ Kronverskiy~49, 195009, St.Petersburg, Russia\\
 
 	In this paper we propose a parser generator front-end which statically checks semantic actions for typing errors and prevents such errors from appearing in generated code. The type checking procedure is extensible to support many implementation languages. An extension for Java is presented along with an extension for declarative type system descriptions.
 \end{abstract}
-\begin{keyword}
-parser generator, type checking, type system, generated code, errors.
-\end{keyword}
-\end{frontmatter}
 
-%\title{Extensible Type Checker for Parser Generation}
-%\author{Andrey Breslav\thanks{This work was partly done while the author was a visiting PhD student at University of Tartu, under a scholarship from European Regional Development Funds through Archimedes Foundation.}}
 %\date{}
 
-\maketitle
 
-\section{Introduction.}\label{Introduction}
+\section{Introduction}\label{Introduction}
 
 Parser generators have been used for decades to create translators and other language processing tools.
 A parser generator is a tool that reads a specification of a language and generates code which is capable of checking its input text for syntactical correctness and construct an internal representation from it. This process involves several languages (see \figref{languages}): the specification is written in a \emph{specification language} and describes the \emph{parsed language}, while the generated code (which recognizes the parsed language) is written in an \emph{implementation language} (e.g., Java or C). 
@@ -211,7 +200,7 @@ This process took us three complete runs of \tool{ANTLR}, each followed by a com
 		\item Get error messages in terms of the specification language.
 		\item Go to 1.
 \end{enumerate}
-\vspace{52pt}
+\vspace{34pt}
 \end{minipage}
 }
 \caption{Development cycles: conventional and with static checking}\label{cycles}
@@ -228,15 +217,15 @@ In this paper we present an extensible specification language and a front-end in
 
 Our approach is designed under the requirement of being applicable for many implementation languages, and thus the generic specification language may be extended to support a particular type system. We present an implementation of such a type system for Java and a generic language which allows one to specify simple type systems declaratively.
 
-We report on \ATF{} --- a prototype implementation of our approach built on top of \tool{ANTLR}. \ATF{} specifications are type-checked and transformed into \tool{ANTLR} specifications. The \tool{ANTLR} tool-chain can then be used to generate the parser. 
+We report on \ATF{} --- a prototype implementation of our approach built on top of \tool{ANTLR}\footnote{The source code of \ATF{} is available as a part of \textsc{Grammatic} project at \url{http://grammatic.googlecode.com}.}. \ATF{} specifications are type-checked and transformed into \tool{ANTLR} specifications. The \tool{ANTLR} tool-chain can then be used to generate the parser. 
 
-The rest of the paper is organized as follows. \secref{Overview} gives an overview of our specification language illustrating the language design and basic constructs. Extensible type system of \ATF{} and a demonstration of how the development cycle changes with it is presented in \secref{TypeSystem}. This type system is parameterized by the types of an implementation language and corresponding subtyping rules, and thus it must be \emph{instantiated} to be actually used. In \secref{DefaultExtension} we present a mechanism for declaratively describing type systems of implementation languages and instantiating \ATF{} using them. This mechanism describes the type systems as having a fixed number of types with subtyping rules specified explicitly. To provide a better integration with a particular implementation language, one can write a custom extension. The extension mechanism and an example extension supporting Java are described in \secref{Java}. As we mentioned before, the front end provides an internal representation of a parser from which a back-end can generate error-free code. We show how the latter is done in our prototype in \secref{Backend}. \secref{RelatedWork} describes related work, and \secref{Conclusion} summarizes our contribution and points out directions for future work.
+The rest of the paper is organized as follows. \secref{Overview} gives an overview of our specification language illustrating the language design and basic constructs. Extensible type system of \ATF{} and a demonstration of how the development cycle changes with it is presented in \secref{TypeSystem}. This type system is parameterized by the types of the implementation language and corresponding subtyping rules, and thus it must be \emph{instantiated} to be actually used. In \secref{DefaultExtension} we present a mechanism for declaratively describing type systems of implementation languages and instantiating \ATF{} using them. This mechanism describes the type systems as having a fixed number of types with subtyping rules specified explicitly. \report{To provide a better integration with a particular implementation language, one can write a custom extension. The extension mechanism and an example extension supporting Java are described in \secref{Java}. As we mentioned before, the front end provides an internal representation of a parser from which a back-end can generate error-free code. We show how the latter is done in our prototype in \secref{Backend}.} \secref{RelatedWork} describes related work, and \secref{Conclusion} summarizes our contribution and points out directions for future work.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Overview of the specification language.}\label{Overview}
+\section{Overview of the specification language}\label{Overview}
 
 Attribute grammars (AGs) introduced in \cite{ATG} are very convenient for describing translators, but in a general case they require the whole input to be parsed before the translation starts. This is why the most popular parser generators only use some concepts of AGs, but not the whole framework.
 
@@ -247,7 +236,7 @@ Attribute grammars (AGs) introduced in \cite{ATG} are very convenient for descri
 \end{itemize}
 Output attributes of \ATF{} directly correspond to \emph{synthesized} attributes used in AGs, and input attributes represent a restricted case of \emph{inherited} attributes. 
 
-\subsection{Translation functions and external functions.}
+\subsection{Translation functions and external functions}
 
 We use the terms ``input'' and ``output'' for attributes because they correspond very closely to inputs and outputs of functions. One can think of a \emph{syntactic rule} defining a nonterminal (which is a set of all productions for this nonterminal) as a ``\emph{translation function}''. The productions which use the nonterminal \emph{call} this function, passing the input attributes to is (as arguments). The function itself computes the output attributes and \emph{returns} them to be used by the caller. A recursive descent parser implements this analogy in a one-to-one manner: for each nonterminal there is a corresponding function which takes the input attributes as parameters and returns the output attributes. 
 
@@ -300,7 +289,7 @@ This, written inside a translation function for \texttt{A}, means that for the o
 
 To illustrate some technical details of the \ATF{} notation, we will now proceed to the example of arithmetic expressions mentioned in the \secref{Introduction}.
 
-\subsection{Example.}
+\subsection{Example}
 
 The grammar for arithmetic expression is given in \lstref{arithexp}. Our translation functions must evaluate an expression in a given environment which contains values for the variables used in the expression. To do this, we will need the appropriate external functions:
 \begin{lstlisting}
@@ -378,7 +367,7 @@ expr[Environment env] returns [int result]
 	;         
 \end{lstlisting}
 
-\subsection{Multi-return functions.}
+\subsection{Multi-return functions}
 All functions used in our example have only one output attribute, but in general a function may return a tuple. For example, a function \texttt{divide(x,~y)} may return two numbers: a quotient and a remainder. \ATF{} does not support tuple-typed attributes, and a return value of this function can not be assigned to a single attribute. Instead, \ATF{} supports attribute tuples. If one needs to receive a result of the \texttt{divide} function, it can be done in the following way:
 \begin{lstlisting}
 Int quot;
@@ -387,7 +376,7 @@ Int rem;
 \end{lstlisting}
 This code assigns the first component of a returned tuple to the attribute \texttt{quot} and the second --- to the attribute \texttt{rem}.
 
-\subsection{Attribute initialization.}
+\subsection{Attribute initialization}
 
 Before the first assignment, a value of an attribute is not defined and thus can not be read. To ensure that every attribute is initialized before the first usage, \ATF{} performs conventional data-flow analysis \cite{DataFlow}.
 If the analysis finds a read-access which may not be preceded by a corresponding write-access, the front-end reports an error. This analysis relies on the construction of a control flow graph. \ATF{} does not support conditional operators and loops as such, and all the branching and repetition happens according to the structure of grammar rules which is denoted by the common regular operations: concatenation (sequence), alternative (``$|$'') and iteration (``+''). Optional constructs (``?'' and ``*'') are viewed as alternatives with an empty option.
@@ -401,7 +390,7 @@ A control flow graph is constructed as follows: concatenation corresponds to seq
 \end{figure}}
 
 \report{
-\subsection{Local type inference.}\label{TypeInf}
+\subsection{Local type inference}\label{TypeInf}
 
 \ATF{} checks translation functions for type safety: when a value is assigned to an attribute (passing as an argument can also be interpreted as an assignment to an input attribute of a function), the type of the right-hand side must be a subtype of the type of the left-hand side. This prevents \ATF{} from generating code with typing errors such as those we discussed in \secref{Introduction}.
 
@@ -439,11 +428,11 @@ We provide a more detailed description of type checking and type inference in \A
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 }
 
-\section{Type system.}\label{TypeSystem}
+\section{Type system}\label{TypeSystem}
 
 This section describes the extensible type system used in \ATF{}. The typing rules presented below are written under the assumption that all the attributes and external functions are declared explicitly. The purpose of type inference in this case is to reconstruct omitted annotations. If the reconstruction is not possible, the specification is considered to be inconsistent.
 
-\subsection{Typing rules.}
+\subsection{Typing rules}
 
 \newcommand{\G}{ {\mathcal{G}_L} }
 \renewcommand{\L}{L}
@@ -477,10 +466,6 @@ result^{term} &:& Int\\
 \end{array}$$
 
 \figref{exptypes} provides straightforward typing rules for token values, attributes and tuples and a rule for function application which says that a type of an argument must be a subtype of the type of the corresponding formal parameter.
-
-\newcommand{\trule}[3]{%
-\dfrac{#1}{#2}(\mbox{\textsc{#3}})
-}
 
 \begin{figure}[htbp]
 $$\begin{array}{lll}
@@ -555,7 +540,7 @@ The only nontrivial constraint is expressed by the rule \textsc{assignment}: the
 $$(a_1,\cdots,a_n)\gel^*(b_1,\cdots,b_n)\mbox{ iff } (a_1 \gel b_1) \wedge \cdots \wedge (a_n \gel b_n)$$
 
 
-\subsection{Type inference.}\label{TypeInference}
+\subsection{Type inference}\label{TypeInference}
 
 The previous subsection formalizes the type system of \ATF{} under the assumption that every attribute and every function which is used is also declared explicitly. As we illustrated above, such declarations may be redundant in some cases, and \ATF{} (after many programming languages) provides a local type inference mechanism to enable omission of some of them.  
 
@@ -582,7 +567,7 @@ This procedure can be summarized as follows: we look for the type which is as cl
 
 If no constraints are present at all, this means that all the attributes connected to the one at hand are not declared. In this case we ask if the ground type system has a top type $Top_L$ (such as \texttt{java.lang.Object}), and if it has one, we choose it, otherwise we report an error.
 
-\subsection{Revisiting the initial example.}
+\subsection{Revisiting the initial example}
 
 Now we are ready to explain how the example from \secref{Introduction} is handled by \ATF{}. In that example we had a rule for \texttt{factor} analogous to the one in \lstref{factorTF}, in which there was an error: a name of the \texttt{INT} token was used instead of its textual value (\texttt{INT\#}). Here is the modification of \lstref{factorTF} containing the same defect:
 \begin{lstlisting}
@@ -610,15 +595,15 @@ As can be seen, the development cycle now takes the form shown in \figref{cycles
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Declarative descriptions of type systems.}\label{DefaultExtension}
+\section{Declarative descriptions of type systems}\label{DefaultExtension}
 
-The type checking procedure described above is parameterized by a set of ground types $\G$ with distinguished types $\Str$ and $Top_L$, and a subtyping relation~$\lel$. To incorporate a type system of the implementation language into \ATF{}, one needs to substitute concrete implementations for these parameters. In general, this is done by adding front-end \emph{extensions} (plug-ins written in Java), which provide support for particular implementation languages. Developing such extensions requires some effort and may be undesirable in certain cases. For this reason \ATF{} provides a default extension which supports declarative descriptions of type systems of implementation languages. 
+The type checking procedure described above is parameterized by a set of ground types $\G$ with distinguished types $\Str$ and $Top_L$, and a subtyping relation~$\lel$. To incorporate a type system of the implementation language into \ATF{}, one needs to substitute concrete implementations for these parameters. In general, this is done by adding front-end \emph{extensions} (plug-ins written in Java), which provide support for particular implementation languages\footnote{More details about extensions can be found in our technical report available at \url{http://arxiv.org/abs/1002.1549}.}. In many cases, one can avoid developing such extensions, since \ATF{} provides a ``default extension'' which supports \emph{declarative descriptions} of type systems of implementation languages. 
 
 A type system description specifies a set of named types, a subtyping relation on these types, an optional top type and a string type. For example, the type system used above may be described as follows:
 \begin{lstlisting}[language=Typesystem]
 	typesystem Simple( 
-		_,             // Name of the top type (nothing in this case)
-		String         // Name of the string type
+		_,       // Name of the top type (nothing in this case)
+		String   // Name of the string type
 	) {
 		// Type declarations
 		type Int;
@@ -656,7 +641,8 @@ This is a profile for a back-end implemented by a Java class \texttt{ANTLRJavaBa
 To summarize, the declarative descriptions of type systems in \ATF{} are organized into three levels (see \figref{typesystem}). 
 
 \begin{figure}[htbp]
-		\includegraphics[width=\textwidth]{typesystem}
+\center
+		\includegraphics[width=.7\textwidth]{typesystem}
 		\caption{Three levels of type system descriptions}\label{typesystem}
 \end{figure}
 
@@ -667,13 +653,13 @@ In such a case one describes an abstract \emph{type system} as shown above and p
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \report{
-\section{Language-specific front-end extensions.}\label{Java}
+\section{Language-specific front-end extensions}\label{Java}
 
 To provide tighter integration with a particular implementation language one can use a language-specific extension of the \ATF{} front-end instead of the default one described in the previous section. 
 Technically, a front-end extension consists of a ground type syntax specification and implementations of Java interfaces which capture the semantical aspects of ground types: a subtyping relation, a set of predefined types and two distinguished types. Let us describe these parts in more details.
 Examples below present an extension supporting Java types (including generics), which we developed in our prototype.
 
-\subsection{Syntax of ground types.}
+\subsection{Syntax of ground types}
 
 The core specification of the \ATF{} notation (see \lstref{short_notation}) has extension points: it uses but does not define two nonterminal symbols, \texttt{type} and \texttt{declaration} (written in bold font in the listing). The language generated by \texttt{type} is a syntactical form of~$\G$. Since the specification parser in \ATF{} is itself implemented using \ATF{}, \texttt{type} must be defined by grammar rules and translation functions. This is done in a separate specification file which is virtually ``appended'' to the generic specification when the whole system is built.
 \begin{lstlisting}[caption={Extension points in \ATF{} notation},float=htbp,label=short_notation,
@@ -713,7 +699,7 @@ evaluate
 \end{lstlisting}
 As can be seen, fully qualified class and interface names and generics can be used as types for attributes. 
 
-\subsection{Declarations.}
+\subsection{Declarations}
 
 The names in the example above are quite long which is inconvenient. In Java this problem is solved with the help of imports. \ATF{} does not know about the structure of Java types and can not support imports itself. Instead, it provides a generic mechanism for adding arbitrary \emph{declarations} which are specific for an implementation language. The syntax for declarations is defined by the \texttt{declarations} nonterminal. A translation function for it does not take or accept any attributes: it is supposed to collect the information about the declarations and store it internally to be available when somebody else (e.g., the translation function for \texttt{types}) needs it.
 
@@ -743,7 +729,7 @@ importDeclaration
 	: 'import' IDENTIFIER  ('.' INDENTIFIER)* ('.' '*')? ;
 \end{lstlisting}
 
-\subsection{Semantics of ground types.}
+\subsection{Semantics of ground types}
 
 \begin{lstlisting}[language=Java,caption=Java interfaces describing semantics of ground types,label=java_intf,float]
 public interface ISubtypingRelation<T> {
@@ -770,7 +756,7 @@ public class JavaSubtypingRelation
 
 The other interface, \texttt{ITypeSystem} has methods which return a subtyping relation represented as discussed above, a set of predefined types, a top type (or \texttt{null} if no top type exists in the ground type system) and a type for character strings. A back-end must use the \texttt{toString()} method of type objects to obtain their textual representation.
 
-\section{Back-end.}\label{Backend}
+\section{Back-end}\label{Backend}
 
 By now we have presented an extensible front-end which can detect typing errors in specifications. Here we will explain why detecting these errors is sufficient for the back-end to be able to generate error-free code. The techniques described below apply to virtually any language, and we believe that whenever the front-end can be extended to support a particular implementation language, a corresponding back-end can be developed \footnote{Currently a back-end must be programmed manually in Java. This is because the issues described in this sections are rather peculiar for each implementation language and for the moment we do not see an efficient way to abstract them into a reusable framework. Such a framework is an interesting direction for the future research.}.
 
@@ -797,11 +783,11 @@ Thus, we have reached our goal: as soon as a specification is successfully type-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Related work.}\label{RelatedWork}
+\section{Related work}\label{RelatedWork}
 
 We are not aware of any parser generators which support multiple implementation languages and have type checking in their front-ends.
 
-The most popular tools supporting multiple implementation languages are \tool{ANTLR} \cite{ANTLR} and \tool{Coco/R} \cite{Coco/R}, and they do not perform any type checking in the front-ends. In most cases these tools can not generate code in different specification languages from the same specification (the specifications, thus, are not \emph{multi-targeted} in these systems) , because the embedded actions are written in a particular implementation language and will not compile in another one. In \tool{SableCC} \cite{SableCC} specifications are multi-targeted, which is achieved by having no semantic actions: a developer has to manually process parse trees using visitors. In contrast, \ATF{} supports both multi-targeted specifications (using type system descriptions) and semantic actions.
+The most popular tools supporting multiple implementation languages are \tool{ANTLR} \cite{ANTLR} and \tool{Coco/R} \cite{Coco/R}, and they do not perform any type checking in the front-ends. In most cases these tools can not generate code in different specification languages from the same specification (the specifications, thus, are not \emph{multi-targeted} in these systems), because the embedded actions are written in a particular implementation language and will not compile in another one. In \tool{SableCC} \cite{SableCC} specifications are multi-targeted, which is achieved by having no semantic actions: a developer has to manually process parse trees using visitors. In contrast, \ATF{} supports both multi-targeted specifications (using type system descriptions) and semantic actions.
 
 The following attribute grammar systems are capable of reducing the development cycle to the one shown in \figref{cycles} (right side): \tool{Eli} \cite{Eli} automatically tracks compiler errors back to the specification. This approach is tied up not only to a specific implementation language (\tool{Eli} uses C), but also to a specific implementation of its compiler, since the format of error messages usually varies from one compiler to another.
 The team behind \tool{JastAdd} \cite{JastAdd} system plans to integrate their own implementation of a Java compiler into it, to check semantic actions. This approach is also tied up to a specific implementation language. None of these systems provide appropriate means by which they could be extended for other implementation languages. \ATF{} allows for this via front-end extensions and separated back ends.
@@ -809,7 +795,7 @@ The team behind \tool{JastAdd} \cite{JastAdd} system plans to integrate their ow
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Conclusion.}\label{Conclusion}
+\section{Conclusion}\label{Conclusion}
 
 This paper addresses the problem of type checking in front-ends of parser generators supporting multiple implementation languages. The main goal is to prevent typing errors in the generated code to avoid the need of manually tracing such errors back to their causes in the specification . 
 
@@ -834,18 +820,10 @@ One possible direction to continue this work is to investigate a possibility of 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section*{Acknowledgements.}
-This work was partly done while the author was a visiting PhD student at University of Tartu, under a scholarship from European Regional Development Funds through Archimedes Foundation.
+%\section*{Acknowledgements.}
+%This work was partly done while the author was a visiting PhD student at University of Tartu, under a scholarship from European Regional Development Funds through Archimedes Foundation.
 
-%\bibliographystyle{informat}
-%\bibliography{atf}
-\input{atf.biblio}
+\bibliographystyle{plain}
+\bibliography{atf}
 
-%********* Backmatter
-\begin{backmatter}
-\begin{biography}
-\author{A. Breslav} received his Masters degree in Computer Science from St. Petersburg State University of IT, Mechanics and Optics in 2007. He is currently a Ph.D. student at the Mathematics department of the same university and a visiting Pd.D student at the Institute of Computer Science of University of Tartu. His research interests include the problems of declarative language descriptions, type systems and domain-specific languages.
-\end{biography}
-
-\end{backmatter}
 \end{document}
