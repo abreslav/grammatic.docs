@@ -29,13 +29,11 @@ bg=#00FF00</panel_attributes>
     <type>com.umlet.element.Class</type>
     <coordinates>
       <x>520</x>
-      <y>200</y>
+      <y>190</y>
       <w>130</w>
-      <h>50</h>
+      <h>30</h>
     </coordinates>
-    <panel_attributes>_: String_
---
-value = "ListList"</panel_attributes>
+    <panel_attributes>*"ListList"*</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
@@ -44,16 +42,16 @@ value = "ListList"</panel_attributes>
       <x>670</x>
       <y>120</y>
       <w>50</w>
-      <h>140</h>
+      <h>100</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes>
-    <additional_attributes>30;30;30;120</additional_attributes>
+    <additional_attributes>30;30;30;80</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Class</type>
     <coordinates>
       <x>690</x>
-      <y>240</y>
+      <y>200</y>
       <w>20</w>
       <h>20</h>
     </coordinates>
@@ -65,7 +63,7 @@ bg=#00FF00</panel_attributes>
     <type>com.umlet.element.Class</type>
     <coordinates>
       <x>690</x>
-      <y>260</y>
+      <y>220</y>
       <w>20</w>
       <h>20</h>
     </coordinates>
@@ -77,7 +75,7 @@ bg=#00FF00</panel_attributes>
     <type>com.umlet.element.custom.Text</type>
     <coordinates>
       <x>650</x>
-      <y>210</y>
+      <y>180</y>
       <w>120</w>
       <h>20</h>
     </coordinates>
@@ -88,18 +86,18 @@ bg=#00FF00</panel_attributes>
     <type>com.umlet.element.Relation</type>
     <coordinates>
       <x>620</x>
-      <y>200</y>
+      <y>170</y>
       <w>90</w>
-      <h>70</h>
+      <h>60</h>
     </coordinates>
     <panel_attributes>lt=--</panel_attributes>
-    <additional_attributes>30;30;70;50</additional_attributes>
+    <additional_attributes>30;30;70;40</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
       <x>620</x>
-      <y>240</y>
+      <y>200</y>
       <w>90</w>
       <h>70</h>
     </coordinates>
@@ -144,7 +142,7 @@ bg=#00FF00</panel_attributes>
     <type>com.umlet.element.Class</type>
     <coordinates>
       <x>520</x>
-      <y>270</y>
+      <y>230</y>
       <w>130</w>
       <h>30</h>
     </coordinates>
@@ -168,10 +166,10 @@ bg=#00FF00</panel_attributes>
       <x>370</x>
       <y>210</y>
       <w>170</w>
-      <h>90</h>
+      <h>50</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;&lt;-</panel_attributes>
-    <additional_attributes>150;70;30;30</additional_attributes>
+    <additional_attributes>150;30;30;30</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Relation</type>
@@ -179,16 +177,16 @@ bg=#00FF00</panel_attributes>
       <x>290</x>
       <y>220</y>
       <w>50</w>
-      <h>130</h>
+      <h>100</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes>
-    <additional_attributes>30;30;30;110</additional_attributes>
+    <additional_attributes>30;30;30;80</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Class</type>
     <coordinates>
       <x>310</x>
-      <y>330</y>
+      <y>300</y>
       <w>20</w>
       <h>20</h>
     </coordinates>
@@ -200,7 +198,7 @@ bg=#00FF00</panel_attributes>
     <type>com.umlet.element.Class</type>
     <coordinates>
       <x>310</x>
-      <y>350</y>
+      <y>320</y>
       <w>20</w>
       <h>20</h>
     </coordinates>
@@ -212,7 +210,7 @@ bg=#00FF00</panel_attributes>
     <type>com.umlet.element.custom.Text</type>
     <coordinates>
       <x>240</x>
-      <y>300</y>
+      <y>280</y>
       <w>120</w>
       <h>20</h>
     </coordinates>
@@ -223,20 +221,18 @@ bg=#00FF00</panel_attributes>
     <type>com.umlet.element.Class</type>
     <coordinates>
       <x>370</x>
-      <y>290</y>
+      <y>280</y>
       <w>130</w>
-      <h>50</h>
+      <h>30</h>
     </coordinates>
-    <panel_attributes>_: String_
---
-value = "IntList"</panel_attributes>
+    <panel_attributes>*"IntList"*</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <type>com.umlet.element.Class</type>
     <coordinates>
       <x>370</x>
-      <y>360</y>
+      <y>330</y>
       <w>130</w>
       <h>30</h>
     </coordinates>
@@ -247,7 +243,7 @@ value = "IntList"</panel_attributes>
     <type>com.umlet.element.Relation</type>
     <coordinates>
       <x>300</x>
-      <y>330</y>
+      <y>300</y>
       <w>90</w>
       <h>60</h>
     </coordinates>
@@ -258,7 +254,7 @@ value = "IntList"</panel_attributes>
     <type>com.umlet.element.Relation</type>
     <coordinates>
       <x>300</x>
-      <y>290</y>
+      <y>260</y>
       <w>90</w>
       <h>70</h>
     </coordinates>

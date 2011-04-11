@@ -4,13 +4,14 @@
   <element>
     <type>com.umlet.element.Class</type>
     <coordinates>
-      <x>120</x>
+      <x>90</x>
       <y>60</y>
-      <w>80</w>
-      <h>30</h>
+      <w>110</w>
+      <h>50</h>
     </coordinates>
     <panel_attributes>*Struct*
-</panel_attributes>
+--
+name : String</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
@@ -18,10 +19,12 @@
     <coordinates>
       <x>300</x>
       <y>60</y>
-      <w>90</w>
-      <h>30</h>
+      <w>110</w>
+      <h>50</h>
     </coordinates>
     <panel_attributes>*Field*
+--
+name : String
 
 </panel_attributes>
     <additional_attributes/>
@@ -63,13 +66,13 @@
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>360</x>
+      <x>380</x>
       <y>40</y>
-      <w>150</w>
+      <w>130</w>
       <h>50</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;&lt;-</panel_attributes>
-    <additional_attributes>30;30;130;30</additional_attributes>
+    <additional_attributes>30;30;110;30</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.custom.Text</type>
@@ -99,12 +102,12 @@
     <type>com.umlet.element.Relation</type>
     <coordinates>
       <x>150</x>
-      <y>60</y>
+      <y>80</y>
       <w>160</w>
-      <h>150</h>
+      <h>130</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;&lt;-</panel_attributes>
-    <additional_attributes>140;130;30;130;30;30</additional_attributes>
+    <additional_attributes>140;110;30;110;30;30</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Class</type>
@@ -215,7 +218,7 @@
     <type>com.umlet.element.custom.Text</type>
     <coordinates>
       <x>130</x>
-      <y>90</y>
+      <y>110</y>
       <w>70</w>
       <h>20</h>
     </coordinates>

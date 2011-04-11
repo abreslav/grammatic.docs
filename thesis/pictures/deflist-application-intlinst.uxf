@@ -121,13 +121,11 @@ bg=#00FF00</panel_attributes>
     <type>com.umlet.element.Class</type>
     <coordinates>
       <x>520</x>
-      <y>200</y>
+      <y>220</y>
       <w>130</w>
-      <h>50</h>
+      <h>30</h>
     </coordinates>
-    <panel_attributes>_: String_
---
-value = "IntList"</panel_attributes>
+    <panel_attributes>*"IntList"*</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
