@@ -239,7 +239,7 @@ $t = \List{1, \Object{\String{id}}{\RefSt{c}}{\RefSt{p} = \RefSt{id}}}$; в эт
 При разворачивании шаблонов необходимо знать, какие ссылки являются внутренними для тела шаблона и его аргументов: только эти ссылки необходимо преобразовывать при разворачивании. Ссылки, не являющиеся внутренними, функция $\InstSign$ оставляет без изменений.
 
 \begin{Def}[Среда]
-Множество $\gamma$ пар вида вида $v = t$, где $v$ --- ссылка на переменную (объект класса \code{Variable}), а $t$ --- шаблонный терм.
+Множество $\gamma$ пар вида вида $v = t$, где $v$~--- ссылка на переменную (объект класса \code{Variable}), а $t$ --- шаблонный терм.
 \end{Def}
 Среда ``запоминает'' значения, приданные параметрам при применении шаблона.
 
@@ -248,65 +248,103 @@ $t = \List{1, \Object{\String{id}}{\RefSt{c}}{\RefSt{p} = \RefSt{id}}}$; в эт
 $$
 \trule{
 	\Object{abs}{\RefSt{Abstraction}}{
-\begin{array}{rcl}
-	\RefSt{body} &=& b,\\
-	\RefSt{parameters} &=& \List{v_1, \ldots, v_n}\\
-\end{array}	
+		\begin{array}{rcl}
+			\RefSt{body} &=& b,\\
+			\RefSt{parameters} &=& \List{v_1, \ldots, v_n}\\
+		\end{array}	
 	}
 }{
 	\Inst{\gamma}{
-		\Object{app}{\Ref{\String{Application}}}{
-\begin{array}{rcl}
-			\RefSt{abstraction} &=& \Ref{abs},\\
-			\RefSt{arguments} &=& \List{a_1, \ldots, a_n}
-\end{array}	
-		}} = \InstС{r'}{\gamma'}{b}
+		\Object{app}{\RefSt{Application}}{
+			\begin{array}{rcl}
+				\RefSt{abstraction} &=& \Ref{abs},\\
+				\RefSt{arguments} &=& \List{a_1, \ldots, a_n}
+			\end{array}	
+		}
+	} = \InstC{r'}{\gamma'}{b}
 }{app-inst}
 $$}
-Здесь $r' = r \cup r_b \cup \bigcup\limits_{1}^{n} r_{a_i}$, а $\gamma' = \bigcup\limits_{i=1}^{n} \{ v_i = \Inst{\gamma}{a_i} \}$.
+Где $$r' = r \cup r_b \cup \bigcup\limits_{1}^{n} r_{a_i},$$
+$$\gamma' = \bigcup\limits_{i=1}^{n} \{ v_i = \Inst{\gamma}{a_i} \}.$$
+Это правило описывает работу процедуры разворачивания шаблонов в случае применения шаблона, описание которого приведено над горизонтальной чертой: тело шаблона обозначено метапеременной $b$, а параметры --- метапеременными $v_i$. Выражение под горизонтальной чертой означает, что при разворачивании применения такого шаблона, в случае если переданы аргументы $a_i$, число которых в точности совпадает с числом параметров шаблона, результатом является $\InstC{r'}{\gamma'}{b}$, то есть результат разворачивания тела шаблона $b$ в пополненной среде $\gamma'$, содержащей новые значения для параметров $v_i$, и в контексте пополненного множества $r'$, учитывающего внутренние ссылки тела и аргументов. Заметим, что передача параметров происходит \emph{по значению}: в среде $\gamma'$ переменным $v_i$ сопоставляются не аргументы $a_i$, а результаты их разворачивания. Кроме того, заметим, что в случае передачи неверного числа аргументов поведение не определено.
 
-
+Далее рассмотрим действие процедуры разворачивания на использование переменной:
 $$
 \trule{
 	\{v = t\} \subseteq \gamma
 }{
-	\Inst{\gamma}{\Object{u}{\RefSt{VariableUsage}}{\RefSt{variable} = \Ref{v}}} = \Copy{t}
+	\Inst{\gamma}{\Object{u}{\RefSt{VariableUsage}}{\RefSt{variable} = \Ref{v}}} = t
 }{var-inst}
 $$ 
+Предсказуемым образом, результат берется из среды $\gamma$, и поведение определено только в том случае, если среда содержит значение для данной переменной. \bad{Copy}
 
+Перейдем к правилам разворачивания для классов, порожденных преобразованием $\TC{\bullet}$. Строго говоря, соответствующих правил должно быть столько же, сколько и самих этих классов, и правило для класса $C$ выглядит следующим образом:
+$$
+\trule{
+	C = \Class{c}{S}{\ldots} &
+	t = \Object{id}{c^\mathcal{T}}{p_i = v_i}
+}{
+	\Inst{\gamma}{t} = \Object{id'}{c^\mathcal{T}}{p_i = \Inst{\gamma}{v_i}}
+}{ds-inst(С)}
+$$ 
+Процедура разворачивания применяется к значениям всех свойств объекта класса $c^\mathcal{T} \eqdef \TC{C}$.
 
+Объекты классов, не являющихся результатом преобразования $\TC{\bullet}$, не изменяются при разворачивании. На практике это касается, в первую очередь, перечислений (enumerations).
+
+При разворачивании ссылок учитывается содержимое множества $r$:
+$$
+\trule{
+	id \in r
+	&
+	\Inst{\gamma}{\Object{id}{c}{\ldots}} = \Object{id'}{c'}{\ldots}
+}{
+	\Inst{\gamma}{\Ref{id}} = \Ref{id'}
+}{inner-ref-inst}
+$$ 
+То есть внутренние ссылки после разворачивания меняют идентификатор, поскольку новая ссылка должна показывать на новый объект. Ссылки, не являющиеся внутренними, идентификаторы не меняют:
+$$
+\trule{
+	id \notin r
+}{
+	\Inst{\gamma}{\Ref{id}} = \Ref{id}
+}{ref-inst}
+$$ 
+
+Следующим рассмотрим правило, описывающее семантику конструкции \code{Reference}:
 $$
 \trule{
 	\Inst{\gamma}{\Object{t}{c}{\ldots}} = \Object{t'}{c'}{\ldots}
 }{
 	\Inst{\gamma}{\Object{r}{\RefSt{Reference}}{\RefSt{to} = \Ref{t}}} = \Ref{t'}
-}{ref-inst}
+}{reference-inst}
 $$ 
+Результатом разворачивания $Reference(\Ref{t})$ является ссылка на объект, полученный в результате разворачивания $t$.
 
+Перейдем к разворачиванию списков. Здесь важную роль играет конструкция \code{Inline}, позволяющая ``склеивать'' несколько коллекций в одну. При $n \ge 0$
 $$
-\trule{
-n \ge 0
-}{
-	\Inst{\gamma}{\List{x_1, \ldots, x_n}} = \InstL{\gamma}{x_1} \LConcat \ldots \LConcat \InstL{\gamma}{x_n}
-}{list-inst}
+\Inst{\gamma}{\List{x_1, \ldots, x_n}} = \InstL{\gamma}{x_1} \LConcat \ldots \LConcat \InstL{\gamma}{x_n},
 $$ 
-
+где $\LConcat$ --- операция конкатенации списков. Таким образом, действие функции $\Inst{\gamma}{\bullet}$ сводится к конкатенации результатов действия вспомогательной функции $\InstL{\gamma}{\bullet} : \Language{\TM} \rightarrow \ListT{\Language{\TM}}$ на элементы списка. Сама функция $\InstL{\gamma}{\bullet}$ определяется следующим образом:
 $$
 \trule{
 \Inst{\gamma}{t} = \List{x_1, \ldots, x_n}
 }{
 	\InstL{\gamma}{\Object{i}{\RefSt{Inline}}{\RefSt{subject} = t}} = \List{x_1, \ldots, x_n}
 }{}
-$$ 
-
 $$
-\trule{
-\Inst{\gamma}{t} = x %& t \notin \denotRCC{\ClassT{\String{Inline}}}
-}{
-	\InstL{\gamma}{t} = \List{x}
-}{}
+В случае, если $t$ --- аргумент конструкции \code{Inline} --- разворачивается в список, этот список и является результатом; в противном случае результат ``заворачивается'' в дополнительный список:
+$$
+	\InstL{\gamma}{t} = \List{\Inst{\gamma}{t}}.
 $$ 
+Приведем пример:
+\begin{align*}
+	\Inst{\emptyset}{\List{1, \Object{i}{\RefSt{Inline}}{\RefSt{subject} = \List{3, 4}}}} = \\
+=	\InstL{\emptyset}{1} \LConcat \InstL{\emptyset}{\Object{i}{\RefSt{Inline}}{\RefSt{subject} = \List{3, 4}}} = \\
+=	\List{1} \LConcat \List{3, 4} = \\
+=	\List{1, 3, 4}
+\end{align*}
 
+Для множеств правила аналогичные:
 $$
 \trule{
 n \ge 0
@@ -323,30 +361,9 @@ $$
 }{}
 $$ 
 
+Осталось рассмотреть правила разворачивания для значений примитивных типов. Для $x \in \{\Null\} \cup  \Sigma^* \cup \mathbb{Z} \cup \mathbb{B}$
 $$
-\trule{
-\Inst{\gamma}{t} = x %& t \notin \denotRCC{\ClassT{\String{Inline}}}
-}{
-	\InstS{\gamma}{t} = \Set{x}
-}{}
-$$ 
-
-$$
-\trule{
-	C = \Class{c}{S}{\ldots} &
-	t = \Object{id}{c^\mathcal{T}}{p_i = v_i}
-}{
-	\Inst{\gamma}{t} = \Object{id'}{c^\mathcal{T}}{p_i = \Inst{\gamma}{v_i}}
-}{ds-inst(С)}
-$$ 
-
-
-$$
-\trule{
-\mbox{В остальных случаях}
-}{
-	\Inst{\gamma}{x} = x
-}{ref-base}
+	\Inst{\gamma}{x} = x.
 $$
 
 Для обеспечения функционирования специфичных конструкций процедура разворачивания шаблонов пополняется правилами следующего вида:
