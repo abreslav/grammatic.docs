@@ -7,10 +7,12 @@
       <x>360</x>
       <y>200</y>
       <w>130</w>
-      <h>30</h>
+      <h>50</h>
     </coordinates>
     <panel_attributes>*Application*
-bg=#00FF00</panel_attributes>
+bg=#00FF00
+--
+arguments : [T*]</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
@@ -19,10 +21,12 @@ bg=#00FF00</panel_attributes>
       <x>80</x>
       <y>200</y>
       <w>140</w>
-      <h>30</h>
+      <h>50</h>
     </coordinates>
     <panel_attributes>*Abstraction*
-bg=#00FF00</panel_attributes>
+bg=#00FF00
+--
+body : T</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
@@ -58,28 +62,6 @@ bg=#00FF00</panel_attributes>
     </coordinates>
     <panel_attributes>*/Term/*
 bg=#00FF00</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <type>com.umlet.element.Relation</type>
-    <coordinates>
-      <x>380</x>
-      <y>40</y>
-      <w>100</w>
-      <h>180</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes>
-    <additional_attributes>80;160;30;30</additional_attributes>
-  </element>
-  <element>
-    <type>com.umlet.element.custom.Text</type>
-    <coordinates>
-      <x>420</x>
-      <y>70</y>
-      <w>90</w>
-      <h>20</h>
-    </coordinates>
-    <panel_attributes>arguments</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
@@ -193,27 +175,5 @@ bg=#00FF00</panel_attributes>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
     <additional_attributes>30;30;190;30;190;180</additional_attributes>
-  </element>
-  <element>
-    <type>com.umlet.element.Relation</type>
-    <coordinates>
-      <x>190</x>
-      <y>40</y>
-      <w>190</w>
-      <h>190</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes>
-    <additional_attributes>30;170;170;30</additional_attributes>
-  </element>
-  <element>
-    <type>com.umlet.element.custom.Text</type>
-    <coordinates>
-      <x>300</x>
-      <y>70</y>
-      <w>50</w>
-      <h>20</h>
-    </coordinates>
-    <panel_attributes>body</panel_attributes>
-    <additional_attributes/>
   </element>
 </diagram>

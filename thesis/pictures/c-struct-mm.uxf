@@ -130,7 +130,7 @@ name : String
       <w>50</w>
       <h>140</h>
     </coordinates>
-    <panel_attributes>lt=&lt;&lt;&lt;-</panel_attributes>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes>
     <additional_attributes>30;120;30;30</additional_attributes>
   </element>
   <element>
