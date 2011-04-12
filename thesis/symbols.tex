@@ -116,9 +116,10 @@
 %
 
 \newcommand{\MM}[1]{\mathcal{#1}}%
-\newcommand{\Inst}[2]{\mathcal{I}_{#1} \left\langle #2 \right\rangle}%
-\newcommand{\InstL}[2]{\mathcal{I}_{#1}^{L} \left\langle #2 \right\rangle}%
-\newcommand{\InstS}[2]{\mathcal{I}_{#1}^{L} \left\langle #2 \right\rangle}%
+\newcommand{\InstSign}{\mathcal{E}}
+\newcommand{\Inst}[2]{\InstSign_{#1} \left\langle #2 \right\rangle}%
+\newcommand{\InstL}[2]{\InstSign_{#1}^{L} \left\langle #2 \right\rangle}%
+\newcommand{\InstS}[2]{\InstSign_{#1}^{S} \left\langle #2 \right\rangle}%
 \newcommand{\match}[3][]{#2 \; \mathbf{match}_{#1} \; #3}
 \newcommand{\matchNV}[3][]{#2 \; \overline{\mathbf{match}}_{#1} \; #3}
 \newcommand{\ang}[1]{\mathsf{<}#1\mathsf{>}}
@@ -144,6 +145,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 
+
 \newcommand{\TM}{\mathcal{M}^{\mathcal{T}}}
 \newcommand{\TC}[1]{\mathcal{T}\left(#1\right)}
 \newcommand{\TR}[1]{{\color{red}\mathcal{TR}\left(#1\right)}}
@@ -153,6 +155,10 @@
 %\renewcommand{\vec}[1]{\overrightarrow{\mbox{#1}}}
 \newcommand{\ct}[1]{\MM{M}\left(#1\right)}
 \newcommand{\h}[1]{h\left(#1\right)}
+
+\newcommand{\M}{\MM{M}}
+\newcommand{\Sem}{\mathcal{I}}
+
 
 \newcommand{\Copy}[1]{\mathsf{Copy}(#1)}
 \newcommand{\LConcat}{\oplus}
