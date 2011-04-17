@@ -141,30 +141,6 @@ bg=#00FF00
     <additional_attributes/>
   </element>
   <element>
-    <type>com.umlet.element.Class</type>
-    <coordinates>
-      <x>610</x>
-      <y>250</y>
-      <w>120</w>
-      <h>30</h>
-    </coordinates>
-    <panel_attributes>*Reference*
-bg=#00FF00
-</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <type>com.umlet.element.Relation</type>
-    <coordinates>
-      <x>470</x>
-      <y>180</y>
-      <w>260</w>
-      <h>90</h>
-    </coordinates>
-    <panel_attributes>lt=-&gt;&gt;</panel_attributes>
-    <additional_attributes>240;70;240;30;30;30;30;70</additional_attributes>
-  </element>
-  <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
       <x>520</x>
@@ -174,17 +150,6 @@ bg=#00FF00
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
     <additional_attributes>30;30;30;120;60;120</additional_attributes>
-  </element>
-  <element>
-    <type>com.umlet.element.custom.Text</type>
-    <coordinates>
-      <x>520</x>
-      <y>230</y>
-      <w>30</w>
-      <h>20</h>
-    </coordinates>
-    <panel_attributes>to</panel_attributes>
-    <additional_attributes/>
   </element>
   <element>
     <type>com.umlet.element.Class</type>
@@ -267,17 +232,6 @@ arguments : [T*]</panel_attributes>
 bg=#00FF00
 </panel_attributes>
     <additional_attributes/>
-  </element>
-  <element>
-    <type>com.umlet.element.Relation</type>
-    <coordinates>
-      <x>520</x>
-      <y>190</y>
-      <w>140</w>
-      <h>80</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;&lt;&lt;-</panel_attributes>
-    <additional_attributes>120;60;120;30;30;30;30;60</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Relation</type>

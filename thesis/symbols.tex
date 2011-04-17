@@ -161,5 +161,12 @@
 \newcommand{\Sem}{\mathcal{I}}
 
 
-\newcommand{\Copy}[1]{\mathsf{Copy}(#1)}
+\newcommand{\CopyRM}[3]{\mathsf{Copy}_{#1, #2}\left(#3\right)}
+\newcommand{\Copy}[1]{\CopyRM{r}{m}{#1}}
 \newcommand{\LConcat}{\oplus}
+\newcommand{\idmap}{\mathsf{map}}
+\newcommand{\newid}{\mathsf{new}}
+\newcommand{\idmapcompose}{\blacktriangleright}
+
+\newcommand{\dom}{\mathbf{dom}}
+\newcommand{\range}{\mathbf{rng}}
