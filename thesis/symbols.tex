@@ -135,19 +135,27 @@
 \newcommand{\meflatten}[1]{\overline{#1}}
 \newcommand{\subtype}{\preceq}
 \newcommand{\suptype}{\succeq}
+
+\newcounter{typerule}
+\renewcommand{\thetyperule}{\thesection.\arabic{typerule}}
+
+\newcommand{\rulelabel}[1]{\refstepcounter{typerule}(\thetyperule)\label{#1}}
 \newcommand{\myinfer}[3][]{\infer[\mbox{#1}]{#2}{#3}}
+\newcommand{\trule}[3]{%
+\myinfer[\rulelabel{#3}]{#2}{#1}%(\mbox{\textsc{#3}})%
+}%
+\newcommand{\tinfer}[3][]{\infer[\rulelabel{#1}]{#2}{#3}}
+\newcommand{\rref}[1]{\mbox{\textit{#1}}}
+\newcommand{\ruleref}[1]{(\ref{#1})}
 \newcommand{\matchList}[3]{\mathit{matchList}_{#1}(#2,\, #3)}
 \newcommand{\matchSet}[3]{\mathit{matchSet}_{#1}(#2,\, #3)}
-\newcommand{\trule}[3]{%
-\myinfer[#3]{#2}{#1}%(\mbox{\textsc{#3}})%
-}%
-\newcommand{\rref}[1]{\mbox{\textit{#1}}}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 \newcommand{\TM}{\mathcal{M}^{\mathcal{T}}}
+\newcommand{\Tc}[1]{#1^{\mathcal{T}}}
 \newcommand{\TC}[1]{\mathcal{T}\left(#1\right)}
 \newcommand{\TR}[1]{{\color{red}\mathcal{TR}\left(#1\right)}}
 \newcommand{\TA}[1]{{\color{red}\mathcal{TA}\left(#1\right)}}

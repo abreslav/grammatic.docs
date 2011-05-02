@@ -148,6 +148,7 @@
 }
 \renewcommand{\section}[1]{%
 \nopagebreak[4]%
+\setcounter{typerule}{0}%
 \refstepcounter{section}%
 \begin{flushleft}\bf \thesection. #1\end{flushleft}%
 \addcontentsline{toc}{section}{\hspace{1em}\thesection. #1}%
